@@ -1,0 +1,33 @@
+From e4f4b600adf08570aaadcfd5df8730243fa5137a Mon Sep 17 00:00:00 2001
+From: Vincent Cheah Beng Keat <vincent.beng.keat.cheah@address.com>
+Date: Fri, 11 Nov 2022 06:32:51 +0000
+Subject: [PATCH] vaapipostproc: Adding back missing DMABuf in src caps
+
+Found out dmabuf src caps is reverted for dec and vpp in 1.20.3.
+Gst-vaapi reintroduced it back in 1.21.1.
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2459
+
+upstream status: merged
+
+Signed-off-by: Cheah, Vincent Beng Keat <vincent.beng.keat.cheah@intel.com>
+---
+ gst/vaapi/gstvaapipostproc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gst/vaapi/gstvaapipostproc.c b/gst/vaapi/gstvaapipostproc.c
+index 4fa79e5..525f1f3 100644
+--- a/gst/vaapi/gstvaapipostproc.c
++++ b/gst/vaapi/gstvaapipostproc.c
+@@ -73,7 +73,8 @@ static const char gst_vaapipostproc_src_caps_str[] =
+   GST_VAAPI_MAKE_GLTEXUPLOAD_CAPS "; "
+ #endif
+   GST_VIDEO_CAPS_MAKE (GST_VAAPI_FORMATS_ALL) ", "
+-  GST_CAPS_INTERLACED_MODES;
++  GST_CAPS_INTERLACED_MODES ";"
++  GST_VAAPI_MAKE_DMABUF_CAPS;
+ /* *INDENT-ON* */
+ 
+ /* *INDENT-OFF* */
+-- 
+2.35.5
+

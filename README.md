@@ -7,52 +7,46 @@ Graphics SR-IOV is Intel's latest Virtualization Technology for Graphics.
 ## Getting Started
 
 ### Installation
-  * Quick Install
-  * [Manual Install](https://github.com/ThunderSoft-SRIOV/ppa/blob/main/README.md)
+  * Source Install
+  * Package Install
 
-### Quick Install
+### Source Install
 
-   ```sh
-   ./scripts/install_sriov.sh
-   ```
+Install and setup from source code.
 
-### Enable UEFI Secure Boot
+1. Setup kernel
 
-  * [Enable Secure Boot](docs/secure-boot.md)
+  ```sh
+  sudo ./scripts/sriov_setup_kernel.sh
+  ```
 
-### Update grub file
+2. Setup debian
 
-1. Specify kernel version to boot.
-    ```sh
-    GRUB_DEFAULT="Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux 6.6.32-debian-sriov"
-    ```
+  ```sh
+  sudo ./scripts/sriov_setup_debian.sh
+  ```
 
-2. Add kernel option.
-    ```sh
-    GRUB_CMDLINE_LINUX_DEFAULT="quiet console=tty0,115200n8 intel_iommu=on iommu=soft vt_handoff=7"
-    GRUB_CMDLINE_LINUX="splash i915.enable_guc=3 i915.max_vfs=7 i915.force_probe=* udmabuf.list_limit=8192"
-    ```
+### Source Install
 
-3. Update grub.
-    ```sh
-    sudo update-grub
+Install and setup from ppa.
 
-    sudo reboot
-    ```
+1. Setup kernel
 
-4. After reboot, check the kernel version.
-    ```sh
-    uname -r
-    ```
-    Output:
-    ```sh
-    6.6.32-debian-sriov
-    ```
+  ```sh
+  sudo ./scripts/sriov_setup_kernel.sh --use-install-files
+  ```
+
+2. Setup debian
+
+  ```sh
+  sudo ./scripts/sriov_setup_debian.sh --use-install-files
+  ```
 
 <!-- USAGE EXAMPLES -->
 ### Usage
-1. Setup and deploy Windows VM.
-  * [Deploy Windows VM](docs/deploy-windows-vm.md)
 
-2. Setup and deploy Linux VM.
-  * [Deploy Windows VM](docs/deploy-ubuntu-vm.md)
+Follow the links below for instructions on how to setup and deploy virtual machines using this toolkit
+
+[Deploy Windows Virtual Machine](docs/deploy-windows-vm.md)
+
+[Deploy Linux Virtual Machine](docs/deploy-ubuntu-vm.md)

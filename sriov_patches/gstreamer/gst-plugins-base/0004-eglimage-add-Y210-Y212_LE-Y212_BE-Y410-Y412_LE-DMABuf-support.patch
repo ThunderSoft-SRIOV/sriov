@@ -1,0 +1,200 @@
+From 73277b92a3c9794bb9f46484926e8536489275ae Mon Sep 17 00:00:00 2001
+From: Haihao Xiang <haihao.xiang@intel.com>
+Date: Fri, 2 Jul 2021 15:37:19 +0800
+Subject: [PATCH 1/4] eglimage: add Y210 DMABuf import support
+
+This fixed the error below:
+
+GST_GL_PLATFORM=egl gst-launch-1.0 videotestsrc ! msdkvpp ! \
+"video/x-raw(memory:DMABuf),format=Y210" ! glimagesink
+
+0:00:00.039881627 571365 0x56245eba6920 ERROR             gleglimage
+gsteglimage.c:549:_drm_rgba_fourcc_from_info: Unsupported format for
+DMABuf
+---
+ .../gst-plugins-base/gst-libs/gst/gl/egl/gsteglimage.c      | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/gst-libs/gst/gl/egl/gsteglimage.c b/gst-libs/gst/gl/egl/gsteglimage.c
+index 906f56e381..31fbba2e45 100644
+--- a/gst-libs/gst/gl/egl/gsteglimage.c
++++ b/gst-libs/gst/gl/egl/gsteglimage.c
+@@ -464,10 +464,12 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+   const gint rgba_fourcc = DRM_FORMAT_ABGR8888;
+   const gint rgb_fourcc = DRM_FORMAT_BGR888;
+   const gint rg_fourcc = DRM_FORMAT_GR88;
++  const gint rg16_fourcc = DRM_FORMAT_GR1616;
+ #else
+   const gint rgba_fourcc = DRM_FORMAT_RGBA8888;
+   const gint rgb_fourcc = DRM_FORMAT_RGB888;
+   const gint rg_fourcc = DRM_FORMAT_RG88;
++  const gint rg16_fourcc = DRM_FORMAT_RG1616;
+ #endif
+ 
+   GST_DEBUG ("Getting DRM fourcc for %s plane %i",
+@@ -545,6 +547,10 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+       *out_format = plane == 1 ? GST_GL_RED : GST_GL_RG;
+       return plane == 1 ? rg_fourcc : DRM_FORMAT_R8;
+ 
++    case GST_VIDEO_FORMAT_Y210:
++      *out_format = GST_GL_RG16;
++      return rg16_fourcc;
++
+     default:
+       GST_ERROR ("Unsupported format for DMABuf.");
+       return -1;
+-- 
+GitLab
+
+
+From 62c9f0a789ca0498290721ae930582d3c35dfef8 Mon Sep 17 00:00:00 2001
+From: Haihao Xiang <haihao.xiang@intel.com>
+Date: Fri, 2 Jul 2021 20:31:22 +0800
+Subject: [PATCH 2/4] eglimage: add Y212_LE / Y212_BE DMABuf import support
+
+This fixed the error below:
+
+GST_GL_PLATFORM=egl gst-launch-1.0 videotestsrc ! msdkvpp \
+! "video/x-raw(memory:DMABuf),format=Y212_LE" ! glimagesink
+
+0:00:00.148086281 575148 0x562a6d36d920 ERROR             gleglimage
+gsteglimage.c:555:_drm_rgba_fourcc_from_info: Unsupported format for
+DMABuf.
+---
+ .../gst-plugins-base/gst-libs/gst/gl/egl/gsteglimage.c    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/gst-libs/gst/gl/egl/gsteglimage.c b/gst-libs/gst/gl/egl/gsteglimage.c
+index 31fbba2e45..557ae9cee0 100644
+--- a/gst-libs/gst/gl/egl/gsteglimage.c
++++ b/gst-libs/gst/gl/egl/gsteglimage.c
+@@ -551,6 +551,14 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+       *out_format = GST_GL_RG16;
+       return rg16_fourcc;
+ 
++    case GST_VIDEO_FORMAT_Y212_LE:
++      *out_format = GST_GL_RG16;
++      return DRM_FORMAT_GR1616;
++
++    case GST_VIDEO_FORMAT_Y212_BE:
++      *out_format = GST_GL_RG16;
++      return DRM_FORMAT_RG1616;
++
+     default:
+       GST_ERROR ("Unsupported format for DMABuf.");
+       return -1;
+-- 
+GitLab
+
+
+From 887e6943a28d44a15c42064dfc72cd0d87be989c Mon Sep 17 00:00:00 2001
+From: Haihao Xiang <haihao.xiang@intel.com>
+Date: Fri, 2 Jul 2021 16:01:19 +0800
+Subject: [PATCH 3/4] eglimage: add Y410 DMABuf import support
+
+This fixed the error below:
+
+GST_GL_PLATFORM=egl gst-launch-1.0 videotestsrc ! msdkvpp ! \
+"video/x-raw(memory:DMABuf),format=Y410" ! glimagesink
+
+0:00:00.040553883 576732 0x55be9b35f920 ERROR             gleglimage
+gsteglimage.c:577:_drm_rgba_fourcc_from_info: Unsupported format for
+DMABuf.
+---
+ .../gst-libs/gst/gl/egl/gsteglimage.c              | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/gst-libs/gst/gl/egl/gsteglimage.c b/gst-libs/gst/gl/egl/gsteglimage.c
+index 557ae9cee0..4744ebca89 100644
+--- a/gst-libs/gst/gl/egl/gsteglimage.c
++++ b/gst-libs/gst/gl/egl/gsteglimage.c
+@@ -91,6 +91,14 @@
+ #define DRM_FORMAT_RG1616       fourcc_code('R', 'G', '3', '2')
+ #endif
+ 
++#ifndef DRM_FORMAT_ABGR2101010
++#define DRM_FORMAT_ABGR2101010    fourcc_code('A', 'B', '3', '0')
++#endif
++
++#ifndef DRM_FORMAT_RGBA1010102
++#define DRM_FORMAT_RGBA1010102    fourcc_code('R', 'A', '3', '0')
++#endif
++
+ #ifndef EGL_LINUX_DMA_BUF_EXT
+ #define EGL_LINUX_DMA_BUF_EXT 0x3270
+ #endif
+@@ -465,11 +473,13 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+   const gint rgb_fourcc = DRM_FORMAT_BGR888;
+   const gint rg_fourcc = DRM_FORMAT_GR88;
+   const gint rg16_fourcc = DRM_FORMAT_GR1616;
++  const gint rgb10a2_fourcc = DRM_FORMAT_ABGR2101010;
+ #else
+   const gint rgba_fourcc = DRM_FORMAT_RGBA8888;
+   const gint rgb_fourcc = DRM_FORMAT_RGB888;
+   const gint rg_fourcc = DRM_FORMAT_RG88;
+   const gint rg16_fourcc = DRM_FORMAT_RG1616;
++  const gint rgb10a2_fourcc = DRM_FORMAT_RGBA1010102;
+ #endif
+ 
+   GST_DEBUG ("Getting DRM fourcc for %s plane %i",
+@@ -559,6 +569,10 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+       *out_format = GST_GL_RG16;
+       return DRM_FORMAT_RG1616;
+ 
++    case GST_VIDEO_FORMAT_Y410:
++      *out_format = GST_GL_RGB10_A2;
++      return rgb10a2_fourcc;
++
+     default:
+       GST_ERROR ("Unsupported format for DMABuf.");
+       return -1;
+-- 
+GitLab
+
+
+From 24d19e2728886266efc9c23480eefac1d986fa36 Mon Sep 17 00:00:00 2001
+From: Haihao Xiang <haihao.xiang@intel.com>
+Date: Fri, 2 Jul 2021 16:22:04 +0800
+Subject: [PATCH 4/4] eglimage: fix Y412_LE DMABuf import support
+
+This fixed the error below:
+
+GST_GL_PLATFORM=egl gst-launch-1.0 videotestsrc ! msdkvpp !
+"video/x-raw(memory:DMABuf),format=Y412_LE" ! glimagesink
+
+0:00:00.063737691 576978 0x557c11266920 ERROR             gleglimage
+gsteglimage.c:577:_drm_rgba_fourcc_from_info: Unsupported format for
+DMABuf.
+---
+ .../gst-plugins-base/gst-libs/gst/gl/egl/gsteglimage.c   | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/gst-libs/gst/gl/egl/gsteglimage.c b/gst-libs/gst/gl/egl/gsteglimage.c
+index 4744ebca89..54cc8bc92c 100644
+--- a/gst-libs/gst/gl/egl/gsteglimage.c
++++ b/gst-libs/gst/gl/egl/gsteglimage.c
+@@ -99,6 +99,10 @@
+ #define DRM_FORMAT_RGBA1010102    fourcc_code('R', 'A', '3', '0')
+ #endif
+ 
++#ifndef DRM_FORMAT_ABGR16161616
++#define DRM_FORMAT_ABGR16161616   fourcc_code('A', 'B', '4', '8')
++#endif
++
+ #ifndef EGL_LINUX_DMA_BUF_EXT
+ #define EGL_LINUX_DMA_BUF_EXT 0x3270
+ #endif
+@@ -573,6 +577,11 @@ _drm_rgba_fourcc_from_info (const GstVideoInfo * info, int plane,
+       *out_format = GST_GL_RGB10_A2;
+       return rgb10a2_fourcc;
+ 
++    /* No support for Y412_BE because DRM_FORMAT_RGBA16161616 isn't defined */
++    case GST_VIDEO_FORMAT_Y412_LE:
++      *out_format = GST_GL_RGBA16;
++      return DRM_FORMAT_ABGR16161616;
++
+     default:
+       GST_ERROR ("Unsupported format for DMABuf.");
+       return -1;
+-- 
+GitLab

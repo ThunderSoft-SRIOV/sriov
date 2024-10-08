@@ -1,0 +1,59 @@
+From 65e32bc4a6ed6cfb0c204c329d4bd4953fab05ee Mon Sep 17 00:00:00 2001
+From: Tejas Upadhyay <tejaskumarx.surendrakumar.upadhyay@intel.com>
+Date: Mon, 17 May 2021 15:36:24 +0530
+Subject: [PATCH] intel: Add intel_is_adlp()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ADL_P have stride restrictions that requires special handling, so
+this function will be needed.
+
+Reviewed-by: Clint Taylor <Clinton.A.Taylor@intel.com>
+Signed-off-by: José Roberto de Souza <jose.souza@intel.com>
+Signed-off-by: Tejas Upadhyay <tejaskumarx.surendrakumar.upadhyay@intel.com>
+---
+ intel/intel_chipset.c | 17 +++++++++++++++++
+ intel/intel_chipset.h |  1 +
+ 2 files changed, 18 insertions(+)
+
+diff --git a/intel/intel_chipset.c b/intel/intel_chipset.c
+index 76b194034995..4068b41abf3c 100644
+--- a/intel/intel_chipset.c
++++ b/intel/intel_chipset.c
+@@ -96,3 +96,20 @@ drm_private bool intel_get_genx(unsigned int devid, int *gen)
+ 
+ 	return false;
+ }
++
++static bool intel_is_platform(unsigned int devid, const struct pci_device *p)
++{
++	for (; p->gen != 0; p++) {
++		if (p->device == devid)
++			return true;
++	}
++
++	return false;
++}
++
++drm_private bool intel_is_adlp(unsigned int devid)
++{
++	const struct pci_device p[] = { INTEL_ADLP_IDS(12), { 0, 0 } };
++
++	return intel_is_platform(devid, p);
++}
+diff --git a/intel/intel_chipset.h b/intel/intel_chipset.h
+index 0a48e0dabce9..e217913951df 100644
+--- a/intel/intel_chipset.h
++++ b/intel/intel_chipset.h
+@@ -333,6 +333,7 @@
+ 
+ drm_private bool intel_is_genx(unsigned int devid, int gen);
+ drm_private bool intel_get_genx(unsigned int devid, int *gen);
++drm_private bool intel_is_adlp(unsigned int devid);
+ 
+ #define IS_GEN9(devid) intel_is_genx(devid, 9)
+ #define IS_GEN10(devid) intel_is_genx(devid, 10)
+-- 
+2.39.0
+

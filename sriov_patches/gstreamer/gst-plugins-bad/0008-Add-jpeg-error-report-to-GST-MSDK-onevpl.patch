@@ -1,0 +1,23 @@
+From b35dacfce39643c1809217a87726388a8660ce6f Mon Sep 17 00:00:00 2001
+From: "Ung, Teng En" <teng.en.ung@intel.com>
+Date: Sat, 12 Mar 2022 17:36:31 +0000
+Subject: [PATCH] Add jpeg error report to GST-MSDK onevpl.
+
+---
+ sys/msdk/onevpl/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sys/msdk/onevpl/meson.build b/sys/msdk/onevpl/meson.build
+index 02ff922..d829e00 100644
+--- a/sys/msdk/onevpl/meson.build
++++ b/sys/msdk/onevpl/meson.build
+@@ -103,6 +103,7 @@ gst_msdk_incdir = include_directories('..')
+ 
+ if msdk_ovpl_deps_found
+   msdk_ovpl_extra_args += ['-DGST_USE_UNSTABLE_API']
++  msdk_ovpl_extra_args += ['-DONEVPL_EXPERIMENTAL']
+   gstmsdkovpltag = library('gstmsdk',
+     msdk_ovpl_sources,
+     c_args : gst_plugins_bad_args + msdk_ovpl_extra_args,
+-- 
+2.7.4

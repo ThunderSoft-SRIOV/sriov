@@ -1,0 +1,50 @@
+From a45d95b628e95d47ec030c5729d75b2040aae2db Mon Sep 17 00:00:00 2001
+From: "Teng, Jin Chung" <jin.chung.teng@intel.com>
+Date: Mon, 9 Jan 2023 10:01:02 +0800
+Subject: [PATCH 2/2] vaapi: decoder: modify the condition to judge whether dma
+ buffer is supported
+
+It seems "GST_VAAPI_PLUGIN_BASE_SRC_PAD_CAN_DMABUF (decode)" will
+return false even if this platform support the mem_type dma buffer.
+And media-driver will return GST_VAAPI_BUFFER_MEMORY_TYPE_DMA_BUF2
+on Gen12(such as TGL).
+Without this patch, The command such as:
+gst-launch-1.0 videotestsrc num-buffers=100 ! video/x-raw, format=I420 ! \
+x264enc ! h264parse ! vaapih264dec ! video/x-raw\(memory:DMABuf\) ! fakesink
+will return not-negotiated.
+
+Signed-off-by: Zhang Yuankun <yuankunx.zhang@intel.com>
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/-/merge_requests/437>
+link: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/bd8c0b33e7b9bf4fbe9104f3f529cea3519788c7
+
+upstream-status : merged
+
+This code fixed is missing from 1.20.3 version.
+
+Signed-off-by: Lim Siew Hoon <siew.hoon.lim@intel.com>
+Signed-off-by: Teng, Jin Chung <jin.chung.teng@intel.com>
+---
+ gst/vaapi/gstvaapidecode.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/gst/vaapi/gstvaapidecode.c b/gst/vaapi/gstvaapidecode.c
+index aed1f99..9f6eaba 100644
+--- a/gst/vaapi/gstvaapidecode.c
++++ b/gst/vaapi/gstvaapidecode.c
+@@ -261,6 +261,14 @@ gst_vaapidecode_ensure_allowed_srcpad_caps (GstVaapiDecode * decode)
+   gst_caps_set_features_simple (va_caps,
+       gst_caps_features_from_string (GST_CAPS_FEATURE_MEMORY_VAAPI_SURFACE));
+ 
++  if (gst_vaapi_mem_type_supports (mem_types,
++          GST_VAAPI_BUFFER_MEMORY_TYPE_DMA_BUF) ||
++      gst_vaapi_mem_type_supports (mem_types,
++          GST_VAAPI_BUFFER_MEMORY_TYPE_DMA_BUF2)) {
++    dma_caps = gst_caps_copy (base_caps);
++    gst_caps_set_features_simple (dma_caps,
++        gst_caps_features_from_string (GST_CAPS_FEATURE_MEMORY_DMABUF));
++  }
+ #if (GST_VAAPI_USE_GLX || GST_VAAPI_USE_EGL)
+   if (!GST_VAAPI_PLUGIN_BASE_SRC_PAD_CAN_DMABUF (decode)
+       && gst_vaapi_display_has_opengl (GST_VAAPI_PLUGIN_BASE_DISPLAY (decode))) {
+-- 
+2.25.1

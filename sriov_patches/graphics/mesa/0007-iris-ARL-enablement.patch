@@ -1,0 +1,64 @@
+From 7c50d39f7c91bce9faa8884083ca67a47e9b09b3 Mon Sep 17 00:00:00 2001
+From: "Mazlan, Hazwan Arif" <hazwan.arif.mazlan@intel.com>
+Date: Fri, 13 Oct 2023 06:03:54 +0800
+Subject: [PATCH] iris: ARL enablement
+
+Signed-off-by: Mazlan, Hazwan Arif <hazwan.arif.mazlan@intel.com>
+---
+ include/pci_ids/iris_pci_ids.h    | 5 +++++
+ src/intel/dev/intel_device_info.c | 6 ++++++
+ src/intel/dev/intel_device_info.h | 1 +
+ 3 files changed, 12 insertions(+)
+
+diff --git a/include/pci_ids/iris_pci_ids.h b/include/pci_ids/iris_pci_ids.h
+index 4c2728ff573f..04b024480ad8 100644
+--- a/include/pci_ids/iris_pci_ids.h
++++ b/include/pci_ids/iris_pci_ids.h
+@@ -253,3 +253,8 @@ CHIPSET(0x7d45, mtl_p, "MTL", "Intel(R) Graphics")
+ CHIPSET(0x7d55, mtl_p, "MTL", "Intel(R) Arc(tm) Graphics")
+ CHIPSET(0x7d60, mtl_m, "MTL", "Intel(R) Graphics")
+ CHIPSET(0x7dd5, mtl_p, "MTL", "Intel(R) Graphics")
++
++CHIPSET(0x7d41, arl, "ARL", "Intel(R) Graphics")
++CHIPSET(0x7d51, arl, "ARL", "Intel(R) Graphics")
++CHIPSET(0x7d67, arl, "ARL", "Intel(R) Graphics")
++CHIPSET(0x7dd1, arl, "ARL", "Intel(R) Graphics")
+diff --git a/src/intel/dev/intel_device_info.c b/src/intel/dev/intel_device_info.c
+index 0a429a563f3c..58d92d7d7ef5 100644
+--- a/src/intel/dev/intel_device_info.c
++++ b/src/intel/dev/intel_device_info.c
+@@ -72,6 +72,7 @@ static const struct {
+    { "rpl", 0xa780 },
+    { "dg2", 0x5690 },
+    { "mtl", 0x7d60 },
++   { "arl", 0x7d66 },
+ };
+ 
+ /**
+@@ -1152,6 +1153,11 @@ static const struct intel_device_info intel_device_info_mtl_p = {
+    .platform = INTEL_PLATFORM_MTL_P,
+ };
+ 
++static const struct intel_device_info intel_device_info_arl = {
++   MTL_FEATURES,
++   .platform = INTEL_PLATFORM_ARL,
++};
++
+ void
+ intel_device_info_topology_reset_masks(struct intel_device_info *devinfo)
+ {
+diff --git a/src/intel/dev/intel_device_info.h b/src/intel/dev/intel_device_info.h
+index 500774b3b8a6..3d3f4a6d09c1 100644
+--- a/src/intel/dev/intel_device_info.h
++++ b/src/intel/dev/intel_device_info.h
+@@ -81,6 +81,7 @@ enum intel_platform {
+    INTEL_PLATFORM_GROUP_END(ATSM, INTEL_PLATFORM_ATSM_G11),
+    INTEL_PLATFORM_GROUP_START(MTL, INTEL_PLATFORM_MTL_M),
+    INTEL_PLATFORM_GROUP_END(MTL, INTEL_PLATFORM_MTL_P),
++   INTEL_PLATFORM_ARL,
+ };
+ 
+ #undef INTEL_PLATFORM_GROUP_START
+-- 
+2.40.1
+

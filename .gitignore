@@ -1,0 +1,4 @@
+*.log
+packages/*
+*_build/*
+*_install/*
