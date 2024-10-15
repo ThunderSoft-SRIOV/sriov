@@ -21,7 +21,7 @@ function sriov_add_source_list() {
 
 function sriov_install_packages() {
     # List of required packages
-    PACKAGES="git fakeroot build-essential ncurses-dev xz-utils libssl-dev \
+    PACKAGES="git curl fakeroot build-essential ncurses-dev xz-utils libssl-dev \
     bc flex libelf-dev bison rsync kmod cpio unzip lz4 ninja-build pkg-config \
     libglib2.0-dev libpixman-1-dev libspice-protocol-dev libspice-server-dev \
     libusbredirparser-dev python3-venv libglib2.0-dev libpixman-1-dev \
@@ -36,9 +36,6 @@ function sriov_install_packages() {
         del_existing_folder $PACKAGES_DIR
         mkdir -p $PACKAGES_DIR
         sudo cp /var/cache/apt/archives/*.deb $PACKAGES_DIR
-    else
-        # Copy packages to cache
-        sudo cp $PACKAGES_DIR/*.deb /var/cache/apt/archives/
     fi
 
     # Install packages
@@ -129,7 +126,7 @@ function sriov_update_grub() {
     fi
 
     # Update default grub
-    sed -i "s/GRUB_DEFAULT=.*/GRUB_DEFAULT='Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux $kernel_file_version'/g" /etc/default/grub
+    sed -i "s/GRUB_DEFAULT=.*/GRUB_DEFAULT=\"Advanced options for Debian GNU\/Linux\>Debian GNU\/Linux, with Linux $kernel_file_version\"/g" /etc/default/grub
     sudo update-grub
 
     reboot_required=1

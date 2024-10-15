@@ -42,17 +42,17 @@ function sriov_add_source_list() {
 
 function sriov_prepare_install(){
     # Install prerequites for projects installation
-    source $WORK_DIR/scripts/sriov_prepare_projects.sh
+    source $WORK_DIR/scripts/setup_host/sriov_prepare_projects.sh
 }
 
 function sriov_main_install(){
     # Start projects installation
-    source $WORK_DIR/scripts/sriov_install_projects.sh
+    source $WORK_DIR/scripts/setup_host/sriov_install_projects.sh
 }
 
 function sriov_customise_debian() {
     # Switch to Xorg
-    sed -i "s/\#WaylandEnable=false/WaylandEnable=false/g" /etc/gdm3/custom.conf
+    sed -i "s/\#WaylandEnable=false/WaylandEnable=false/g" /etc/gdm3/daemon.conf
 
     if [[ $GUEST_SETUP == 1 ]]; then
         # Configure X11 wrapper and mesa loader for Ubuntu guest
@@ -87,7 +87,7 @@ function sriov_customise_debian() {
 }
 
 function sriov_setup_pwr_ctrl() {
-    source $WORK_DIR/sriov_setup_pwr_ctrl.sh
+    source $WORK_DIR/scripts/setup_host/sriov_setup_pwr_ctrl.sh
 
     if [[ $GUEST_SETUP == 1 ]]; then
         # install qemu-update-agent for guest only
@@ -132,12 +132,12 @@ function sriov_update_cmdline(){
 
     local updated=0
 
-    if [ $kernel_maj_ver -eq 5 ]; then
+    if [[ $kernel_maj_ver -eq 5 ]]; then
         cmds=("i915.force_probe=*"
               "intel_iommu=on"
               "udmabuf.list_limit=8192"
               "i915.enable_guc=(0x)?0*7")
-    elif [ $kernel_maj_ver -eq 6 ]; then
+    elif [[ $kernel_maj_ver -eq 6 ]]; then
         cmds=("i915.force_probe=*"
               "intel_iommu=on"
               "udmabuf.list_limit=8192"
@@ -230,8 +230,8 @@ if [[ $IS_BSP -ne 1 ]]; then
 fi
 
 log_func sriov_customise_debian
-log_func sriov_setup_pwr_ctrl
-log_func sriov_setup_swtpm
+# log_func sriov_setup_pwr_ctrl
+# log_func sriov_setup_swtpm
 log_func sriov_update_cmdline
 log_success
 ask_reboot

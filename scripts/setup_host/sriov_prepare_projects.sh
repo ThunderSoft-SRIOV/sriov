@@ -12,7 +12,7 @@ PACKAGES_DIR=$WORK_DIR/packages
 function sriov_install_packages() {
     # List of required packages
     PACKAGES="net-tools openssh-server \
-    git make autoconf libtool \
+    git make autoconf libtool meson \
     vim libpciaccess-dev cmake \
     python3-pip python3.10 \
     llvm-15 libelf-dev bison \

@@ -781,8 +781,6 @@ if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     ninja && sudo ninja install
     check_build_error
 
-    # Copy debian package to installation directory
-    cp ../$deb_name.deb $INSTALL_DIR
 else
     # Install from ppa
     sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg

@@ -17,13 +17,13 @@ Install and setup from source code.
 1. Setup kernel
 
   ```sh
-  sudo ./scripts/sriov_setup_kernel.sh
+  sudo ./scripts/setup_host/sriov_setup_kernel.sh
   ```
 
 2. Setup debian
 
   ```sh
-  sudo ./scripts/sriov_setup_debian.sh
+  sudo ./scripts/setup_host/sriov_setup_debian.sh
   ```
 
 ### Source Install
@@ -33,13 +33,13 @@ Install and setup from ppa.
 1. Setup kernel
 
   ```sh
-  sudo ./scripts/sriov_setup_kernel.sh --use-install-files
+  sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-install-files
   ```
 
 2. Setup debian
 
   ```sh
-  sudo ./scripts/sriov_setup_debian.sh --use-install-files
+  sudo ./scripts/setup_host/sriov_setup_debian.sh --use-install-files
   ```
 
 <!-- USAGE EXAMPLES -->
