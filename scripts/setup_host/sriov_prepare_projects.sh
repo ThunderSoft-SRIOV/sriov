@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright (c) 2024 ThunderSoft Corporation.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -eE
 
 #----------------------------------      Global variable      --------------------------------------

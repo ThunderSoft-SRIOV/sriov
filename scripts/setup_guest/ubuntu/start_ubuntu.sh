@@ -7,22 +7,11 @@
 
 set -x
 
+
 sudo chmod -t /tmp
-
-if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ]; then
- 	echo "not exists file "/usr/share/ovmf""
- 	sudo apt update
-	sudo apt -y -t bookworm-backports upgrade 
-	sudo apt install -y -t  -f bookworm-backports omvf
- 	exit
-elif [ ! -f './OVMF_CODE.fd' ]; then
-	ln -sf /usr/share/OVMF/OVMF_CODE.fd  ./OVMF_CODE.fd
-fi
-
 #------------------------------------------------------      Global variable    ----------------------------------------------------------
 kernel_maj_ver=0
 WORK_DIR=$PWD
-TPM_DIR=$WORK_DIR/win.qcow2.d
 SETUP_LOCK=/tmp/sriov.setup.lock
 VF_USED=0
 HUGEPG_ALLOC=0
@@ -30,24 +19,24 @@ HUGEPG_ALLOC=0
 EMULATOR_PATH=$(which qemu-system-x86_64)
 MAX_NUM_GUEST=7
 MAX_USB_REDIR_CHANNEL=16
-GUEST_NAME="-name windows-vm"
-GUEST_MEM="-m 4G"
-GUEST_CPU_NUM="-smp cores=4,threads=2,sockets=1"
-GUEST_DISK="-drive file=$WORK_DIR/win.qcow2,id=windows_disk,format=qcow2,cache=none"
+GUEST_NAME="-name ubuntu-vm"
+GUEST_MEM="-m 2G"
+GUEST_CPU_NUM="-smp cores=2,threads=2,sockets=1"
+GUEST_DISK="-drive file=$WORK_DIR/ubuntu.qcow2,if=virtio,id=ubuntu_disk,format=qcow2,cache=none"
 GUEST_FIRMWARE="\
  -drive file=$WORK_DIR/OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
- -drive file=$WORK_DIR/OVMF_VARS_windows.fd,format=raw,if=pflash,unit=1"
-GUEST_DISP_TYPE="-display gtk,gl=on"
-GUEST_DISPLAY_MAX=4
+ -drive file=$WORK_DIR/OVMF_VARS_ubuntu.fd,format=raw,if=pflash,unit=1"
+GUEST_DISP_TYPE="-display gtk,gl=on,show-fps=on"
+GUEST_DISPLAY_MAX=2
 GUEST_DISPLAY_MIN=1
-GUEST_MAX_OUTPUTS=4
+GUEST_MAX_OUTPUTS=2
 GUEST_FULL_SCREEN=0
-GUEST_KIRQ_CHIP="-machine kernel_irqchip=on"
+GUEST_KIRQ_CHIP=
 GUEST_VGA_DEV="-device virtio-gpu-pci"
-GUEST_MAC_ADDR="DE:AD:BE:EF:B1:14"
+GUEST_MAC_ADDR="DE:AD:BE:EF:B1:12"
 GUEST_NET="\
  -device e1000,netdev=net0,mac=$GUEST_MAC_ADDR \
- -netdev user,id=net0,hostfwd=tcp::4444-:22,hostfwd=tcp::5986-:5986,hostfwd=tcp::3389-:3389"
+ -netdev user,id=net0,hostfwd=tcp::2222-:22"
 GUEST_EXTRA_QCMD=
 GUEST_USB_PT_DEV=
 GUEST_UDC_PT_DEV=
@@ -61,7 +50,7 @@ GUEST_QMP_OPT=
 GUEST_PWR_CTRL=0
 GUEST_SPICE_OPT=
 GUEST_SPICE_DISPLAY="egl-headless"
-GUEST_SPICE_PORT="3004"
+GUEST_SPICE_PORT="3002"
 GUEST_SPICE_TICKETING="on"
 GUEST_SPICE_AUDIO_NAME="spice_snd"
 GUEST_AUDIO_DEV=
@@ -70,13 +59,10 @@ GUEST_AUDIO_NAME="hda-audio"
 GUEST_AUDIO_SERVER="unix:/run/user/1000/pulse/native"
 GUEST_AUDIO_SINK="alsa_output.pci-0000_00_1f.3.analog-stereo"
 GUEST_AUDIO_TIMER="5000"
-GUEST_SWTPM="-chardev socket,id=chrtpm,path=$TPM_DIR/vtpm0/swtpm-sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0"
 GUEST_STATIC_OPTION="\
- -machine q35 \
  -enable-kvm \
  -k en-us \
- -cpu host \
- -rtc base=localtime"
+ -cpu host"
 
 #------------------------------------------------------         Functions       ----------------------------------------------------------
 function check_kernel_version() {
@@ -93,7 +79,7 @@ function check_kernel_version() {
 
 function setup_lock_acquire() {
     # Open a file descriptor to lock file
-    exec \{setup_lock_fd\}>$SETUP_LOCK || exit
+    exec {setup_lock_fd}>$SETUP_LOCK || exit
 
     # Block up to 120 seconds to obtain an exclusive lock
     flock -w 120 -x $setup_lock_fd
@@ -104,7 +90,7 @@ function setup_lock_release() {
 
     # Release the lock and unset the variable
     flock -u "$setup_lock_fd"
-    exec \{setup_lock_fd\}>&- && unset setup_lock_fd
+    exec {setup_lock_fd}>&- && unset setup_lock_fd
 }
 
 function set_mem() {
@@ -120,13 +106,7 @@ function set_name() {
 }
 
 function set_disk() {
-    GUEST_DISK="-drive file=$1,id=windows_disk1,format=qcow2,cache=none"
-    set_swtpm $1
-}
-
-function set_swtpm() {
-    TPM_DIR=$WORK_DIR/$1.d
-    GUEST_SWTPM="-chardev socket,id=chrtpm,path=$TPM_DIR/vtpm0/swtpm-sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0"
+    GUEST_DISK="-drive file=$1,if=virtio,id=ubuntu_disk1,format=qcow2,cache=none"
 }
 
 function set_firmware_path() {
@@ -363,11 +343,7 @@ function set_fwd_port() {
     OIFS=$IFS IFS=',' port_arr=($1) IFS=$OIFS
     for e in "${port_arr[@]}"; do
         if [[ $e =~ ^ssh= ]]; then
-            GUEST_NET="${GUEST_NET/4444-:22/${e#*=}-:22}"
-        elif [[ $e =~ ^winrdp= ]]; then
-            GUEST_NET="${GUEST_NET/3389-:3389/${e#*=}-:3389}"
-        elif [[ $e =~ ^winrm= ]]; then
-            GUEST_NET="${GUEST_NET/5986-:5986/${e#*=}-:5986}"
+            GUEST_NET="${GUEST_NET/2222-:22/${e#*=}-:22}"
         else
             echo "E: Forward port, Invalid parameter"
             return -1;
@@ -628,6 +604,7 @@ function set_spice() {
                                             -device hda-micro,audiodev=$GUEST_SPICE_AUDIO_NAME \
                                             -audiodev spice,id=$GUEST_SPICE_AUDIO_NAME"
                     fi
+
                     shift
                     ;;
 
@@ -638,7 +615,7 @@ function set_spice() {
                         echo "E: set_spice: Invalid USB redir channel number: must be number."
                         exit
                     fi
-
+                    
                     if (( usb_redir_channel > 0 && usb_redir_channel <= MAX_USB_REDIR_CHANNEL )); then
                         # set spice usb redir parameters
                         for i in $(seq $usb_redir_channel); do
@@ -648,6 +625,7 @@ function set_spice() {
                     else
                         echo "E: set_spice: Invalid USB redir channel number: must be non zero number less then max usb redirection channel number."
                     fi
+
                     shift
                     ;;
 
@@ -754,11 +732,6 @@ function set_audio() {
                      -audiodev pa,id=$GUEST_AUDIO_NAME,server=$GUEST_AUDIO_SERVER,out.name=$GUEST_AUDIO_SINK,timer-period=$GUEST_AUDIO_TIMER"
 }
 
-function setup_swtpm() {
-    mkdir -p $TPM_DIR/vtpm0
-    swtpm socket --tpmstate dir=$TPM_DIR/vtpm0 --tpm2 --ctrl type=unixio,path=$TPM_DIR/vtpm0/swtpm-sock --daemon
-}
-
 function cleanup() {
     setup_lock_acquire
     cleanup_pt_pci
@@ -802,7 +775,6 @@ function launch_guest() {
               $GUEST_QGA_OPT \
               $GUEST_QMP_OPT \
               $GUEST_SPICE_OPT \
-              $GUEST_SWTPM \
               $GUEST_STATIC_OPTION \
               $GUEST_EXTRA_QCMD \
     "
@@ -820,7 +792,7 @@ function show_help() {
     printf "\t-n  specify guest vm name, eg. \"-n <guest_name>\"\n"
     printf "\t-d  specify guest virtual disk image, eg. \"-d /path/to/<guest_image>\"\n"
     printf "\t-f  specify guest firmware OVMF variable image, eg. \"-d /path/to/<ovmf_vars.fd>\"\n"
-    printf "\t-p  specify host forward ports, current support ssh,winrdp,winrm, eg. \"-p ssh=4444,winrdp=5555,winrm=6666\"\n"
+    printf "\t-p  specify host forward ports, current support ssh, eg. \"-p ssh=2222\"\n"
     printf "\t-e  specify extra qemu cmd, eg. \"-e \"-monitor stdio\"\"\n"
     printf "\t--passthrough-pci-usb passthrough USB PCI bus to guest.\n"
     printf "\t--passthrough-pci-udc passthrough USB Device Controller ie. UDC PCI bus to guest.\n"
@@ -838,9 +810,9 @@ function show_help() {
     printf "\t\tsub-param: disable-host-input, disallow host's HID devices to control the guest.\n"
     printf "\t--enable-pwr-ctrl option allow guest power control from host via qga socket.\n"
     printf "\t--spice enable SPICE feature with sub-parameters,\n"
-    printf "\t          eg. \"--spice display=egl-headless,port=3004,disable-ticketing=on,spice-audio=on,usb-redir=1\"\n"
+    printf "\t          eg. \"--spice display=egl-headless,port=3002,disable-ticketing=on,spice-audio=on,usb-redir=1\"\n"
     printf "\t\tsub-param: display=[display mode], set display mode, eg. \"display=egl-headless\"\n"
-    printf "\t\tsub-param: port=[spice port], assign spice port, eg. \"port=3004\"\n"
+    printf "\t\tsub-param: port=[spice port], assign spice port, eg. \"port=3002\"\n"
     printf "\t\tsub-param: disable-ticketing=[on|off], set disable-ticketing, eg. \"disable-ticketing=on\"\n"
     printf "\t\tsub-param: spice-audio=[on|off], set spice audio eg. \"spice-audio=on\"\n"
     printf "\t\tsub-param: usb-redir=[number of USB redir channel], set USB redirection channel number, eg. \"usb-redir=2\"\n"
@@ -967,7 +939,6 @@ check_kernel_version || exit -1
 setup_lock_acquire
 setup_sriov
 set_pwr_ctrl
-setup_swtpm
 setup_lock_release
 
 # launch

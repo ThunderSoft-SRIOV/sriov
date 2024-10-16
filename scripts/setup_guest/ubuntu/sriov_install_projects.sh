@@ -5,22 +5,38 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+#---------      Global variable     -------------------
 
-#----------------------------------      Global variable      --------------------------------------
-WORK_DIR=$(pwd)
+# Release work week
+# This must be updated whenever this file is changed
+REL_WORK_WEEK="2405"
+
 LOG_FILE="sriov_install_projects.log"
-BUILD_DIR=$WORK_DIR/sriov_build
-INSTALL_DIR=$WORK_DIR/sriov_install
+BUILD_DIR=$(pwd)/sriov_build
+INSTALL_DIR=$(pwd)/sriov_install
 
-REL_WORK_WEEK=$(date +%Y%m | cut -c 3-)
+RED='\033[0;31m'
+NC='\033[0m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 
 export PrefixPath=/usr
 export LibPath=/usr/lib/x86_64-linux-gnu
+export nproc=20
+export WrkDir=`pwd`
 
-reboot_required=0
 
-#----------------------------------         Functions         --------------------------------------
+
+#---------      Functions    -------------------
+
+function check_build_error(){
+        if [ $? -ne 0 ]; then
+                echo -e "${RED}$1: Build Error ${NC}"
+                exit -1
+        else
+                echo -e "${GREEN}$1: Build Success${NC}"
+        fi
+}
 
 function init_deb_name(){
     # Set debian file settings
@@ -39,8 +55,39 @@ function add_replaces_pkg(){
     done
 }
 
+function del_existing_folder() {
+    if [ -d "$1" ]; then
+        echo "Deleting existing folder $1"
+        rm -fr $1
+    fi
+}
+
+function log_func() {
+    if [ "$(type -t $1)" == "function" ]; then
+        start=`date +%s`
+        echo -e "$(date)   start:   \t$@" >> $WrkDir/$LOG_FILE
+        $@
+        end=`date +%s`
+        echo -e "$(date)   end ($((end-start))s):\t$@" >> $WrkDir/$LOG_FILE
+    else
+        echo "Error: $1 is not a function"
+        exit
+    fi
+}
+
+function log_clean(){
+    # Clean up log file
+    if [ -f "$WrkDir/$LOG_FILE" ]; then
+        rm $WrkDir/$LOG_FILE
+    fi
+}
+
+function log_success(){
+    echo "Success" | tee -a $WrkDir/$LOG_FILE
+}
+
 function check_prepare_projects() {
-    input="$WORK_DIR/sriov_prepare_projects.log"
+    input="$WrkDir/sriov_prepare_projects.log"
     prepare_projects_success=0
 
     if [ -f "$input" ]; then
@@ -58,9 +105,26 @@ function check_prepare_projects() {
     fi
 }
 
-#----------------------------------       Main Processes      --------------------------------------
+function check_network(){
 
-source $WORK_DIR/scripts/functions.sh
+    websites=("https://github.com/"
+              "https://wayland.freedesktop.org/")
+
+    set +e
+    for site in ${websites[@]}; do
+        echo "Checking $site"
+        wget --timeout=10 --tries=1 $site -nv --spider
+        if [ $? -ne 0 ]; then
+            echo "Error: Network issue, unable to access $site" | tee -a $WrkDir/$LOG_FILE
+            echo "Error: Please check the internet access connection" | tee -a $WrkDir/$LOG_FILE
+            exit
+        fi
+    done
+    set -e
+}
+
+
+#-------------    main processes    -------------
 
 if [ $(basename $0) != "sriov_install_projects.sh" ]; then
     # change log filename to parent log
@@ -75,17 +139,12 @@ if [[ $IS_SOURCED -ne 1 ]]; then
     log_func check_network
 fi
 
-if [ -d $BUILD_DIR ]; then
-    # Clean up any existing folders
-    del_existing_folder $BUILD_DIR/media
-    del_existing_folder $BUILD_DIR/gstreamer
-    del_existing_folder $BUILD_DIR/graphics
-    del_existing_folder $BUILD_DIR/qemu-*/
-    del_existing_folder $BUILD_DIR/spice
-else
-    mkdir -p $BUILD_DIR/
-fi
-
+# Clean up any existing folders
+del_existing_folder $BUILD_DIR/media
+del_existing_folder $BUILD_DIR/gstreamer
+del_existing_folder $BUILD_DIR/graphics
+del_existing_folder $BUILD_DIR/qemu-*/
+del_existing_folder $BUILD_DIR/spice
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     del_existing_folder $INSTALL_DIR/neo
     del_existing_folder $INSTALL_DIR
@@ -93,45 +152,45 @@ fi
 
 
 git config --global advice.detachedHead false
-# media
+#media
 echo "LIBVA_DRIVER_NAME=iHD" | sudo tee -a /etc/environment
 echo "LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri" | sudo tee -a /etc/environment
 echo "GIT_SSL_NO_VERIFY=true" | sudo tee -a /etc/environment
 source /etc/environment
 
-git lfs install --skip-smudge
+#git lfs install --skip-smudge
 
 
-# cleanup OpenCL
+#cleanup OpenCL
 set +e
 sudo apt-get -y purge intel-gmmlib intel-igc-core intel-igc-opencl intel-level-zero-gpu intel-opencl-icd
 sudo apt-get -y purge intel-media-va-driver-non-free libigdgmm-dev intel-media-va-driver libigdgmm12
 sudo apt-get -y purge gmmlib-sriov
 set -e
 
-# OpenCL
+#OpenCL
 mkdir -p $INSTALL_DIR/neo && cd $INSTALL_DIR/neo
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb
-    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu-dbgsym_1.3.26032.30_amd64.ddeb
-    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu_1.3.26032.30_amd64.deb
-    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd-dbgsym_23.13.26032.30_amd64.ddeb
-    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb
-    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb
+    wget https://mirror.ghproxy.com/https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb
+    wget https://mirror.ghproxy.com/https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb
+    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu-dbgsym_1.3.26032.30_amd64.ddeb
+    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu_1.3.26032.30_amd64.deb
+    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd-dbgsym_23.13.26032.30_amd64.ddeb
+    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb
+    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb
 fi
 sudo dpkg -i *.deb
 cd $BUILD_DIR
 
 
-# libdrm
+#libdrm
 log_func init_deb_name libdrm-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch libdrm-2.4.114 --depth 1 https://gitlab.freedesktop.org/mesa/drm.git media/$component_name
     cd media/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/graphics/drm" ]; then
-        git apply $WORK_DIR/sriov_patches/graphics/drm/*.patch
+    if [ -d "$WrkDir/sriov_patches/graphics/drm" ]; then
+        git apply $WrkDir/sriov_patches/graphics/drm/*.patch
     fi
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
@@ -166,11 +225,11 @@ fi
 cd $BUILD_DIR
 
 
-# libva
+#libva
 log_func init_deb_name libva-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch 2.18.0 --depth 1 https://ghp.ci/https://github.com/intel/libva.git media/$component_name
+    git clone --branch 2.18.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/libva.git media/$component_name
     cd media/$component_name
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
@@ -198,11 +257,11 @@ fi
 cd $BUILD_DIR
 
 
-# libva-utils
+#libva-utils
 log_func init_deb_name libva-utils-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch 2.18.0 --depth 1 https://ghp.ci/https://github.com/intel/libva-utils.git media/$component_name
+    git clone --branch 2.18.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/libva-utils.git media/$component_name
     cd media/$component_name
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
@@ -224,14 +283,14 @@ fi
 cd $BUILD_DIR
 
 
-# gmmlib
+#gmmlib
 log_func init_deb_name gmmlib-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-gmmlib-22.3.5 --depth 1 https://ghp.ci/https://github.com/intel/gmmlib.git media/$component_name
+    git clone --branch intel-gmmlib-22.3.5 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/gmmlib.git media/$component_name
     cd media/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/media/gmmlib" ]; then
-        git apply $WORK_DIR/sriov_patches/media/gmmlib/*.patch
+    if [ -d "$WrkDir/sriov_patches/media/gmmlib" ]; then
+        git apply $WrkDir/sriov_patches/media/gmmlib/*.patch
     fi
 
     # Build and install package
@@ -254,14 +313,14 @@ fi
 cd $BUILD_DIR
 
 
-# media-driver
+#media-driver
 log_func init_deb_name media-driver-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-media-23.1.0 --depth 1 https://ghp.ci/https://github.com/intel/media-driver.git media/$component_name
+    git clone --branch intel-media-23.1.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/media-driver.git media/$component_name
     cd media/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/media/media-driver" ]; then
-        git apply $WORK_DIR/sriov_patches/media/media-driver/*.patch
+    if [ -d "$WrkDir/sriov_patches/media/media-driver" ]; then
+        git apply $WrkDir/sriov_patches/media/media-driver/*.patch
     fi
 
     # Build and install package
@@ -292,14 +351,14 @@ echo "OCA Status=0"                    | sudo tee -a /etc/igfx_user_feature_next
 echo ""                                | sudo tee -a /etc/igfx_user_feature_next.txt
 
 
-# onevpl-gpu
+#onevpl-gpu
 log_func init_deb_name onevpl-gpu-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-onevpl-22.6.5 --depth 1 https://ghp.ci/https://github.com/oneapi-src/oneVPL-intel-gpu.git media/$component_name
+    git clone --branch intel-onevpl-22.6.5 --depth 1 https://mirror.ghproxy.com/https://github.com/oneapi-src/oneVPL-intel-gpu.git media/$component_name
     cd media/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/media/oneVPL-gpu" ]; then
-        git apply $WORK_DIR/sriov_patches/media/oneVPL-gpu/*.patch
+    if [ -d "$WrkDir/sriov_patches/media/oneVPL-gpu" ]; then
+        git apply $WrkDir/sriov_patches/media/oneVPL-gpu/*.patch
     fi
 
     # Build and install package
@@ -321,14 +380,14 @@ fi
 cd $BUILD_DIR
 
 
-# onevpl
+#onevpl
 log_func init_deb_name onevpl-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch v2023.1.3 --depth 1 https://ghp.ci/https://github.com/oneapi-src/oneVPL.git media/$component_name
+    git clone --branch v2023.1.3 --depth 1 https://mirror.ghproxy.com/https://github.com/oneapi-src/oneVPL.git media/$component_name
     cd media/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/media/oneVPL" ]; then
-        git apply $WORK_DIR/sriov_patches/media/oneVPL/*.patch
+    if [ -d "$WrkDir/sriov_patches/media/oneVPL" ]; then
+        git apply $WrkDir/sriov_patches/media/oneVPL/*.patch
     fi
 
     # Build and install package
@@ -351,7 +410,7 @@ fi
 cd $BUILD_DIR
 
 
-# gstreamer
+#gstreamer
 log_func init_deb_name gstreamer-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -385,7 +444,7 @@ log_func init_deb_name gstreamer-sriov
 cd $BUILD_DIR
 
 
-# gst-plugins-base
+#gst-plugins-base
 log_func init_deb_name gst-plugins-base-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -393,8 +452,8 @@ log_func init_deb_name gst-plugins-base-sriov
     wget --no-check-certificate https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.6.tar.xz
     tar -xvf gst-plugins-base-1.20.6.tar.xz --strip-components 1 --one-top-level=$component_name
     cd $component_name
-    if [ -d "$WORK_DIR/sriov_patches/gstreamer/gst-plugins-base" ]; then
-        git apply $WORK_DIR/sriov_patches/gstreamer/gst-plugins-base/*.patch
+    if [ -d "$WrkDir/sriov_patches/gstreamer/gst-plugins-base" ]; then
+        git apply $WrkDir/sriov_patches/gstreamer/gst-plugins-base/*.patch
     fi
     meson build --prefix=$PrefixPath --libdir=$LibPath
     ninja -C build && sudo ninja -C build install
@@ -427,7 +486,7 @@ log_func init_deb_name gst-plugins-base-sriov
 cd $BUILD_DIR
 
 
-# gst-plugins-good
+#gst-plugins-good
 log_func init_deb_name gst-plugins-good-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -435,8 +494,8 @@ log_func init_deb_name gst-plugins-good-sriov
     wget --no-check-certificate https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.6.tar.xz
     tar -xvf gst-plugins-good-1.20.6.tar.xz --strip-components 1 --one-top-level=$component_name
     cd $component_name
-    if [ -d "$WORK_DIR/sriov_patches/gstreamer/gst-plugins-good" ]; then
-        git apply $WORK_DIR/sriov_patches/gstreamer/gst-plugins-good/*.patch
+    if [ -d "$WrkDir/sriov_patches/gstreamer/gst-plugins-good" ]; then
+        git apply $WrkDir/sriov_patches/gstreamer/gst-plugins-good/*.patch
     fi
     meson build --prefix=$PrefixPath --libdir=$LibPath
     ninja -C build && sudo ninja -C build install
@@ -466,7 +525,7 @@ log_func init_deb_name gst-plugins-good-sriov
 cd $BUILD_DIR
 
 
-# gst-plugins-bad
+#gst-plugins-bad
 log_func init_deb_name gst-plugins-bad-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -474,8 +533,8 @@ log_func init_deb_name gst-plugins-bad-sriov
     wget --no-check-certificate https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.6.tar.xz
     tar -xvf gst-plugins-bad-1.20.6.tar.xz --strip-components 1 --one-top-level=$component_name
     cd $component_name
-    if [ -d "$WORK_DIR/sriov_patches/gstreamer/gst-plugins-bad" ]; then
-        git apply $WORK_DIR/sriov_patches/gstreamer/gst-plugins-bad/*.patch
+    if [ -d "$WrkDir/sriov_patches/gstreamer/gst-plugins-bad" ]; then
+        git apply $WrkDir/sriov_patches/gstreamer/gst-plugins-bad/*.patch
     fi
     meson build --prefix=$PrefixPath --libdir=$LibPath -Dmsdk=disabled -Dmfx_api=oneVPL
     ninja -C build && sudo ninja -C build install
@@ -508,7 +567,7 @@ log_func init_deb_name gst-plugins-bad-sriov
 cd $BUILD_DIR
 
 
-# gst-plugins-ugly
+#gst-plugins-ugly
 log_func init_deb_name gst-plugins-ugly-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -538,7 +597,7 @@ log_func init_deb_name gst-plugins-ugly-sriov
 cd $BUILD_DIR
 
 
-# gstreamer-vaapi
+#gstreamer-vaapi
 log_func init_deb_name gstreamer-vaapi-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -546,8 +605,8 @@ log_func init_deb_name gstreamer-vaapi-sriov
     wget --no-check-certificate https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-1.20.6.tar.xz
     tar -xvf gstreamer-vaapi-1.20.6.tar.xz --strip-components 1 --one-top-level=$component_name
     cd $component_name
-    if [ -d "$WORK_DIR/sriov_patches/gstreamer/gstreamer-vaapi" ]; then
-        git apply $WORK_DIR/sriov_patches/gstreamer/gstreamer-vaapi/*.patch
+    if [ -d "$WrkDir/sriov_patches/gstreamer/gstreamer-vaapi" ]; then
+        git apply $WrkDir/sriov_patches/gstreamer/gstreamer-vaapi/*.patch
     fi
     meson build --prefix=$PrefixPath --libdir=$LibPath
     ninja -C build && sudo ninja -C build install
@@ -571,7 +630,7 @@ log_func init_deb_name gstreamer-vaapi-sriov
 cd $BUILD_DIR
 
 
-# gst-rtsp-server
+#gst-rtsp-server
 log_func init_deb_name gst-rtsp-server-sriov
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -604,14 +663,14 @@ log_func init_deb_name gst-rtsp-server-sriov
 cd $BUILD_DIR
 
 
-# mesa
+#mesa
 log_func init_deb_name mesa-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch mesa-23.2.1 --depth 1  https://gitlab.freedesktop.org/mesa/mesa.git graphics/$component_name
     cd graphics/$component_name
-    if [ -d "$WORK_DIR/sriov_patches/graphics/mesa" ]; then
-        git apply $WORK_DIR/sriov_patches/graphics/mesa/*.patch
+    if [ -d "$WrkDir/sriov_patches/graphics/mesa" ]; then
+        git apply $WrkDir/sriov_patches/graphics/mesa/*.patch
     fi
     meson build --prefix=$PrefixPath -Dgallium-drivers="swrast,iris,kmsro" -Dvulkan-drivers=intel
 
@@ -673,7 +732,7 @@ if [[ $GUEST_SETUP == 1 ]]; then
     return
 fi
 
-# spice-protocol
+#spice-protocol
 log_func init_deb_name spice-protocol
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -699,7 +758,7 @@ fi
 cd $BUILD_DIR
 
 
-# spice-server
+#spice-server
 log_func init_deb_name spice-server
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -727,7 +786,7 @@ fi
 cd $BUILD_DIR
 
 
-# spice-client
+#spice-client
 log_func init_deb_name spice-client
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
@@ -762,44 +821,35 @@ fi
 cd $BUILD_DIR
 
 
-# qemu
-log_func init_deb_name qemu
-if [[ $USE_PPA_FILES -ne 1 ]]; then
-    # Prepare build
-    git clone --branch v8.2.1 --depth 1 https://ghp.ci/https://github.com/qemu/qemu.git
-    cd qemu
-    git apply $WORK_DIR/sriov_patches/qemu-8.2.1/*.patch
-    ./configure --target-list=x86_64-softmmu \
-                --enable-debug \
-                --disable-docs \
-                --disable-virglrenderer \
-                --prefix=/usr \
-                --enable-virtfs \
-                --enable-libusb \
-                --disable-debug-tcg \
-                --enable-spice \
-                --enable-usb-redir \
-                --enable-gtk \
-                --enable-slirp
-    # Build and install package
-    cd build
-    ninja && sudo ninja install
-    check_build_error
+#Qemu
+#sudo apt-get purge -y "^qemu"
+#sudo apt-get autoremove -y
 
-else
-    # Install from ppa
-    sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
-    sudo curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
-    sudo apt update
-    sudo apt install -y qemu
-fi
-cd $BUILD_DIR
-
-# qemu-ovmf
-sudo apt install -t bookworm-backports ovmf
-cd $WORK_DIR
-
-if [[ $IS_SOURCED -ne 1 ]]; then
-    log_success
-    echo "Done: \"$(realpath $0) $@\""
-fi
+#wget -N --no-check-certificate https://download.qemu.org/qemu-8.0.0.tar.xz
+#tar -xvf qemu-8.0.0.tar.xz
+#cd qemu-8.0.0
+#if [ -d "$WrkDir/sriov_patches/qemu/cve" ]; then
+#    git apply $WrkDir/sriov_patches/qemu/cve/*.patch
+#fi
+#if [ -d "$WrkDir/sriov_patches/qemu/qemu" ]; then
+#   git apply $WrkDir/sriov_patches/qemu/qemu/*.patch
+#fi
+#
+#./configure --target-list=x86_64-softmmu --enable-debug --disable-docs --disable-virglrenderer --prefix=/usr --enable-virtfs --enable-libusb --disable-debug-tcg --audio-drv-list=pa,alsa --enable-spice --enable-usb-redir
+#cd build
+#ninja && sudo ninja install
+#check_build_error
+#cd $BUILD_DIR
+#
+##qemu-ovmf
+#sudo apt-get -y install ovmf
+#mkdir -p $WrkDir/ovmf
+#cp /usr/share/OVMF/OVMF_CODE.fd $WrkDir/ovmf/OVMF_CODE.fd
+#cp /usr/share/OVMF/OVMF_VARS.fd $WrkDir/ovmf/OVMF_VARS.fd
+#cd $WrkDir
+#
+#
+#if [[ $IS_SOURCED -ne 1 ]]; then
+#    log_success
+#    echo "Done: \"$(realpath $0) $@\""
+#fi

@@ -5,16 +5,155 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -eE
 
-#----------------------------------      Global variable      --------------------------------------
-WORK_DIR=$(pwd)
-LOG_FILE="sriov_setup_debian.log"
+#---------      Global variable     -------------------
 reboot_required=0
+kernel_maj_ver=0
+WORK_DIR=$(pwd)
+LOG_FILE="sriov_setup_ubuntu.log"
+PACKAGES_DIR=$WORK_DIR/packages
+BUILD_DIR=$WORK_DIR/sriov_build
+INSTALL_DIR=$WORK_DIR/sriov_install
 
-#----------------------------------         Functions         --------------------------------------
 
-function sriov_disable_auto_upgrade() {
+#---------      Functions    -------------------
+
+function log_func() {
+    if [ "$(type -t $1)" = "function" ]; then
+        start=`date +%s`
+        echo -e "$(date)   start:   \t$@" >> $WORK_DIR/$LOG_FILE
+        $@
+        end=`date +%s`
+        echo -e "$(date)   end ($((end-start))s):\t$@" >> $WORK_DIR/$LOG_FILE
+    else
+        echo "Error: $1 is not a function"
+        exit
+    fi
+}
+
+function log_clean(){
+    # Clean up log file
+    if [ -f "$WORK_DIR/$LOG_FILE" ]; then
+        rm $WORK_DIR/$LOG_FILE
+    fi
+}
+
+function check_os() {
+    # Check OS
+    local version=`cat /proc/version`
+    if [[ ! $version =~ "Ubuntu" ]]; then
+        echo "Error: Only Ubuntu is supported" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check Ubuntu version
+    req_version="22.04"
+    cur_version=$(lsb_release -rs)
+    if [[ $cur_version != $req_version ]]; then
+        echo "Error: Ubuntu $cur_version is not supported" | tee -a $WORK_DIR/$LOG_FILE
+        echo "Error: Please use Ubuntu $req_version" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check image against selected bsp argument
+    intel_ppa=$(apt-cache policy | grep http | awk '{print $2}' | grep intel | wc -l)
+    if [[ $intel_ppa > 0 ]] && [[ $IS_BSP -ne 1 ]]; then
+        echo "Error: Intel BSP image detected. Use --bsp argument to run setup"
+        exit
+    elif [[ $intel_ppa == 0 ]] && [[ $IS_BSP -eq 1 ]]; then
+        echo "Error: Intel BSP image not detected. Do not use --bsp argument to run setup"
+        exit
+    fi
+}
+
+function check_kernel_version() {
+    local cur_ver=$(uname -r)
+    local req_ver="6.6.32-debian-sriov"
+    kernel_maj_ver=${cur_ver:0:1}
+
+    if [[ $IS_BSP -ne 1 ]]; then
+        if [[ ! $cur_ver =~ $req_ver ]]; then
+            echo "Error: Detected Linux version is $cur_ver" | tee -a $WORK_DIR/$LOG_FILE
+            echo "Error: Please install and boot with an $req_ver kernel" | tee -a $WORK_DIR/$LOG_FILE
+            exit
+        fi
+    fi
+}
+
+function check_network(){
+
+    if [[ $USE_INSTALL_FILES -ne 1 ]]; then
+        websites=("https://github.com/"
+                  "https://wayland.freedesktop.org/"
+                  "https://gstreamer.freedesktop.org/"
+                  "https://gitlab.freedesktop.org/mesa/"
+                  "https://gitlab.freedesktop.org/spice/"
+                  "https://gitlab.com/virt-viewer/"
+                  "https://download.qemu.org/")
+    else
+        websites=("https://github.com/"
+                  "https://wayland.freedesktop.org/"
+                  "https://gstreamer.freedesktop.org/"
+                  "https://download.qemu.org/")
+    fi
+
+    set +e
+    for site in ${websites[@]}; do
+        echo "Checking $site"
+        wget --timeout=10 --tries=1 $site -nv --spider
+        if [ $? -ne 0 ]; then
+            echo "Error: Network issue, unable to access $site" | tee -a $WORK_DIR/$LOG_FILE
+            echo "Error: Please check the internet access connection" | tee -a $WORK_DIR/$LOG_FILE
+            exit
+        fi
+    done
+    set -e
+}
+
+function del_existing_folder() {
+    if [ -d "$1" ]; then
+        echo "Deleting existing folder $1"
+        rm -fr $1
+    fi
+}
+
+
+function sriov_check_files(){
+    # Check for SRIOV patches
+    if [ ! -d "$WORK_DIR/sriov_patches" ]; then
+        echo "Error: $WORK_DIR/sriov_patches folder is missing" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check for dependent scripts
+    if [ ! -f $WORK_DIR/sriov_prepare_projects.sh ]; then
+        echo "Error: $WORK_DIR/sriov_prepare_projects.sh file is missing" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    if [ ! -f $WORK_DIR/sriov_install_projects.sh ]; then
+        echo "Error: $WORK_DIR/sriov_install_projects.sh file is missing" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check for install files
+    if [[ $USE_INSTALL_FILES -eq 1 ]]; then
+        folders=("$PACKAGES_DIR"
+                 "$INSTALL_DIR"
+                 "$INSTALL_DIR/neo")
+
+        for folder in ${folders[@]}; do
+            do_exists=$(ls $folder 2> /dev/null | wc -l)
+            if [ "$do_exists" == "0" ]; then
+                echo "Error: $folder folder is missing" | tee -a $WORK_DIR/$LOG_FILE
+                exit
+            fi
+        done
+    fi
+}
+
+function sriov_disable_auto_upgrade(){
     # Stop existing upgrade service
     sudo systemctl stop unattended-upgrades.service
     sudo systemctl disable unattended-upgrades.service
@@ -37,27 +176,26 @@ function sriov_disable_auto_upgrade() {
     reboot_required=1
 }
 
-function sriov_add_source_list() {
+function sriov_add-universe-multiverse(){
     # Add repository and update
-    sudo echo 'deb http://deb.debian.org/debian bookworm-backports main non-free-firmware' | sudo tee -a /etc/apt/sources.list.d/debian_sriov.list
-    sudo sed -i '$!N; /^\(.*\)\n\1$/!P; D' /etc/apt/sources.list.d/debian_sriov.list
-    sudo apt update
-    sudo apt -t bookworm-backports upgrade 
+    sudo add-apt-repository -y universe
+    sudo add-apt-repository -y multiverse
+    sudo apt-get update
 }
 
 function sriov_prepare_install(){
     # Install prerequites for projects installation
-    source $WORK_DIR/scripts/setup_host/sriov_prepare_projects.sh
+    source $WORK_DIR/sriov_prepare_projects.sh
 }
 
 function sriov_main_install(){
     # Start projects installation
-    source $WORK_DIR/scripts/setup_host/sriov_install_projects.sh
+    source $WORK_DIR/sriov_install_projects.sh
 }
 
-function sriov_customise_debian() {
+function sriov_customise_ubu(){
     # Switch to Xorg
-    sed -i "s/\#WaylandEnable=false/WaylandEnable=false/g" /etc/gdm3/daemon.conf
+    sed -i "s/\#WaylandEnable=false/WaylandEnable=false/g" /etc/gdm3/custom.conf
 
     if [[ $GUEST_SETUP == 1 ]]; then
         # Configure X11 wrapper and mesa loader for Ubuntu guest
@@ -91,8 +229,8 @@ function sriov_customise_debian() {
     reboot_required=1
 }
 
-function sriov_setup_pwr_ctrl() {
-    source $WORK_DIR/scripts/setup_host/sriov_setup_pwr_ctrl.sh
+function sriov_setup_pwr_ctrl(){
+    source $WORK_DIR/sriov_setup_pwr_ctrl.sh
 
     if [[ $GUEST_SETUP == 1 ]]; then
         # install qemu-update-agent for guest only
@@ -137,12 +275,12 @@ function sriov_update_cmdline(){
 
     local updated=0
 
-    if [[ $kernel_maj_ver -eq 5 ]]; then
+    if [ $kernel_maj_ver -eq 5 ]; then
         cmds=("i915.force_probe=*"
               "intel_iommu=on"
               "udmabuf.list_limit=8192"
               "i915.enable_guc=(0x)?0*7")
-    elif [[ $kernel_maj_ver -eq 6 ]]; then
+    elif [ $kernel_maj_ver -eq 6 ]; then
         cmds=("i915.force_probe=*"
               "intel_iommu=on"
               "udmabuf.list_limit=8192"
@@ -179,11 +317,22 @@ function sriov_update_cmdline(){
     fi
 }
 
+function log_success(){
+    echo "Success" | tee -a $WORK_DIR/$LOG_FILE
+}
+
+function ask_reboot(){
+    if [ $reboot_required -eq 1 ];then
+        echo "Please reboot system to take effect"
+    fi
+}
+
 function show_help() {
-    printf "$(basename "$0") [-h] [--use-ppa-files]\n"
+    printf "$(basename "$0") [-h] [--bsp] [--use-install-files]\n"
     printf "Options:\n"
     printf "\t-h                    show this help message\n"
-    printf "\t--use-ppa-files       setup with ppa files for faster setup\n"
+    printf "\t--bsp                 setup host for Ubuntu BSP\n"
+    printf "\t--use-install-files   setup with install files for faster setup\n"
 }
 
 function parse_arg() {
@@ -194,8 +343,12 @@ function parse_arg() {
                 exit
                 ;;
 
-            --use-ppa-files)
-                USE_PPA_FILES=1
+            --bsp)
+                IS_BSP=1
+                ;;
+
+            --use-install-files)
+                USE_INSTALL_FILES=1
                 ;;
 
             -?*)
@@ -212,31 +365,27 @@ function parse_arg() {
     done
 }
 
-#----------------------------------       Main Processes      --------------------------------------
 
-source $WORK_DIR/scripts/functions.sh
+#-------------    main processes    -------------
 
 parse_arg "$@" || exit -1
 
 log_clean
-log_func check_os
-log_func check_kernel_version
-
+#log_func check_os
+#log_func check_kernel_version
 if [[ $IS_BSP -ne 1 ]]; then
     log_func check_network
+    log_func sriov_check_files
 fi
-
-# log_func sriov_disable_auto_upgrade
-
+#log_func sriov_disable_auto_upgrade
 if [[ $IS_BSP -ne 1 ]]; then
-    log_func sriov_add_source_list
+    log_func sriov_add-universe-multiverse
     log_func sriov_prepare_install
     log_func sriov_main_install
 fi
-
-log_func sriov_customise_debian
-# log_func sriov_setup_pwr_ctrl
-# log_func sriov_setup_swtpm
+log_func sriov_customise_ubu
+log_func sriov_setup_pwr_ctrl
+log_func sriov_setup_swtpm
 log_func sriov_update_cmdline
 log_success
 ask_reboot

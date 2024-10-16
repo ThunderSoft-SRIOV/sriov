@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright (c) 2024 ThunderSoft Corporation.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 #----------------------------------      Global variable      --------------------------------------
@@ -69,7 +74,7 @@ function sriov_install_firmware() {
 }
 
 function sriov_install_kernel() {
-    if [[ $USE_INSTALL_FILES -ne 1 ]]; then
+    if [[ $USE_PPA_FILES -ne 1 ]]; then
         # Create temporary folder
         del_existing_folder $WORK_DIR/kernel_install
         mkdir $WORK_DIR/kernel_install
@@ -133,10 +138,10 @@ function sriov_update_grub() {
 }
 
 function show_help() {
-    printf "$(basename "$0") [-h] [--use-install-files]\n"
+    printf "$(basename "$0") [-h] [--use-ppa-files]\n"
     printf "Options:\n"
     printf "\t-h                    show this help message\n"
-    printf "\t--use-install-files   setup with install files for faster setup\n"
+    printf "\t--use-ppa-files       setup with ppa files for faster setup\n"
 }
 
 function parse_arg() {
@@ -147,8 +152,8 @@ function parse_arg() {
                 exit
                 ;;
 
-            --use-install-files)
-                USE_INSTALL_FILES=1
+            --use-ppa-files)
+                USE_PPA_FILES=1
                 ;;
 
             -?*)

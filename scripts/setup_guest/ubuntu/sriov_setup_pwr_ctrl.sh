@@ -4,13 +4,14 @@
 # All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
 set -eE
 
 #---------      Global variable     -------------------
 
 # This global should be uncommented when the script is
 # copied to the Ubuntu guest during guest setup.
-#GUEST_SCRIPT=1
+GUEST_SCRIPT=1
 
 #---------      Functions    -------------------
 
