@@ -8,14 +8,14 @@
 1. [Installation](#installation)
     1. [Create Windows VM Image](#create-windows-vm-image)
         1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
-        1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager)
-        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh)
+        1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager) (EXPERIMENTAL)
+        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh) (EXPERIMENTAL)
     1. [Install Drivers and Windows 11 update](#install-drivers-and-windows-11-update)
 1. [Launch Windows VM](#launch-windows-vm)
 
 ## Prerequisites
 
-* Windows 11 ISO.
+* Windows 11 ISO. In this example we are using Windows 11 version 23H2
 * [Windows 11 Cumulative Update](https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e3472ba5-22b6-46d5-8de2-db78395b3209/public/windows11.0-kb5031455-x64_d1c3bafaa9abd8c65f0354e2ea89f35470b10b65.msu)
 * [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
 * [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
@@ -26,33 +26,50 @@
 ## Create Windows VM Image
 
 * [Option 1] Create Windows VM Image Using `qemu`
-* [Option 2] Create Windows VM Image Using `virt-manager`
-* [Option 3] Create Windows VM Image Using `virsh`
+* [Option 2] Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
+* [Option 3] Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
 *Note: Please choose one of the installation methods*
 
+### Preparation
+
+1. Download Windows iso image and save the iso file as `windows.iso`. 
+
+2. Copy the `windows.iso` to setup directory.
+
+    ```sh
+    mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
+    ```
+
 ### Create Windows VM Image Using `qemu`
 
-1. Run `install_windows.sh` to start idv guest installation.
+1. Run `install_windows.sh` to start idv guest installation
 
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/install_windows.sh
     ```
 
-2. Follow Windows installation steps until installation is successful.
+2. Choose language and other preferences and click *Next*
 
     <img src=./media/winsetup1.png width="80%">
+
+3. Select *Drive 0 Unallocated Space* and click *Next* and wait for Windows installation to succeed
+
     <img src=./media/winsetup2.png width="80%">
 
-3. [Optional] Install multiple idv Guest VMs. In this example we started 4 vms.
+4. Disable the automatic updates temporarily with the following steps: open *Setting* -> click *Update & Security* -> click *Windows Update* -> click *Pause updates for 7 days*
+
+5. Shutdown the Windows guest
+
+6. [Optional] Install multiple idv Guest VMs. In this example we started 4 vms
 
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/start_multiple_windows.sh
     ```
 
-### Create Windows VM Image Using `virt-manager`
+### Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
 
 1. Run `virt-manager` to start idv guest installation.
 
@@ -73,16 +90,21 @@
 
     <img src=./media/virtsetup4.png width="80%">
 
-5. Customize configuration. *Customize configuration before install* ->  click *Frimware* and choose **UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd** -> click *Apply* -> click *Begin Installation*
+5. Customize configuration. *Customize configuration before install* -> click *Finish* 
 
     <img src=./media/virtsetup5.png width="80%">
+
+6. Choose firmware. Click *Firmware* and choose **UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd** -> click *Apply* -> click *Begin Installation*
+
     <img src=./media/virtsetup6.png width="80%">
 
     Please follow the installation steps until the installation is successful.
 
-6. [Optional] Install Multiple idv Guest VMs. Please refer to the steps 2 to 5
+7. Shutdown the Windows guest
 
-### Create Windows VM Image Using `virsh`
+8. [Optional] Install Multiple idv Guest VMs. Please refer to the steps 2 to 5
+
+### Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
 1. Run `virsh_install_windows.sh` to start idv guest installation.
 
@@ -92,6 +114,8 @@
     ```
 
 2. Follow Windows installation steps until installation is successful.
+
+    *Note: To view all guest vms, run `sudo virsh list --all`*
 
     ```sh
     sudo virsh list --all
@@ -103,6 +127,8 @@
     ------------------------
     1    win11   running
     ```
+
+3. Shutdown the Windows guest
 
 ## Install Drivers and Windows 11 update
 

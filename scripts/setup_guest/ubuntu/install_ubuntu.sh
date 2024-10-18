@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2024 ThunderSoft Corporation.
+# Copyright (c) 2024 Intel Corporation.
 # All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -27,11 +27,11 @@ elif [ ! -f './OVMF_VARS_ubuntu.fd' ];then
 	cp /usr/share/OVMF/OVMF_VARS.fd  ./OVMF_VARS_ubuntu.fd
 fi
 
-if [ ! -f "./ubuntu-22.04-desktop-amd64+intel-iot.iso" ];then
-	echo "not exists file "./ubuntu-22.04-desktop-amd64+intel-iot.iso""
+if [ ! -f "./ubuntu.iso" ];then
+	echo "not exists file ./ubuntu.iso"
 	exit
-elif [ ! -f './ubuntu-22.04-desktop-amd64+intel-iot.iso' ] | [ ! -f './ubuntu.qcow2' ];then
-	ln -sf ./ubuntu-22.04-desktop-amd64+intel-iot.iso   ./ubuntu.iso
+elif [ ! -f './ubuntu.iso' ] | [ ! -f './ubuntu.qcow2' ];then
+	#ln -sf ./ubuntu-22.04-desktop-amd64+intel-iot.iso   ./ubuntu.iso
 	qemu-img create -f qcow2 ./ubuntu.qcow2 200G
 fi
 

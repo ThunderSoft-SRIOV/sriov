@@ -1,149 +1,285 @@
 # Guest Ubuntu Virtual Machine
 
+# Table of Contents
+1. [Prerequisites](#prerequisites)
+1. [Installation](#installation)
+    1. [Create Ubuntu VM Image](#create-ubuntu-vm-image)
+        1. [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
+        1. [Create Ubuntu VM Image Using `virt-manager`](#create-ubuntu-vm-image-using-virt-manager) (EXPERIMENTAL)
+        1. [Create Ubuntu VM Image Using `virsh`](#create-ubuntu-vm-image-using-virsh) (EXPERIMENTAL)
+    1. [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+1. [Check the installation program](#check-the-installation-program)
+1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+
 ## Prerequisites
+
 ### Guest Operating System Requirements
 
 * Ubuntu 22.04 ISO, Download and install the Intel IOT Ubuntu 22.04 LTS from the official Ubuntu website.
 https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso
 
+## Installation
+
 ## Create Ubuntu VM Image
-* Choose any of the following installation methods
-  * Create Ubuntu VM Image With  command line
-  * Create Ubuntu VM Image With `virt-manager`
-### Create Ubuntu VM Image With  command line
+
+* [Option 1] Create Ubuntu VM Image Using `qemu`
+* [Option 2] Create Ubuntu VM Image Using `virt-manager` (EXPERIMENTAL)
+* [Option 3] Create Ubuntu VM Image Using `virsh` (EXPERIMENTAL)
+
+*Note: Please choose one of the installation methods*
+
+### Create Ubuntu VM Image Using `qemu`
+
 1. Execute the following command on the host
+
   ```shell
-  #Run install_ubuntu.sh to start Ubuntu guest installation.
-  $> sudo ./scripts/guest_setup/ubuntu/install_ubuntu.sh
+  # Run install_ubuntu.sh to start Ubuntu guest installation.
+  cd /home/$USER/
+  git clone https://github.com/ThunderSoft-SRIOV/sriov.git
+  mv ubuntu-22.04-desktop-amd64+intel-iot.iso ./sriov/scripts/setup_guest/ubuntu/ubuntu.iso
+
+  cd ./sriov/scripts/setup_guest/ubuntu/
+  chmod -R +x ./*
+  sudo ./install_ubuntu.sh
   ```
 
 2. Then press enter and continue boot to Ubuntu as shown in the screen below.
 
   <img src=./media/ubuntusetup1.png width="80%">
 
-3. Run Ubuntu OS installation to install into the guest image and reboot after completion.
-### Create Ubuntu VM Image With `virt-manager`
-1. Run `virt-manager` to start Windows guest installation.
+3. Run Ubuntu OS installation to install into the guest image and shutdown after completion, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+
+### Create Ubuntu VM Image Using `virt-manager`
+
+1. Run `virt-manager` to start Ubuntu guest installation in the host.
 
   ```shell
-  $> virt-manager
+  virt-manager
   ```
 
-2. Select image and follow Windows installation steps until installation is successful.
+2. Select image and follow Ubuntu installation steps until installation is successful.
 
   <img src=./media/setup_ubuntu1.png width="80%">
   <img src=./media/virtsetup3.png width="80%">
   <img src=./media/virtsetup4.png width="80%">
 
+3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+
+### Create Ubuntu VM Image Using `virsh`
+
+1. Run `virsh_install_ubuntu.sh` to start ubuntu guest installation.
+
+  ```sh
+  # in the host
+  cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+  sudo ./virsh_install_ubuntu.sh
+  ```
+
+2. Follow ubuntu installation steps until installation is successful.
+
+  ```sh
+  sudo virsh list --all
+  ```
+
+ Output
+  ```sh
+  Id   Name    State
+  ------------------------
+  -    ubuntu   shut off
+  ```
+
+3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
-1. Open a terminal within the guest VM.
-2. Run the command shown below to upgrade Ubuntu software to the latest in the guest VM.
+1. In the host, start the ubuntu VM
+
+```shell
+# host start ubuntu
+cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+sudo ./start_ubuntu.sh
+```
+
+2. Open a `Terminal` within the guest VM.
+
+3. Run the command shown below to upgrade Ubuntu software to the latest in the guest VM.
+
   ```shell
   # Upgrade Ubuntu software
-  $> sudo apt -y update
-  $> sudo apt -y upgrade
-  $> sudo apt -y install openssh-server
+  sudo apt -y update
+  sudo apt -y upgrade
+  sudo apt -y install openssh-server
   ```
-3. Copy the following files and directories from the /home/idvuser/ directory of the host to the /home/guest/ directory of the guest.
+
+4. Copy the following files and directories from the /home/idvuser/ directory of the host to the /home/guest/ directory of the guest.
+
   ```shell
-  #on host, download  ./scripts & ./sriov_patches folder to the current path
-  $> cd  /home/idvuser/Documents/
-  $> git clone  https://github.com/ThunderSoft-SRIOV/sriov.git
-  $> scp -r -P 2222 ./scripts/ ./sriov_patches/  guest@localhost:/home/guest/Documents/
+  #in the host
+  cd /home/$USER/
+  # `idvuser` is the user name of the virtual machine Ubuntu system, Please replace it yourself
+  rsync -avz -e "ssh -p 2222" --exclude '*.qcow2' --exclude '*.iso' ./sriov idvuser@localhost:/home/idvuser/
   ```
-4. Run sriov_setup_kernel.sh in Ubuntu guest VM.
+
+5. Run sriov_setup_kernel.sh in Ubuntu guest VM.
+
   ```shell
-  $> cd  /home/guest/Documents/
-  $> cp -rf ./sriov_patches  ./scripts/guest_setup/ubuntu/
+  #in the guest
+  cd /home/$USER/
+  cp -rf ./sriov/sriov_patches ./sriov/scripts/setup_guest/ubuntu/
   # This will install kernel and firmware, and update grub
-  $> sudo ./scripts/guest_setup/ubuntu/sriov_setup_ubuntu_guest_kernel.sh
+  cd ./sriov/scripts/setup_guest/ubuntu/
+  sudo ./sriov_prepare_projects.sh
+  sudo ./sriov_setup_ubuntu_guest_kernel.sh
   ```
-5. Reboot the system.
+
+6. Reboot the system.
+
   ```shell
-  $> sudo reboot
+  sudo reboot
   ```
-6. After rebooting, check that the kernel is the installed version.
+
+7. After rebooting, check if the kernel is the installed version.
+
   ```shell
-  $> uname -r
-    6.6.32
+  uname -r
   ```
-7. Prepare and generate the install files in Ubuntu guest VM.
+
+ Output
+
   ```shell
-  $> cp -rf ./sriov_patches/  ./scripts/guest_setup/ubuntu/
-  $> sudo ./scripts/guest_setup/ubuntu/sriov_prepare_projects.sh
-  $> sudo ./scripts/guest_setup/ubuntu/sriov_install_projects.sh
-  
+  6.6.32-ubuntu
+  ```
+
+8. Prepare and generate the install files in Ubuntu guest VM.
+
+  ```shell
+  #in the guest
+  cd ~/sriov/scripts/setup_guest/ubuntu/
+  sudo .sriov_install_projects.sh
+
   # After executing the above command, 3 folders will be generated
-  # ./scripts/guest_setup/ubuntu/packages
-  # ./scripts/guest_setup/ubuntu/sriov_install
-  # ./scripts/guest_setup/ubuntu/sriov_build
+  # ./sriov/scripts/setup_guest/ubuntu/packages
+  # ./sriov/scripts/setup_guest/ubuntu/sriov_install
+  # ./sriov/scripts/setup_guest/ubuntu/sriov_build
   ```
-8. Run configure_ubuntu_guest.sh in Ubuntu guest VM.
+
+9. Run configure_ubuntu_guest.sh in Ubuntu guest VM.
+
   ```shell
+  #in the guest
   # This will install userspace libraries and tools
-  $> cp -r ./scripts/guest_setup/ubuntu/sriov_build   ./scripts/guest_setup/ubuntu/
-  $> cp -r ./scripts/guest_setup/ubuntu/sriov_install ./scripts/guest_setup/ubuntu/
-  $> sudo ./scripts/guest_setup/ubuntu/configure_ubuntu_guest.sh
-  ```
-9. After the installation has completed, reboot the guest when prompted.
-10. Next, shutdown the guest properly. The Ubuntu image ubuntu.qcow2 is now ready to use.
-
-## After restarting, check the installation program
-1. Quickly start the guest Ubuntu virtual machine  on host
-  ```shell
-  $> sudo ./scripts/guest_setup/ubuntu/start_ubuntu.sh
+  cd ~/sriov/scripts/setup_guest/ubuntu/
+  sudo ./configure_ubuntu_guest.sh
   ```
 
-2. The following are the corresponding versions after installing the program on guest
+10. After the installation completed, reboot the guest when prompted.
+
+11. Next, shutdown the guest properly. The Ubuntu image `Ubuntu.qcow2` is now ready to use.
+
+## Check the installation program
+
+### Quickly start the guest Ubuntu virtual machine in the host
 
   ```shell
-  $> sudo dpkg -l | grep libdrm 
-  $> sudo dpkg -l | grep libva 
-  ...
+  #in the host
+  cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+  sudo ./start_ubuntu.sh
   ```
 
-  |   Application Name   |    Version     |
-  | :------------------: | :------------: |
-  |        kernel        |     6.6.32     |
-  |     firmware-guc     |      7.13      |
-  |     firmware-huc     |      7.9       |
-  |        gmmlib        |     22.3.5     |
-  |        libdrm        |    2.4.114     |
-  |        libva         |     2.18.0     |
-  |     libva-utils      |     2.18.0     |
-  |     media-driver     |     23.1.0     |
-  |         mesa         |     23.2.1     |
-  |      onevpl-gpu      |     22.6.5     |
-  |        onevpl        |     22.6.5     |
-  |     spice-client     |     v0.42      |
-  |    spice-protocol    |    v0.14.4     |
-  |     spice-server     |    v0.15.2     |
-  |    intel-igc-core    |  1.0.13700.14  |
-  |   intel-igc-opencl   |  1.0.13700.14  |
-  | intel-level-zero-gpu |  1.3.26032.30  |
-  |   intel-opencl-icd   | 23.13.26032.30 |
-  |     libigdgmm12      |      22.3      |
+### Check the installation software package in the guest
 
-3. Check Ubuntu configuration on guest
   ```shell
-  $> sudo cat /etc/default/grub
-  
-  `For example output:`
-  
-  GRUB_DEFAULT="Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux 6.6.32-ubuntu"
-  .....
-  GRUB_CMDLINE_LINUX_DEFAULT="quiet console=tty0,115200n8 intel_iommu=on iommu=soft vt_handoff=7"
-  GRUB_CMDLINE_LINUX="splash i915.enable_guc=3 i915.force_probe=* udmabuf.list_limit=8192"
-  
+  #in the guest
+  cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+  sudo ./sriov_check_version.sh
   ```
 
-4. Check the loading driver on guest
+  Example output
+```shell
+gmmlib-sriov                        2405-1
+libdrm-amdgpu1:amd64                2.4.113-2~ubuntu0.22.04.1
+libdrm-common                       2.4.113-2~ubuntu0.22.04.1
+libdrm-dev:amd64                    2.4.113-2~ubuntu0.22.04.1
+libdrm-intel1:amd64                 2.4.113-2~ubuntu0.22.04.1
+libdrm-nouveau2:amd64               2.4.113-2~ubuntu0.22.04.1
+libdrm-radeon1:amd64                2.4.113-2~ubuntu0.22.04.1
+libdrm-sriov                        2405-1
+libdrm2:amd64                       2.4.113-2~ubuntu0.22.04.1
+libva-drm2:amd64                    2.14.0-1
+libva-sriov                         2405-1
+libva-utils-sriov                   2405-1
+libva-wayland2:amd64                2.14.0-1
+libva-x11-2:amd64                   2.14.0-1
+libva2:amd64                        2.14.0-1
+libvariable-magic-perl              0.62-1build5
+libva-utils-sriov                   2405-1
+media-driver-sriov                  2405-1
+libegl-mesa0:amd64                  23.2.1-1ubuntu3.1~22.04.2
+libegl1-mesa:amd64                  23.0.4-0ubuntu1~22.04.1
+libegl1-mesa-dev:amd64              23.2.1-1ubuntu3.1~22.04.2
+libgl1-mesa-dri:amd64               23.2.1-1ubuntu3.1~22.04.2
+libglapi-mesa:amd64                 23.2.1-1ubuntu3.1~22.04.2
+libglu1-mesa:amd64                  9.0.2-1
+libglu1-mesa-dev:amd64              9.0.2-1
+libglx-mesa0:amd64                  23.2.1-1ubuntu3.1~22.04.2
+mesa-common-dev:amd64               23.2.1-1ubuntu3.1~22.04.2
+mesa-sriov                          2405-1
+mesa-utils                          8.4.0-1ubuntu1
+mesa-utils-bin:amd64                8.4.0-1ubuntu1
+mesa-va-drivers:amd64               23.2.1-1ubuntu3.1~22.04.2
+mesa-vdpau-drivers:amd64            23.2.1-1ubuntu3.1~22.04.2
+mesa-vulkan-drivers:amd64           22.2.5-0ubuntu0.1~22.04.1
+onevpl-gpu-sriov                    2405-1
+onevpl-gpu-sriov                    2405-1
+onevpl-sriov                        2405-1
+libspice-client-glib-2.0-8:amd64    0.39-3ubuntu1
+libspice-client-gtk-3.0-5:amd64     0.39-3ubuntu1
+spice-client-glib-usb-acl-helper    0.39-3ubuntu1
+libspice-protocol-dev               0.14.3-1
+libspice-server-dev:amd64           0.15.0-2ubuntu4
+libspice-server1:amd64              0.15.0-2ubuntu4
+intel-igc-core                      1.0.13700.14
+intel-igc-opencl                    1.0.13700.14
+intel-level-zero-gpu                1.3.26032.30
+intel-opencl-icd                    23.13.26032.30
+libigdgmm12:amd64                   22.3.0
+```
+
+  Check firmware GUC version in the host
+
+```shell
+sudo dmesg |grep -i guc
+```
+ Example output
+
+```shell
+Guc version 7.13
+```
+
+### Check Ubuntu grub configuration in the guest
+
   ```shell
-  $> glxinfo -B
-  
-  `For example output:`
-  
+  sudo cat /etc/default/grub
+  ```
+
+ Example output
+
+```shell
+GRUB_DEFAULT="Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux 6.6.32-ubuntu"
+.....
+GRUB_CMDLINE_LINUX_DEFAULT="quiet console=tty0,115200n8 intel_iommu=on iommu=soft vt_handoff=7"
+GRUB_CMDLINE_LINUX="splash i915.enable_guc=3 i915.force_probe=* udmabuf.list_limit=8192"
+
+```
+
+### Check the loading driver in the guest
+
+  ```shell
+  glxinfo -B
+  ```
+
+ Example output
+  ```
   name of display: :0
   display: :0  screen: 0
   direct rendering: Yes
@@ -174,7 +310,111 @@ https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-
   OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.2.1 (git-49a47f187e)
   OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20`
   ```
-5. Start 4 VMs on host
+
+## Advanced Guest VM Launch
+
+### **Start_ubuntu.sh script help in the host**
+
 ```shell
-$> sudo ./scripts/guest_setup/ubuntu/start_all_ubuntu.sh
+#in the host
+cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+sudo ./start_ubuntu.sh -h
+```
+
+Output
+```shell
+start_ubuntu.sh [-h] [-m] [-c] [-n] [-d] [-f] [-p] [-e] [--passthrough-pci-usb] [--passthrough-pci-udc] [--passthrough-pci-audio] [--passthrough-pci-eth] [--passthrough-pci-wifi] [--disable-kernel-irqchip] [--display] [--enable-pwr-ctrl] [--spice] [--audio]
+Options:
+        -h  show this help message
+        -m  specify guest memory size, eg. "-m 4G or -m 4096M"
+        -c  specify guest cpu number, eg. "-c 4"
+        -n  specify guest vm name, eg. "-n <guest_name>"
+        -d  specify guest virtual disk image, eg. "-d /path/to/<guest_image>"
+        -f  specify guest firmware OVMF variable image, eg. "-d /path/to/<ovmf_vars.fd>"
+        -p  specify host forward ports, current support ssh, eg. "-p ssh=2222"
+        -e  specify extra qemu cmd, eg. "-e "-monitor stdio""
+        --passthrough-pci-usb passthrough USB PCI bus to guest.
+        --passthrough-pci-udc passthrough USB Device Controller ie. UDC PCI bus to guest.
+        --passthrough-pci-audio passthrough Audio PCI bus to guest.
+        --passthrough-pci-eth passthrough Ethernet PCI bus to guest.
+        --passthrough-pci-wifi passthrough WiFi PCI bus to guest.
+        --disable-kernel-irqchip set kernel_irqchip=off.
+        --display specify guest display connectors configuration with HPD (Hot Plug Display) feature,
+                  eg. "--display full-screen,connectors.0=HDMI-1,connectors.1=DP-1"
+                sub-param: max-outputs=[number of displays], set the max number of displays for guest vm, eg. "max-outputs=2"
+                sub-param: full-screen, switch the guest vm display to full-screen mode.
+                sub-param: show-fps, show fps info in the guest vm primary display.
+                sub-param: connectors.[index]=[connector name], assign a connected display connector to guest vm.
+                sub-param: extend-abs-mode, enable extend absolute mode across all monitors.
+                sub-param: disable-host-input, disallow host's HID devices to control the guest.
+        --enable-pwr-ctrl option allow guest power control from host via qga socket.
+        --spice enable SPICE feature with sub-parameters,
+                  eg. "--spice display=egl-headless,port=3002,disable-ticketing=on,spice-audio=on,usb-redir=1"
+                sub-param: display=[display mode], set display mode, eg. "display=egl-headless"
+                sub-param: port=[spice port], assign spice port, eg. "port=3002"
+                sub-param: disable-ticketing=[on|off], set disable-ticketing, eg. "disable-ticketing=on"
+                sub-param: spice-audio=[on|off], set spice audio eg. "spice-audio=on"
+                sub-param: usb-redir=[number of USB redir channel], set USB redirection channel number, eg. "usb-redir=2"
+        --audio enable hda audio for guest vm with sub-parameters,
+                  eg. "--audio device=intel-hda,name=hda-audio,sink=alsa_output.pci-0000_00_1f.3.analog-stereo,timer-period=5000"
+                sub-param: device=[device], set audio device, eg. "device=intel-hda"
+                sub-param: name=[name], set audio device name, eg. "name=hda-audio"
+                sub-param: server=[audio server], set audio server, eg. "unix:/run/user/1000/pulse/native"
+                sub-param: sink=[audio sink], set audio stream routing. Use "pacmd list-sinks" to find available audio sinks
+                sub-param: timer-period=[period], set timer period in microseconds (us), eg. "timer-period=5000"
+
+
+```
+### **Launch Multiple Windows Guest VMs**
+
+```shell
+# in the host
+cd /home/idvhost/
+sudo ./scripts/setup_guest/ubuntu/start_all_ubuntu.sh
+```
+
+  - Script Execution Instructions
+    `Create multiple copies of OVMF files.`
+
+    Create and setup the Ubuntu guest images. Ensure that the images are named as ubuntu.qcow2, ubuntu2.qcow2, ubuntu3.qcow2 and ubuntu4.qcow2.
+    Run `start_all_ubuntu.sh` script to launch multiple guests as shown below.
+
+
+```shell
+#!/bin/bash
+# Sample script to launch multiple Ubuntu guests
+# Remember to customise the launch commands according to HW 
+setup and use case:
+# - number of guests
+# - memory allocated
+# - core allocated
+if [ ! -e ./OVMF_VARS_ubuntu2.fd ] & [ ! -e ubuntu2.qcow2 ];then
+   cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu2.fd
+   cp -rf ./ubuntu.qcow2         ./ubuntu2.qcow2
+fi 
+
+
+if [ ! -e ./OVMF_VARS_ubuntu2.fd ] & [ ! -e ubuntu3.qcow2 ];then
+   cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu3.fd
+   cp -rf ./ubuntu.qcow2         ./ubuntu3.qcow2
+fi 
+
+
+if [ ! -e ./OVMF_VARS_ubuntu2.fd ] & [ ! -e ubuntu4.qcow2 ];then
+   cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu4.fd
+   cp -rf ./ubuntu.qcow2         ./ubuntu4.qcow2
+fi 
+
+# Propagate signal to children
+trap 'trap " " SIGTERM; kill 0; wait' SIGINT SIGTERM
+# Start Ubuntu multi guests
+echo "Starting Ubuntu Guest1..."
+sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm1 &
+echo "Starting Ubuntu Guest2..."
+sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm2 -f OVMF_VARS_ubuntu2.fd -d ubuntu2.qcow2 -p ssh=2223 &
+echo "Starting Ubuntu Guest3..."
+sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm3 -f OVMF_VARS_ubuntu3.fd -d ubuntu3.qcow2 -p ssh=2224 &
+echo "Starting Ubuntu Guest4..."
+sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm4 -f OVMF_VARS_ubuntu4.fd -d ubuntu4.qcow2 -p ssh=2225 &
+wait
 ```
