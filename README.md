@@ -3,8 +3,8 @@
 1. [Introduction](#introduction)
 1. [Prerequisites](#prerequisites)
 1. [Host Setup](#host-setup)
-    1. [Host Setup (install from source code)](#host-setup-install-from-source-code)
-    1. [Host Setup (install from ppa)](#host-setup-install-from-ppa)
+    1. [Install From Source Code](#install-from-source-code)
+    1. [Install From PPA](#install-from-ppa)
 1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
     1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
     1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
@@ -23,49 +23,54 @@ The key benefits of Intel Graphics SR-IOV are:
   * Support up to 4 independent display output and 7 virtualized functions
   * Support multiple guest operating system
 
+<!-- PREREQUISITES -->
 ## Prerequisites
 
-  * [Debian 12.5 ISO](https://get.debian.org/images/archive/12.5.0/amd64/iso-dvd/debian-12.5.0-amd64-DVD-1.iso)
+  * A working [Debian 12.5 ISO](https://get.debian.org/images/archive/12.5.0/amd64/iso-dvd/debian-12.5.0-amd64-DVD-1.iso) host.
 
 <!-- HOST SETUP -->
 ## Host Setup
 
-  * Source Install
-  * PPA Install
+  * [Option 1] Install From Source Code
+  * [Option 2] Install From PPA
 
 *Note: Please choose one of the installation methods*
 
-### Host Setup (install from source code)
+### Install From Source Code
 
 Install and setup from source code.
 
 1. Setup kernel
 
-  ```sh
-  sudo ./scripts/setup_host/sriov_setup_kernel.sh
-  ```
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_host/sriov_setup_kernel.sh
+    ```
 
 2. Setup debian
 
-  ```sh
-  sudo ./scripts/setup_host/sriov_setup_debian.sh
-  ```
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_host/sriov_setup_debian.sh
+    ```
 
-### Host Setup (install from ppa)
+### Install From PPA
 
 Install and setup from ppa.
 
 1. Setup kernel
 
-  ```sh
-  sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
-  ```
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
+    ```
 
 2. Setup debian
 
-  ```sh
-  sudo ./scripts/setup_host/sriov_setup_debian.sh --use-ppa-files
-  ```
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_host/sriov_setup_debian.sh --use-ppa-files
+    ```
 
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 ## Virtual Machine Image Creation
@@ -74,11 +79,11 @@ Follow the links below for instructions on how to setup and deploy virtual machi
 
 ### Deploy Windows Virtual Machine
 
-Please refer [deplay-windows-vm](docs/deploy-windows-vm.md) for steps on creating Windows VM image.
+Please refer [deploy-windows-vm](docs/deploy-windows-vm.md) for steps on creating Windows VM image.
 
 ### Deploy Ubuntu Virtual Machine
 
-Please refer [deplay-ubuntu-vm](docs/deploy-ubuntu-vm.md) for steps on creating Ubuntu VM image.
+Please refer [deploy-ubuntu-vm](docs/deploy-ubuntu-vm.md) for steps on creating Ubuntu VM image.
 
 <!-- LICENSE -->
 ## License

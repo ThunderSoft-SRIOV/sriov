@@ -10,7 +10,7 @@ set -e
 #----------------------------------      Global variable      --------------------------------------
 DEFAULT_VM_MEM=80
 DEFAULT_NUM_CORES=2
-DEFAULT_VM_NAME=win11-5
+DEFAULT_VM_NAME=win11
 DEFAULT_DISK_SIZE=80
 
 DEFAULT_OVMF_PATH=/usr/share/OVMF
@@ -21,8 +21,8 @@ WIN_IMAGE_NAME=$DEFAULT_VM_NAME.qcow2
 #----------------------------------         Functions         --------------------------------------
 
 function install_dep() {
-  which virt-install > /dev/null || sudo apt install -y virtinst
-  which virt-viewer > /dev/null || sudo apt install -y virt-viewer
+    which virt-install > /dev/null || sudo apt install -y virtinst
+    which virt-viewer > /dev/null || sudo apt install -y virt-viewer
 }
 
 function install_windows() {
@@ -69,12 +69,12 @@ function parse_arg() {
                 ;;
 
             -c)
-                GUEST_CPU_NUM=$2
+                DEFAULT_NUM_CORES=$2
                 shift
                 ;;
 
             -n)
-                GUEST_NAME=$2
+                DEFAULT_VM_NAME=$2
                 shift
                 ;;
 

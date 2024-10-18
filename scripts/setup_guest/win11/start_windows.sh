@@ -93,7 +93,7 @@ function check_kernel_version() {
 
 function setup_lock_acquire() {
     # Open a file descriptor to lock file
-    exec \{setup_lock_fd\}>$SETUP_LOCK || exit
+    exec {setup_lock_fd}>$SETUP_LOCK || exit
 
     # Block up to 120 seconds to obtain an exclusive lock
     flock -w 120 -x $setup_lock_fd
@@ -104,7 +104,7 @@ function setup_lock_release() {
 
     # Release the lock and unset the variable
     flock -u "$setup_lock_fd"
-    exec \{setup_lock_fd\}>&- && unset setup_lock_fd
+    exec {setup_lock_fd}>&- && unset setup_lock_fd
 }
 
 function set_mem() {

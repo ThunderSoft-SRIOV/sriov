@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# Copyright (c) 2024 ThunderSoft Corporation.
+# Copyright (c) 2022 Intel Corporation.
 # All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
 set -eE
 
 #---------      Global variable     -------------------
@@ -224,7 +225,7 @@ log_func check_network
 
 # Check if kernel needs to be installed
 if [[ $IS_BSP -ne 1 ]]; then
-    log_func sriov_check_files
+    #log_func sriov_check_files
     log_func sriov_install_firmware
     log_func sriov_install_kernel
     log_func sriov_ax210_workaround

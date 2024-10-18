@@ -19,7 +19,7 @@ GUEST_SWTPM="-chardev socket,id=chrtpm,path=$TPM_DIR/vtpm0/swtpm-sock -tpmdev em
 #----------------------------------       Main Processes      --------------------------------------
 
 if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ]; then
- 	echo "not exists file "/usr/share/ovmf""
+ 	echo "not exists file "/usr/share/OVMF""
  	sudo apt update
 	sudo apt -y -t bookworm-backports upgrade 
 	sudo apt install -y -t bookworm-backports omvf
@@ -47,7 +47,7 @@ swtpm socket --tpmstate dir=$TPM_DIR/vtpm0 --tpm2 --ctrl type=unixio,path=$TPM_D
 
 # Start guest
 qemu-system-x86_64 \
-	-m $DEFAULTMEM_SIZE \
+	-m $DEFAULT_MEM_SIZE \
 	-enable-kvm \
 	-cpu host \
 	-name $DEFAULT_VM_NAME \
@@ -61,6 +61,6 @@ qemu-system-x86_64 \
 	-rtc base=localtime \
 	-usb \
 	-device usb-tablet \
-        -device VGA,xres=1024,yres=768 \
-        -machine q35 \
-        -$GUEST_SWTPM
+    -device VGA,xres=1024,yres=768 \
+    -machine q35 \
+    -$GUEST_SWTPM

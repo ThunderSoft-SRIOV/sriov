@@ -4,21 +4,20 @@
 # All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
 set -eE
 
-#---------      Global variable     -------------------
+#----------------------------------      Global variable      --------------------------------------
 
 # This global should be uncommented when the script is
 # copied to the Ubuntu guest during guest setup.
 #GUEST_SCRIPT=1
 
-#---------      Functions    -------------------
-
+#----------------------------------         Functions         --------------------------------------
 
 function sriov_install_agent {
     sudo apt-get install -y qemu-guest-agent
 }
-
 
 function sriov_setup_hugepg {
     # Workaround for S4 hugepages/RAM allocation issue.
@@ -193,7 +192,7 @@ function sriov_install_qmp() {
     sudo pip3 install qemu.qmp==0.0.3
 }
 
-#-------------    main processes    -------------
+#----------------------------------       Main Processes      --------------------------------------
 
 # run only for guest and not during setup
 # this should happen during startup
