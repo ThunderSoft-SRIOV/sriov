@@ -32,9 +32,8 @@ https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-
 2. Select image and follow Windows installation steps until installation is successful.
 
   <img src=./media/setup_ubuntu1.png width="80%">
-  <img src=./media/winsetup11.png width="80%">
-  <img src=./media/winsetup12.png width="80%">
-
+  <img src=./media/virtsetup3.png width="80%">
+  <img src=./media/virtsetup4.png width="80%">
 
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
