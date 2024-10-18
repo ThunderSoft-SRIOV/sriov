@@ -36,6 +36,22 @@ The key benefits of Intel Graphics SR-IOV are:
 
 *Note: Please choose one of the installation methods*
 
+### Preparation
+
+1. Install `git`
+
+    ```sh
+    sudo apt update
+    sudo apt install -y git
+    ```
+
+2. Clone code from github
+
+    ```sh
+    cd /home/$USER/
+    git clone https://github.com/ThunderSoft-SRIOV/sriov.git
+    ```
+
 ### Install From Source Code
 
 Install and setup from source code.
@@ -47,7 +63,13 @@ Install and setup from source code.
     sudo ./scripts/setup_host/sriov_setup_kernel.sh
     ```
 
-2. Setup debian
+2. Reboot the host
+
+    ```sh
+    sudo reboot
+    ```
+
+3. Setup debian after reboot
 
     ```sh
     cd /home/$USER/sriov
@@ -65,7 +87,13 @@ Install and setup from ppa.
     sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
     ```
 
-2. Setup debian
+2. Reboot the host
+
+    ```sh
+    sudo reboot
+    ```
+
+3. Setup debian after reboot
 
     ```sh
     cd /home/$USER/sriov

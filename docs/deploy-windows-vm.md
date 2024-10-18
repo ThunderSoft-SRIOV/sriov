@@ -31,6 +31,10 @@
 
 *Note: Please choose one of the installation methods*
 
+### Preparation
+
+1. Rename windows iso to `windows.iso`
+
 ### Create Windows VM Image Using `qemu`
 
 1. Run `install_windows.sh` to start idv guest installation.
