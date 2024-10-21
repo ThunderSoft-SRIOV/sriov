@@ -10,6 +10,12 @@ set -x
 
 sudo chmod -t /tmp
 #------------------------------------------------------      Global variable    ----------------------------------------------------------
+FILE_PATH="$0"
+SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*} 
+INSTALL_DIR=install_dir
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
+
 kernel_maj_ver=0
 WORK_DIR=$PWD
 SETUP_LOCK=/tmp/sriov.setup.lock
@@ -22,11 +28,11 @@ MAX_USB_REDIR_CHANNEL=16
 GUEST_NAME="-name ubuntu-vm"
 GUEST_MEM="-m 2G"
 GUEST_CPU_NUM="-smp cores=2,threads=2,sockets=1"
-GUEST_DISK="-drive file=$WORK_DIR/ubuntu.qcow2,if=virtio,id=ubuntu_disk,format=qcow2,cache=none"
+GUEST_DISK="-drive file=$SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2,if=virtio,id=ubuntu_disk,format=qcow2,cache=none"
 GUEST_FIRMWARE="\
- -drive file=$WORK_DIR/OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
- -drive file=$WORK_DIR/OVMF_VARS_ubuntu.fd,format=raw,if=pflash,unit=1"
-GUEST_DISP_TYPE="-display gtk,gl=on,show-fps=on"
+ -drive file=$SRIOV_PATH/$INSTALL_DIR/OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
+ -drive file=$SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd,format=raw,if=pflash,unit=1"
+GUEST_DISP_TYPE="-display gtk,gl=on"
 GUEST_DISPLAY_MAX=2
 GUEST_DISPLAY_MIN=1
 GUEST_MAX_OUTPUTS=2
@@ -111,7 +117,7 @@ function set_disk() {
 
 function set_firmware_path() {
     GUEST_FIRMWARE="\
-        -drive file=$WORK_DIR/OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
+        -drive file=$SRIOV_PATH/$INSTALL_DIR/OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
         -drive file=$1,format=raw,if=pflash,unit=1"
 }
 

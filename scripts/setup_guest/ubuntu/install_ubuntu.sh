@@ -5,35 +5,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+#------------------------------------------------------      Global variable    ----------------------------------------------------------
+
 set -x
-
-
-if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ];then
- 	echo "not exists file "/usr/share/ovmf""
- 	sudo apt update
-	sudo apt -y -t bookworm-backports upgrade 
-	sudo apt install -y -t bookworm-backports omvf
- 	exit
-elif [ ! -f './OVMF_CODE.fd' ];then
-	
-	ln -sf /usr/share/OVMF/OVMF_CODE.fd  ./OVMF_CODE.fd
-fi
-
-
-if [ ! -f "/usr/share/OVMF/OVMF_VARS.fd" ];then
-	echo "not exists file "/usr/share/OVMF/OVMF_VARS.fd""
- 	exit
-elif [ ! -f './OVMF_VARS_ubuntu.fd' ];then
-	cp /usr/share/OVMF/OVMF_VARS.fd  ./OVMF_VARS_ubuntu.fd
-fi
-
-if [ ! -f "./ubuntu.iso" ];then
-	echo "not exists file ./ubuntu.iso"
-	exit
-elif [ ! -f './ubuntu.iso' ] | [ ! -f './ubuntu.qcow2' ];then
-	#ln -sf ./ubuntu-22.04-desktop-amd64+intel-iot.iso   ./ubuntu.iso
-	qemu-img create -f qcow2 ./ubuntu.qcow2 200G
-fi
+FILE_PATH="$0"
+SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*}
+INSTALL_DIR=install_dir
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
 
 
 MEM_SIZE=4096
@@ -43,6 +22,42 @@ NUM_CORES=4
 MAC_ADDR=DE:AD:BE:EF:B1:12
 
 
+#------------------------------------------------------         Functions       ----------------------------------------------------------
+
+if [ ! -d $SRIOV_PATH/$INSTALL_DIR/ ];then
+  sudo mkdir $SRIOV_PATH/$INSTALL_DIR/
+fi
+
+if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ];then
+ 	echo "not exists file "/usr/share/ovmf""
+ 	sudo apt update
+	sudo apt -y -t bookworm-backports upgrade 
+	sudo apt install -y -t bookworm-backports omvf
+ 	exit
+elif [ ! -f $SRIOV_PATH/$INSTALL_DIR/OVMF_CODE.fd ];then
+	
+	ln -sf /usr/share/OVMF/OVMF_CODE.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_CODE.fd
+fi
+
+if [ ! -f "/usr/share/OVMF/OVMF_VARS.fd" ];then
+	echo "not exists file /usr/share/OVMF/OVMF_VARS.fd"
+ 	exit
+elif [ ! -f $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd ];then
+	cp /usr/share/OVMF/OVMF_VARS.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd
+fi
+
+if [ ! -f $SCRIPT_DIR/ubuntu.iso ];then
+	echo "not exists file ${SCRIPT_DIR}/ubuntu.iso"
+	exit
+elif [ -f $SCRIPT_DIR/ubuntu.iso ];then
+  cp -rf $SCRIPT_DIR/ubuntu.iso $SRIOV_PATH/$INSTALL_DIR/
+fi
+
+if [ ! -f $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 ];then
+	qemu-img create -f qcow2 $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 60G
+fi
+
+cd $SRIOV_PATH/$INSTALL_DIR/
 
 qemu-system-x86_64 \
         -m $MEM_SIZE \

@@ -13,6 +13,13 @@ DEFAULT_NUM_CORES=2
 DEFAULT_VM_NAME=ubuntu
 DEFAULT_DISK_SIZE=60
 
+FILE_PATH="$0"
+SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*}
+INSTALL_DIR=install_dir
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
+
+
 DEFAULT_OVMF_PATH=/usr/share/OVMF
 WIN_INSTALLER_ISO=ubuntu_virsh.iso
 DEFAULT_LIBVIRT_IMAGES_PATH=/var/lib/libvirt/images
@@ -43,11 +50,11 @@ fi
 #	cp /usr/share/OVMF/OVMF_VARS.fd  ./OVMF_VARS_ubuntu.fd
 #fi
 
-if [ ! -f "./ubuntu.iso" ];then
-	echo "not exists file ./ubuntu.iso"
+if [ ! -f ${SCRIPT_DIR}/ubuntu.iso ];then
+	echo "not exists file ${SCRIPT_DIR}/ubuntu.iso"
 	exit
 elif [ ! -f $IMAGE_ISO_PATH ];then
-	cp -rf ./ubuntu.iso $IMAGE_ISO_PATH
+	cp -rf ${SCRIPT_DIR}/ubuntu.iso $IMAGE_ISO_PATH
 
 fi
 

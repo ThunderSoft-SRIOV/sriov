@@ -11,13 +11,12 @@
         1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
         1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager) (EXPERIMENTAL)
         1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh) (EXPERIMENTAL)
-    1. [Install Drivers and Windows 11 update](#install-drivers-and-windows-11-update)
+    1. [Install Drivers](#install-drivers)
 1. [Launch Windows VM](#launch-windows-vm)
 
 ## Prerequisites
 
 * Windows 11 ISO. In this example we are using Windows 11 version 23H2
-* [Windows 11 Cumulative Update](https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e3472ba5-22b6-46d5-8de2-db78395b3209/public/windows11.0-kb5031455-x64_d1c3bafaa9abd8c65f0354e2ea89f35470b10b65.msu)
 * [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
 * [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
 * [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
@@ -36,15 +35,15 @@
 
 ## Create Windows VM Image
 
+There are three options provided, option 2 and 3 are in progress.
+
 * [Option 1] Create Windows VM Image Using `qemu`
 * [Option 2] Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
 * [Option 3] Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
-*Note: Options 2 and 3 are experimental*
-
 ### Create Windows VM Image Using `qemu`
 
-1. Run `install_windows.sh` to start idv guest installation
+1. Run `install_windows.sh` to start windows vm installation
 
     ```sh
     cd /home/$USER/sriov
@@ -63,11 +62,13 @@
 
 5. Shutdown the Windows guest
 
-6. [Optional] Install multiple idv Guest VMs. In this example we started 4 vms
+6. [Optional] Install multiple windows VMs
+
+    *Note: Specifying the `install_multiple_windows.sh -n 2` option will install 2 virtual machines*
 
     ```sh
     cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/start_multiple_windows.sh
+    sudo ./scripts/setup_guest/win11/install_multiple_windows.sh -n 2
     ```
 
 ### Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
@@ -131,9 +132,9 @@
 
 3. Shutdown the Windows guest
 
-## Install Drivers and Windows 11 update
+## Install Drivers
 
-1. Download Intel Graphics Driver and Windows 11 update files to Windows desktop. Launch Windows 11 update installer and make sure Windows version is updated.
+1. Download Intel Graphics Driver to Windows desktop.
 
 2. Unzip SR-IOV Zero Copy Driver installer, search for 'Windows PowerShell' and run it as an administrator. Make sure SR-IOV Zero Copy Driver is successfully installed
 
@@ -152,24 +153,33 @@ installer. Make sure Intel Graphics Driver is successfully installed.
 
 ## Launch Windows VM
 
-* [Option 1] Launch from `qemu`
-* [Option 1] Launch from `virt-manager`
-* [Option 1] Launch from `virsh`
+There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
 
-*Note: Choose the corresponding launch method according to your installation method* 
+* [Option 1] Launch From `qemu`
+* [Option 2] Launch From `virt-manager` (EXPERIMENTAL)
+* [Option 3] Launch From `virsh` (EXPERIMENTAL)
 
-### Launch from `qemu`
+### Launch From `qemu`
 
-1. Run `start_windows.sh` to launch windows vm.
+1. Run `start_windows.sh` to launch windows virtual machine
 
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
 
-### Launch from `virt-manager`
+2. Launch multiple virtual machines
 
-1. Run `virt-manager` to launch windows vm.
+    *Note: Specifying the `start_multiple_windows.sh -n 2` option will launch 2 virtual machines installed by `start_multiple_window.sh`*
+
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/win11/start_multiple_windows.sh -n 2
+    ```
+
+### Launch From `virt-manager` (EXPERIMENTAL)
+
+1. Run `virt-manager` to launch windows virtual machine
 
 
     ```sh
@@ -178,9 +188,9 @@ installer. Make sure Intel Graphics Driver is successfully installed.
 
     <img src=./media/virtstart1.png width="80%">
 
-### Launch from `virsh`
+### Launch From `virsh` (EXPERIMENTAL)
 
-1. Run `virsh` to launch windows vm.
+1. Run `virsh` to launch windows virtual machine
 
     ```sh
     sudo virsh start win11

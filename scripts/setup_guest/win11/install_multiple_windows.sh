@@ -55,7 +55,7 @@ for (( i = 1; i <= $GUEST_NUM; i++ )); do
     ssh_port=$(expr $SSH_PORT + $i)
     winrdp_port=$(expr $WINRDP_PORT + $i)
     winrdm_port=$(expr $WINRM_PORT + $i)
-    echo "Starting Windows Guest $i..."
-    sudo ./scripts/setup_guest/win11/start_windows.sh -n $name -f $firmware -d $disk -p ssh=$ssh_port,winrdp=$winrdp_port,winrm=$winrdm_port &
+    echo $ssh_port $winrdp_port $winrdm_port
+    sudo ./scripts/setup_guest/win11/install_windows.sh -n $name -f $firmware -d $disk -p ssh=$ssh_port,winrdp=$winrdp_port,winrm=$winrdm_port &
 done
 wait
