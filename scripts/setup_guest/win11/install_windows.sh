@@ -17,13 +17,13 @@ DEFAULT_VM_NAME=windows-vm
 DEFAULT_NUM_CORES=4
 TPM_DIR=$INSTALL_DIR/win.qcow2.d
 GUEST_SWTPM="-chardev socket,id=chrtpm,path=$TPM_DIR/vtpm0/swtpm-sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0"
-WIN_ISO_DIR=$PWD/scripts/setup_guest/win11
+WIN_ISO_PATH=$PWD/scripts/setup_guest/win11
 WIN_ISO=windows.iso
 
 #----------------------------------       Main Processes      --------------------------------------
 
-if [ ! -f $WIN_ISO_DIR/$WIN_ISO ]; then
-	echo "Please copy windows iso image to $WIN_ISO_DIR"
+if [ ! -f $WIN_ISO_PATH/$WIN_ISO ]; then
+	echo "Please copy windows iso image to $WIN_ISO_PATH"
 	exit
 fi
 
@@ -67,7 +67,7 @@ sudo qemu-system-x86_64 \
 	-drive file=./OVMF_CODE.fd,format=raw,if=pflash,unit=0,readonly=on \
 	-drive file=./OVMF_VARS_windows.fd,format=raw,if=pflash,unit=1 \
 	-drive file=$VM_IMAGE,format=qcow2,cache=none \
-	-drive file=$WIN_ISO_DIR/$WIN_ISO,media=cdrom \
+	-drive file=$WIN_ISO_PATH/$WIN_ISO,media=cdrom \
 	-device e1000,netdev=net0,mac=$MAC_ADDR\
 	-netdev user,id=net0,restrict=y,hostfwd=tcp::4444-:22 \
 	-rtc base=localtime \

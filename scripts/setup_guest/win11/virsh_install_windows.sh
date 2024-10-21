@@ -13,8 +13,9 @@ DEFAULT_NUM_CORES=2
 DEFAULT_VM_NAME=win11
 DEFAULT_DISK_SIZE=80
 
+WIN_ISO_PATH=$PWD/scripts/setup_guest/win11
+WIN_ISO=windows.iso
 DEFAULT_OVMF_PATH=/usr/share/OVMF
-WIN_INSTALLER_ISO=/home/idv/Downloads/windows.iso
 DEFAULT_LIBVIRT_IMAGES_PATH=/var/lib/libvirt/images
 WIN_IMAGE_NAME=$DEFAULT_VM_NAME.qcow2
 
@@ -34,7 +35,7 @@ function install_windows() {
     --machine q35 \
     --network network=default,model=virtio \
     --graphics vnc,listen=0.0.0.0,port=5905 \
-    --cdrom "${WIN_INSTALLER_ISO}" \
+    --cdrom "${WIN_ISO_PATH}/${WIN_ISO}" \
     --disk path="${DEFAULT_LIBVIRT_IMAGES_PATH}/${WIN_IMAGE_NAME}",format=qcow2,size=${DEFAULT_DISK_SIZE},bus=virtio,cache=none \
     --os-variant win11 \
     --boot loader="$DEFAULT_OVMF_PATH/OVMF_CODE_4M.ms.fd",loader.readonly=yes,loader.type=pflash,loader.secure=no,nvram.template=$DEFAULT_OVMF_PATH/OVMF_VARS_4M.fd \
@@ -100,6 +101,11 @@ function parse_arg() {
 #----------------------------------       Main Processes      --------------------------------------
 
 parse_arg "$@" || exit -1
+
+if [ ! -f $WIN_ISO_PATH/$WIN_ISO ]; then
+	echo "Please copy windows iso image to $WIN_ISO_PATH"
+	exit
+fi
 
 install_dep
 install_windows || exit 255

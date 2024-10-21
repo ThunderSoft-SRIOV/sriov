@@ -5,20 +5,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -x
 
 #----------------------------------      Global variable      --------------------------------------
-DEFAULT_VM_MEM=80
+DEFAULT_VM_MEM=2048
 DEFAULT_NUM_CORES=2
 DEFAULT_VM_NAME=ubuntu
-DEFAULT_DISK_SIZE=80
+DEFAULT_DISK_SIZE=60
 
 DEFAULT_OVMF_PATH=/usr/share/OVMF
-WIN_INSTALLER_ISO=$WORK_DIR/ubuntu-22.04-desktop-amd64+intel-iot.iso
+WIN_INSTALLER_ISO=ubuntu_virsh.iso
 DEFAULT_LIBVIRT_IMAGES_PATH=/var/lib/libvirt/images
+IMAGE_ISO_PATH=/var/lib/libvirt/images/$WIN_INSTALLER_ISO
 WIN_IMAGE_NAME=$DEFAULT_VM_NAME.qcow2
 
 #----------------------------------         Functions         --------------------------------------
+
 
 
 
@@ -31,29 +33,31 @@ if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ];then
 #elif [ ! -f './OVMF_CODE.fd' ];then
 	
 #	ln -sf /usr/share/OVMF/OVMF_CODE.fd  ./OVMF_CODE.fd
-#fi
+fi
 
 
 #if [ ! -f "/usr/share/OVMF/OVMF_VARS.fd" ];then
 #	echo "not exists file "/usr/share/OVMF/OVMF_VARS.fd""
-# 	exit
+# 	exitline
 #elif [ ! -f './OVMF_VARS_ubuntu.fd' ];then
 #	cp /usr/share/OVMF/OVMF_VARS.fd  ./OVMF_VARS_ubuntu.fd
 #fi
 
-if [ ! -f "./ubuntu-22.04-desktop-amd64+intel-iot.iso" ];then
-	echo "not exists file "./ubuntu-22.04-desktop-amd64+intel-iot.iso""
+if [ ! -f "./ubuntu.iso" ];then
+	echo "not exists file ./ubuntu.iso"
 	exit
-elif [ ! -f './ubuntu-22.04-desktop-amd64+intel-iot.iso' ] | [ ! -f './ubuntu.qcow2' ];then
-	ln -sf ./ubuntu-22.04-desktop-amd64+intel-iot.iso   ./ubuntu.iso
-	qemu-img create -f qcow2 ./ubuntu.qcow2 200G
-fi
+elif [ ! -f $IMAGE_ISO_PATH ];then
+	cp -rf ./ubuntu.iso $IMAGE_ISO_PATH
 
+fi
 
 function install_dep() {
   which virt-install > /dev/null || sudo apt install -y virtinst
   which virt-viewer > /dev/null || sudo apt install -y virt-viewer
 }
+
+sudo virsh net-list --all
+sudo virsh net-start default
 
 function install_ubuntu() {
     virt-install \
@@ -64,9 +68,9 @@ function install_ubuntu() {
     --machine q35 \
     --network network=default,model=virtio \
     --graphics vnc,listen=0.0.0.0,port=5905 \
-    --cdrom "${WIN_INSTALLER_ISO}" \
+    --cdrom "${IMAGE_ISO_PATH}" \
     --disk path="${DEFAULT_LIBVIRT_IMAGES_PATH}/${WIN_IMAGE_NAME}",format=qcow2,size=${DEFAULT_DISK_SIZE},bus=virtio,cache=none \
-    --os-variant win11 \
+    --os-variant ubuntu22.04 \
     --boot loader="$DEFAULT_OVMF_PATH/OVMF_CODE_4M.ms.fd",loader.readonly=yes,loader.type=pflash,loader.secure=no,nvram.template=$DEFAULT_OVMF_PATH/OVMF_VARS_4M.fd \
     --tpm backend.type=emulator,backend.version=2.0,model=tpm-crb \
     --pm suspend_to_mem.enabled=off,suspend_to_disk.enabled=on \
@@ -130,6 +134,5 @@ function parse_arg() {
 #----------------------------------       Main Processes      --------------------------------------
 
 parse_arg "$@" || exit -1
-
 install_dep
 install_ubuntu || exit 255
