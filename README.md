@@ -52,7 +52,7 @@ This repository contains scripts, manifests and documentation, collectively know
 <!-- HOST SETUP -->
 ## Host Setup
 
-*Note: Two installation methods are provided, please choose one of them*
+Two installation methods are provided, please choose one of them.
 
   * [Option 1] Setup Host From Source Code
   * [Option 2] Setup Host From PPA

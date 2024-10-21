@@ -5,6 +5,7 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
 1. [Prerequisites](#prerequisites)
+1. [Preparation](#preparation)
 1. [Installation](#installation)
     1. [Create Windows VM Image](#create-windows-vm-image)
         1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
@@ -21,6 +22,16 @@
 * [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
 * [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
 
+## Preparation
+
+1. Download Windows iso image and save the iso file as `windows.iso`
+
+2. Copy the `windows.iso` to setup directory
+
+    ```sh
+    mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
+    ```
+
 ## Installation
 
 ## Create Windows VM Image
@@ -29,17 +40,7 @@
 * [Option 2] Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
 * [Option 3] Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
-*Note: Please choose one of the installation methods*
-
-### Preparation
-
-1. Download Windows iso image and save the iso file as `windows.iso`. 
-
-2. Copy the `windows.iso` to setup directory.
-
-    ```sh
-    mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
-    ```
+*Note: Options 2 and 3 are experimental*
 
 ### Create Windows VM Image Using `qemu`
 
