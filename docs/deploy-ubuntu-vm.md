@@ -10,6 +10,7 @@
         1. [Create Ubuntu VM Image Using `virsh`](#create-ubuntu-vm-image-using-virsh) (EXPERIMENTAL)
     1. [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 1. [Check the installation program](#check-the-installation-program)
+1. [Launch Ubuntu VM](#launch-ubuntu-vm)
 1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
 ## Prerequisites
@@ -70,6 +71,7 @@ There are three options provided, option 2 and 3 are in progress.
     <img src=./media/setup_ubuntu1.png width="80%">
     <img src=./media/virtsetup3.png width="80%">
     <img src=./media/virtsetup4.png width="80%">
+    <img src=./media/setup_ubuntu2.png width="80%">
 
 3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
@@ -93,7 +95,7 @@ There are three options provided, option 2 and 3 are in progress.
     ```sh
     Id   Name    State
     ------------------------
-    -    ubuntu   shut off
+    1    ubuntu   running
     ```
 
 3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
@@ -156,7 +158,7 @@ There are three options provided, option 2 and 3 are in progress.
     Output
 
     ```shell
-    6.6.32-ubuntu
+    6.6.32-ubuntu-sriov
     ```
 
 8. Prepare and generate the install files in Ubuntu guest VM.
@@ -308,11 +310,44 @@ There are three options provided, option 2 and 3 are in progress.
     OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.2.1 (git-49a47f187e)
     OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20`
     ```
+## Launch Ubuntu VM
+
+There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch From `qemu`
+* [Option 2] Launch From `virt-manager` (EXPERIMENTAL)
+* [Option 3] Launch From `virsh` (EXPERIMENTAL)
+
+### Launch From `qemu`
+
+1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
+
+    ```sh
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    sudo ./start_windows.sh
+    ```
+
+### Launch From `virt-manager` (EXPERIMENTAL)
+
+1. Run `virt-manager` to launch ubuntu virtual machine
+2. 
+    ```sh
+    virt-manager
+    ```
+    <img src=./media/ubuntu_virt.png width="80%">
+
+### Launch From `virsh` (EXPERIMENTAL)
+
+1. Run `virsh` to launch ubuntu  virtual machine
+
+    ```sh
+    sudo virsh start ubuntu
+    ```
 
 ## Advanced Guest VM Launch
 
-   + Cutomize launch single VM
-   The `start_ubuntu.sh` script help in the host
+   + Customize launch single VM
+      The `start_ubuntu.sh` script help in the host
         ```shell
         cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
         sudo ./start_ubuntu.sh -h
@@ -369,7 +404,7 @@ There are three options provided, option 2 and 3 are in progress.
     cd /home/$USER/scripts/setup_guest/ubuntu/
     sudo ./start_all_ubuntu.sh
     ```
-    
+   
     Script enablements:
     1. It has created multiple copies of `OVMF` files.
     2. It has created and setup the Ubuntu guest images. You can check that the images are named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and `ubuntu4.qcow2`.
@@ -389,17 +424,17 @@ There are three options provided, option 2 and 3 are in progress.
         cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu2.fd
         cp -rf ./ubuntu.qcow2         ./ubuntu2.qcow2
     fi 
-
+   
     if [ ! -e ./OVMF_VARS_ubuntu2.fd ] & [ ! -e ubuntu3.qcow2 ];then
         cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu3.fd
         cp -rf ./ubuntu.qcow2         ./ubuntu3.qcow2
     fi 
-
+   
     if [ ! -e ./OVMF_VARS_ubuntu2.fd ] & [ ! -e ubuntu4.qcow2 ];then
         cp -rf ./OVMF_VARS_ubuntu.fd  ./OVMF_VARS_ubuntu4.fd
         cp -rf ./ubuntu.qcow2         ./ubuntu4.qcow2
     fi 
-
+   
     # Propagate signal to children
     trap 'trap " " SIGTERM; kill 0; wait' SIGINT SIGTERM
     # Start Ubuntu multi guests
