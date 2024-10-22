@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -x
+set -e
 
 #----------------------------------      Global variable      --------------------------------------
 INSTALL_DIR=$PWD/install_dir

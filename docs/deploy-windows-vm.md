@@ -170,7 +170,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 
 2. Launch multiple virtual machines
 
-    *Note: Specifying the `start_multiple_windows.sh -n 2` option will launch 2 virtual machines installed by `start_multiple_window.sh`*
+    *Note: Specifying the `start_multiple_windows.sh -n 2` option will launch 2 virtual machines installed by `install_multiple_windows.sh`*
 
     ```sh
     cd /home/$USER/sriov

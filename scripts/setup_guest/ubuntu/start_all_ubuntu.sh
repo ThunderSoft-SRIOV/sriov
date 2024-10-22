@@ -65,13 +65,13 @@ sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm1 &
 
 
 echo "Starting Ubuntu Guest2..."
-sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm2 -f OVMF_VARS_ubuntu2.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu2.qcow2 -p ssh=2223 &
+sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm2 -f $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu2.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu2.qcow2 -p ssh=2223 &
 
 
 echo "Starting Ubuntu Guest3..."
-sudo ./start_ubuntu.sh -m 2G -c 2  -n ubuntu-vm3 -f OVMF_VARS_ubuntu3.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu3.qcow2 -p ssh=2224 &
+sudo ./start_ubuntu.sh -m 2G -c 2  -n ubuntu-vm3 -f $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu3.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu3.qcow2 -p ssh=2224 &
 
 
 echo "Starting Ubuntu Guest4..."
-sudo ./start_ubuntu.sh -m 2G -c 2  -n ubuntu-vm4 -f OVMF_VARS_ubuntu4.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu4.qcow2 -p ssh=2225 &
+sudo ./start_ubuntu.sh -m 2G -c 2  -n ubuntu-vm4 -f $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu4.fd -d $SRIOV_PATH/$INSTALL_DIR/ubuntu4.qcow2 -p ssh=2225 &
 wait
