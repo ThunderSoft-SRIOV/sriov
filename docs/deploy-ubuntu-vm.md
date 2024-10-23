@@ -44,21 +44,20 @@ There are three options provided, option 2 and 3 are in progress.
     ```shell
     # Run install_ubuntu.sh to start Ubuntu guest installation.
     cd /home/$USER/
-    git clone https://github.com/ThunderSoft-SRIOV/sriov.git
     mv ubuntu-22.04-desktop-amd64+intel-iot.iso ./sriov/scripts/setup_guest/ubuntu/ubuntu.iso
-
+    
     cd ./sriov/scripts/setup_guest/ubuntu/
     chmod -R +x ./*
     sudo ./install_ubuntu.sh
     ```
-
+    
 2. Then press enter and continue boot to Ubuntu as shown in the screen below.
 
     <img src=./media/ubuntusetup1.png width="80%">
 
 3. Run Ubuntu OS installation to install into the guest image and shutdown after completion, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
-### Create Ubuntu VM Image Using `virt-manager`
+### Create Ubuntu VM Image Using `virt-manager`  (EXPERIMENTAL)
 
 1. Run `virt-manager` to start Ubuntu guest installation in the host.
 
@@ -75,7 +74,7 @@ There are three options provided, option 2 and 3 are in progress.
 
 3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
-### Create Ubuntu VM Image Using `virsh`
+### Create Ubuntu VM Image Using `virsh`  (EXPERIMENTAL)
 
 1. Run `virsh_install_ubuntu.sh` to start ubuntu guest installation.
 
@@ -165,9 +164,9 @@ There are three options provided, option 2 and 3 are in progress.
 
     ```shell
     # in the guest
-    cd ~/sriov/scripts/setup_guest/ubuntu/
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo .sriov_install_projects.sh
-
+    
     # After executing the above command, 3 folders will be generated
     # ./sriov/scripts/setup_guest/ubuntu/packages
     # ./sriov/scripts/setup_guest/ubuntu/sriov_install
@@ -179,7 +178,7 @@ There are three options provided, option 2 and 3 are in progress.
     ```shell
     # in the guest
     # This will install userspace libraries and tools
-    cd ~/sriov/scripts/setup_guest/ubuntu/
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./configure_ubuntu_guest.sh
     ```
 
@@ -269,7 +268,7 @@ There are three options provided, option 2 and 3 are in progress.
     .....
     GRUB_CMDLINE_LINUX_DEFAULT="quiet console=tty0,115200n8 intel_iommu=on iommu=soft vt_handoff=7"
     GRUB_CMDLINE_LINUX="splash i915.enable_guc=3 i915.force_probe=* udmabuf.list_limit=8192"
-
+    
     ```
 
 4. Check the loading driver
@@ -324,7 +323,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 
     ```sh
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./start_windows.sh
+    sudo ./start_ubuntu.sh
     ```
 
 ### Launch From `virt-manager` (EXPERIMENTAL)

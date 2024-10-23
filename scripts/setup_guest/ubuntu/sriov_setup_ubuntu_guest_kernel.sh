@@ -183,8 +183,8 @@ function sriov_install_kernel(){
 }
 
 function sriov_update_grub(){
-    # Retrieve installed lts202[12]-iotg kernel names
-    readarray -t kernel_pkg_version < <(dpkg -l | grep "linux-headers*" | grep "lts202[12]-iotg" | grep ^ii | grep -Po 'linux-headers-\K[^ ]*')
+    # Retrieve installed ubuntu-sriov kernel names
+    readarray -t kernel_pkg_version < <(dpkg -l | grep "linux-headers*" | grep "ubuntu-sriov" | grep ^ii | grep -Po 'linux-headers-\K[^ ]*')
 
     # Check the installed package for matching version
     match_found=0

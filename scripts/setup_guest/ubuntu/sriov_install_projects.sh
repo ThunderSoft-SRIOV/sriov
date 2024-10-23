@@ -171,13 +171,13 @@ set -e
 #OpenCL
 mkdir -p $INSTALL_DIR/neo && cd $INSTALL_DIR/neo
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
-    wget https://mirror.ghproxy.com/https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb
-    wget https://mirror.ghproxy.com/https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb
-    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu-dbgsym_1.3.26032.30_amd64.ddeb
-    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu_1.3.26032.30_amd64.deb
-    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd-dbgsym_23.13.26032.30_amd64.ddeb
-    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb
-    wget https://mirror.ghproxy.com/https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb
+    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu-dbgsym_1.3.26032.30_amd64.ddeb
+    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-level-zero-gpu_1.3.26032.30_amd64.deb
+    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd-dbgsym_23.13.26032.30_amd64.ddeb
+    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb
+    wget https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb
 fi
 sudo dpkg -i *.deb
 cd $BUILD_DIR
@@ -229,7 +229,7 @@ cd $BUILD_DIR
 log_func init_deb_name libva-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch 2.18.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/libva.git media/$component_name
+    git clone --branch 2.18.0 --depth 1 https://github.com/intel/libva.git media/$component_name
     cd media/$component_name
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
@@ -261,7 +261,7 @@ cd $BUILD_DIR
 log_func init_deb_name libva-utils-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch 2.18.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/libva-utils.git media/$component_name
+    git clone --branch 2.18.0 --depth 1 https://github.com/intel/libva-utils.git media/$component_name
     cd media/$component_name
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
@@ -287,7 +287,7 @@ cd $BUILD_DIR
 log_func init_deb_name gmmlib-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-gmmlib-22.3.5 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/gmmlib.git media/$component_name
+    git clone --branch intel-gmmlib-22.3.5 --depth 1 https://github.com/intel/gmmlib.git media/$component_name
     cd media/$component_name
     if [ -d "$WrkDir/sriov_patches/media/gmmlib" ]; then
         git apply $WrkDir/sriov_patches/media/gmmlib/*.patch
@@ -317,7 +317,7 @@ cd $BUILD_DIR
 log_func init_deb_name media-driver-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-media-23.1.0 --depth 1 https://mirror.ghproxy.com/https://github.com/intel/media-driver.git media/$component_name
+    git clone --branch intel-media-23.1.0 --depth 1 https://github.com/intel/media-driver.git media/$component_name
     cd media/$component_name
     if [ -d "$WrkDir/sriov_patches/media/media-driver" ]; then
         git apply $WrkDir/sriov_patches/media/media-driver/*.patch
@@ -355,7 +355,7 @@ echo ""                                | sudo tee -a /etc/igfx_user_feature_next
 log_func init_deb_name onevpl-gpu-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch intel-onevpl-22.6.5 --depth 1 https://mirror.ghproxy.com/https://github.com/oneapi-src/oneVPL-intel-gpu.git media/$component_name
+    git clone --branch intel-onevpl-22.6.5 --depth 1 https://github.com/oneapi-src/oneVPL-intel-gpu.git media/$component_name
     cd media/$component_name
     if [ -d "$WrkDir/sriov_patches/media/oneVPL-gpu" ]; then
         git apply $WrkDir/sriov_patches/media/oneVPL-gpu/*.patch
@@ -384,7 +384,7 @@ cd $BUILD_DIR
 log_func init_deb_name onevpl-sriov
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
-    git clone --branch v2023.1.3 --depth 1 https://mirror.ghproxy.com/https://github.com/oneapi-src/oneVPL.git media/$component_name
+    git clone --branch v2023.1.3 --depth 1 https://github.com/oneapi-src/oneVPL.git media/$component_name
     cd media/$component_name
     if [ -d "$WrkDir/sriov_patches/media/oneVPL" ]; then
         git apply $WrkDir/sriov_patches/media/oneVPL/*.patch
