@@ -24,7 +24,7 @@
 2. Copy the `ubuntu.iso` to setup directory
 
     ```sh
-    mv ubuntu.iso /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    mv ubuntu-22.04-desktop-amd64+intel-iot.iso ./sriov/scripts/setup_guest/ubuntu/ubuntu.iso
     ```
 
 ## Installation
@@ -43,10 +43,7 @@ There are three options provided, option 2 and 3 are in progress.
 
     ```shell
     # Run install_ubuntu.sh to start Ubuntu guest installation.
-    cd /home/$USER/
-    mv ubuntu-22.04-desktop-amd64+intel-iot.iso ./sriov/scripts/setup_guest/ubuntu/ubuntu.iso
-    
-    cd ./sriov/scripts/setup_guest/ubuntu/
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     chmod -R +x ./*
     sudo ./install_ubuntu.sh
     ```

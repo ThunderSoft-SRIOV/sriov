@@ -69,7 +69,7 @@ function check_os() {
 
 function check_kernel_version() {
     local cur_ver=$(uname -r)
-    local req_ver="6.6.32-debian-sriov"
+    local req_ver="6.6.32-ubuntu-sriov"
     kernel_maj_ver=${cur_ver:0:1}
 
     if [[ $IS_BSP -ne 1 ]]; then
@@ -284,8 +284,7 @@ function sriov_update_cmdline(){
         cmds=("i915.force_probe=*"
               "intel_iommu=on"
               "udmabuf.list_limit=8192"
-              "i915.enable_guc=(0x)?(0)*3"
-              "i915.max_vfs=(0x)?(0)*7")
+              "i915.enable_guc=(0x)?(0)*3")
     fi
 
     cmdline=$(sed -n -e "/.*\(GRUB_CMDLINE_LINUX=\).*/p" /etc/default/grub)
@@ -371,8 +370,8 @@ function parse_arg() {
 parse_arg "$@" || exit -1
 
 log_clean
-#log_func check_os
-#log_func check_kernel_version
+log_func check_os
+log_func check_kernel_version
 if [[ $IS_BSP -ne 1 ]]; then
     log_func check_network
     log_func sriov_check_files
