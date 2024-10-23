@@ -764,7 +764,7 @@ cd $BUILD_DIR
 
 # qemu
 log_func init_deb_name qemu
-if [[ $USE_PPA_FILES -ne 1 ]]; then
+# if [[ $USE_PPA_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch v8.2.1 --depth 1 https://github.com/qemu/qemu.git
     cd qemu
@@ -786,13 +786,13 @@ if [[ $USE_PPA_FILES -ne 1 ]]; then
     ninja && sudo ninja install
     check_build_error
 
-else
-    # Install from ppa
-    sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
-    sudo curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
-    sudo apt update
-    sudo apt install -y qemu
-fi
+# else
+#     # Install from ppa
+#     sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
+#     sudo curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
+#     sudo apt update
+#     sudo apt install -y qemu
+# fi
 cd $BUILD_DIR
 
 # qemu-ovmf

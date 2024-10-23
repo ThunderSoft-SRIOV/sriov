@@ -764,6 +764,7 @@ if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch v0.15.2 --depth 1 https://gitlab.freedesktop.org/spice/spice.git spice/$component_name
     cd spice/$component_name
+    sleep 5
     meson build --prefix=$PrefixPath --libdir=$LibPath
 
     # Build and install package
