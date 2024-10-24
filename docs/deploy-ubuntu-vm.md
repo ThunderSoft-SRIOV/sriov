@@ -403,7 +403,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
    
    1. create multiple copies of `OVMF` files.
    
-   2. create and setup the Ubuntu guest images. And the images will be named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and ubuntu4.qcow2`.
+   2. create and setup the Ubuntu guest images. And the images will be named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and `ubuntu4.qcow2`.
    
    3. start 4 VMs
    

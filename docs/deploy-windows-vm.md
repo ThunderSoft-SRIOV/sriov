@@ -65,11 +65,11 @@ There are three options provided, option 2 and 3 are in progress.
 
 6. [Optional] Install multiple windows VMs
 
-    *Note: Specifying the `install_multiple_windows.sh -n 2` option will install 2 virtual machines*
+    Specify the `install_multiple_windows.sh -n N`, it will install N (1-4) virtual machines as you needed.
+
 
     ```sh
     cd /home/$USER/sriov
-
     sudo ./scripts/setup_guest/win11/install_multiple_windows.sh -n 2
     ```
 
@@ -136,22 +136,27 @@ There are three options provided, option 2 and 3 are in progress.
 3. Shutdown the Windows guest
 
 ## Install Drivers
+1. Launch guest in the corrsponding way to your installation.
+2. Download the following drivers by browser on the guest.
+* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
+* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
+* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
 
-1. Download Intel Graphics Driver to Windows desktop.
-
-2. Unzip SR-IOV Zero Copy Driver installer, search for 'Windows PowerShell' and run it as an administrator. Make sure SR-IOV Zero Copy Driver is successfully installed
+3. Unzip SR-IOV Zero Copy Driver installer, search for 'Windows PowerShell' and run it as an administrator, enter the unziped directory and run the following command to install the drivers. 
 
     ```sh
     C:\> Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope CurrentUser
     C:\> .\DVInstaller.ps1
     ```
-
+    Make sure SR-IOV Zero Copy Driver is successfully installed
     <img src=./media/zerocopydrv.png width="80%">
 
-3. Unzip Intel Graphics Driver installer and navigate into the install folder and double click on installer.exe to launch the 
-installer. Make sure Intel Graphics Driver is successfully installed.
+3. Unzip Intel Graphics Driver installer and navigate into the install folder and double click on installer.exe to launch the installer. 
+
 
     <img src=./media/gfxdrvinstall.png width="80%">
+
+    Make sure Intel Graphics Driver is successfully installed.    
     <img src=./media/gfxdrv.png width="80%">
 
 ## Launch Windows VM
@@ -164,21 +169,19 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 
 ### Launch From `qemu`
 
-1. Run `start_windows.sh` to launch windows virtual machine
+There are 2 options to luanch VMs. You can choose the coresponding method.
 
++ [Option 1.1] Launch single VM alone
+    Run `start_windows.sh` to launch windows virtual machine
     ```sh
     cd /home/$USER/sriov
-
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
-
-2. Launch multiple virtual machines
-
-    *Note: Specifying the `start_multiple_windows.sh -n 2` option will launch 2 virtual machines installed by `install_multiple_windows.sh`*
++ [Option 1.2] Launch multiple VMs 
+    Specify the `start_multiple_windows.sh -n N`, it will launch N (1-4) virtual machines as you need, which are installed by `install_multiple_windows.sh`
 
     ```sh
     cd /home/$USER/sriov
-
     sudo ./scripts/setup_guest/win11/start_multiple_windows.sh -n 2
     ```
 

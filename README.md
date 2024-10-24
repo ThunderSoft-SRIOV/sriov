@@ -24,10 +24,6 @@ The key benefits of Intel Graphics SR-IOV are:
   * Support up to 4 independent display output and 7 virtualized functions
   * Support multiple guest operating system
 
-**Intel Graphics SR-IOV Enablement Toolkit**
-
-This repository contains scripts, manifests and documentation, collectively known as the *Intel Graphics SR-IOV Enablement Tookit* to help software developer enable **Graphics SR-IOV**.
-
 <!-- PREREQUISITES -->
 ## Prerequisites
 
@@ -73,7 +69,7 @@ Two installation methods are provided, please choose one of them.
     sudo reboot
     ```
 
-3. Setup debian after reboot
+3. Install software after reboot
 
     ```sh
     cd /home/$USER/sriov
@@ -108,7 +104,7 @@ Two installation methods are provided, please choose one of them.
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 ## Virtual Machine Image Creation
 
-Follow the links below for instructions on how to setup and deploy virtual machines using this toolkit
+Follow the links below for instructions on how to setup and deploy virtual machines using scripts in this repos.
 
 ### Deploy Windows Virtual Machine
 
