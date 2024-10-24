@@ -63,6 +63,7 @@ Two installation methods are provided, please choose one of them.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_host/sriov_setup_kernel.sh
     ```
 
@@ -76,6 +77,7 @@ Two installation methods are provided, please choose one of them.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_host/sriov_setup_debian.sh
     ```
 
@@ -85,6 +87,7 @@ Two installation methods are provided, please choose one of them.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
     ```
 
@@ -98,6 +101,7 @@ Two installation methods are provided, please choose one of them.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_host/sriov_setup_debian.sh --use-ppa-files
     ```
 

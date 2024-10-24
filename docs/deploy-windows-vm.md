@@ -47,6 +47,7 @@ There are three options provided, option 2 and 3 are in progress.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_guest/win11/install_windows.sh
     ```
 
@@ -58,7 +59,7 @@ There are three options provided, option 2 and 3 are in progress.
 
     <img src=./media/winsetup2.png width="80%">
 
-4. Disable the automatic updates temporarily with the following steps: open *Setting* -> click *Update & Security* -> click *Windows Update* -> click *Pause updates for 7 days*
+4. Disable the automatic updates temporarily with the following steps: open *Settings* -> click *Windows Update* -> click *Check for updates* and wait for all updates to complete -> click *Pause for 1 week*
 
 5. Shutdown the Windows guest
 
@@ -68,6 +69,7 @@ There are three options provided, option 2 and 3 are in progress.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_guest/win11/install_multiple_windows.sh -n 2
     ```
 
@@ -112,6 +114,7 @@ There are three options provided, option 2 and 3 are in progress.
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_guest/win11/virsh_install_windows.sh
     ```
 
@@ -165,6 +168,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
 
@@ -174,6 +178,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 
     ```sh
     cd /home/$USER/sriov
+
     sudo ./scripts/setup_guest/win11/start_multiple_windows.sh -n 2
     ```
 
