@@ -162,7 +162,7 @@ There are three options provided, option 2 and 3 are in progress.
     ```shell
     # in the guest
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo .sriov_install_projects.sh
+    sudo ./sriov_install_projects.sh
     
     # After executing the above command, 3 folders will be generated
     # ./sriov/scripts/setup_guest/ubuntu/packages
