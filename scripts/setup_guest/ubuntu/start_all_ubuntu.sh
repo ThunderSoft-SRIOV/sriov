@@ -21,23 +21,34 @@ SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
 
 
 if [ ! -e  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu2.fd ] & [ ! -e $SRIOV_PATH/$INSTALL_DIR/ubuntu2.qcow2 ];then
+
+   echo "Copying ubuntu2.qcow2 file, Please be patient, it will take some time, file directory:${SRIOV_PATH}/${INSTALL_DIR}"
    cp -rf  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu2.fd
    cp -rf  $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2         $SRIOV_PATH/$INSTALL_DIR/ubuntu2.qcow2
+   
 fi 
 
 
 if [ ! -e $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu2.fd ] & [ ! -e $SRIOV_PATH/$INSTALL_DIR/ubuntu3.qcow2 ];then
+
+   echo "Copying ubuntu3.qcow2 file, Please be patient, it will take some time, file directory:${SRIOV_PATH}/${INSTALL_DIR}"
    cp -rf $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu3.fd
    cp -rf $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2         $SRIOV_PATH/$INSTALL_DIR/ubuntu3.qcow2
+
 fi 
 
 
 if [ ! -e $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu2.fd ] & [ ! -e $SRIOV_PATH/$INSTALL_DIR/ubuntu4.qcow2 ];then
+
+   echo "Copying ubuntu4.qcow2 file, Please be patient, it will take some time, file directory:${SRIOV_PATH}/${INSTALL_DIR}"
    cp -rf $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu4.fd
    cp -rf $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2         $SRIOV_PATH/$INSTALL_DIR/ubuntu4.qcow2
+   
+
 fi 
 
-
+echo " Done: Copy file completed"
+echo " Starting VM"
 
 #trap 'trap " " SIGTERM; kill 0; wait' SIGINT SIGTERM
 # Start Ubuntu multi guests

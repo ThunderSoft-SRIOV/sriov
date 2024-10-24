@@ -89,13 +89,11 @@ function check_network(){
                   "https://gstreamer.freedesktop.org/"
                   "https://gitlab.freedesktop.org/mesa/"
                   "https://gitlab.freedesktop.org/spice/"
-                  "https://gitlab.com/virt-viewer/"
-                  "https://download.qemu.org/")
+                  "https://gitlab.com/virt-viewer/")
     else
         websites=("https://github.com/"
                   "https://wayland.freedesktop.org/"
-                  "https://gstreamer.freedesktop.org/"
-                  "https://download.qemu.org/")
+                  "https://gstreamer.freedesktop.org/")
     fi
 
     set +e

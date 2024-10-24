@@ -820,37 +820,3 @@ else
     dpkg -i $INSTALL_DIR/$deb_name.deb
 fi
 cd $BUILD_DIR
-
-
-#Qemu
-#sudo apt-get purge -y "^qemu"
-#sudo apt-get autoremove -y
-
-#wget -N --no-check-certificate https://download.qemu.org/qemu-8.0.0.tar.xz
-#tar -xvf qemu-8.0.0.tar.xz
-#cd qemu-8.0.0
-#if [ -d "$WrkDir/sriov_patches/qemu/cve" ]; then
-#    git apply $WrkDir/sriov_patches/qemu/cve/*.patch
-#fi
-#if [ -d "$WrkDir/sriov_patches/qemu/qemu" ]; then
-#   git apply $WrkDir/sriov_patches/qemu/qemu/*.patch
-#fi
-#
-#./configure --target-list=x86_64-softmmu --enable-debug --disable-docs --disable-virglrenderer --prefix=/usr --enable-virtfs --enable-libusb --disable-debug-tcg --audio-drv-list=pa,alsa --enable-spice --enable-usb-redir
-#cd build
-#ninja && sudo ninja install
-#check_build_error
-#cd $BUILD_DIR
-#
-##qemu-ovmf
-#sudo apt-get -y install ovmf
-#mkdir -p $WrkDir/ovmf
-#cp /usr/share/OVMF/OVMF_CODE.fd $WrkDir/ovmf/OVMF_CODE.fd
-#cp /usr/share/OVMF/OVMF_VARS.fd $WrkDir/ovmf/OVMF_VARS.fd
-#cd $WrkDir
-#
-#
-#if [[ $IS_SOURCED -ne 1 ]]; then
-#    log_success
-#    echo "Done: \"$(realpath $0) $@\""
-#fi

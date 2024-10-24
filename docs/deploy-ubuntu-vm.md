@@ -39,7 +39,7 @@ There are three options provided, option 2 and 3 are in progress.
 
 ### Create Ubuntu VM Image Using `qemu`
 
-1. Execute the following command in the host
+1. Execute the following command on the host
 
     ```shell
     # Run install_ubuntu.sh to start Ubuntu guest installation.
@@ -48,7 +48,7 @@ There are three options provided, option 2 and 3 are in progress.
     sudo ./install_ubuntu.sh
     ```
     
-2. Then press enter and continue boot to Ubuntu as shown in the screen below.
+2. Then press enter and continue boot to Ubuntu as shown on the screen below.
 
     <img src=./media/ubuntusetup1.png width="80%">
 
@@ -56,7 +56,7 @@ There are three options provided, option 2 and 3 are in progress.
 
 ### Create Ubuntu VM Image Using `virt-manager`  (EXPERIMENTAL)
 
-1. Run `virt-manager` to start Ubuntu guest installation in the host.
+1. Run `virt-manager` to start Ubuntu guest installation on the host.
 
     ```shell
     virt-manager
@@ -76,7 +76,7 @@ There are three options provided, option 2 and 3 are in progress.
 1. Run `virsh_install_ubuntu.sh` to start ubuntu guest installation.
 
     ```sh
-    # in the host
+    # on the host
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./virsh_install_ubuntu.sh
     ```
@@ -98,15 +98,14 @@ There are three options provided, option 2 and 3 are in progress.
 
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
-1. In the host, start the ubuntu VM
+1. on the host, start the ubuntu VM
 
     ```shell
-    # host start ubuntu
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./start_ubuntu.sh
     ```
-
-2. Open a `Terminal` within the guest VM.
+    
+2. Open a `Terminal` withon the guest VM.
 
 3. Run the command shown below to upgrade Ubuntu software to the latest in the guest VM.
 
@@ -117,16 +116,16 @@ There are three options provided, option 2 and 3 are in progress.
     sudo apt -y install openssh-server
     ```
 
-4. Copy the following files and directories from the /home/idvuser/ directory of the host to the /home/guest/ directory of the guest.
+4. Copy the following files and directories from the /home/idvuser/ directory of the host to the /home/idvuser/ directory of the guest.
 
     ```shell
-    # in the host
+    # on the host
     cd /home/$USER/
     # `idvuser` is the user name of the virtual machine Ubuntu system, Please replace it yourself
     rsync -avz -e "ssh -p 2222" --exclude '*.qcow2' --exclude '*.iso' ./sriov idvuser@localhost:/home/idvuser/
     ```
 
-5. Run sriov_setup_kernel.sh in Ubuntu guest VM.
+5. Run sriov_setup_kernel.sh in Ubuntu guest VM. Please be patient, it will take a few hours
 
     ```shell
     # in the guest
@@ -160,7 +159,7 @@ There are three options provided, option 2 and 3 are in progress.
 8. Prepare and generate the install files in Ubuntu guest VM.
 
     ```shell
-    # in the guest
+    # on the guest
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./sriov_install_projects.sh
     
@@ -173,7 +172,7 @@ There are three options provided, option 2 and 3 are in progress.
 9. Run configure_ubuntu_guest.sh in Ubuntu guest VM.
 
     ```shell
-    # in the guest
+    # on the guest
     # This will install userspace libraries and tools
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./configure_ubuntu_guest.sh
@@ -326,8 +325,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 ### Launch From `virt-manager` (EXPERIMENTAL)
 
 1. Run `virt-manager` to launch ubuntu virtual machine
-2. 
-    ```sh
+    ```shell
     virt-manager
     ```
     <img src=./media/ubuntu_virt.png width="80%">
@@ -343,7 +341,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
 ## Advanced Guest VM Launch
 
    + Customize launch single VM
-      The `start_ubuntu.sh` script help in the host
+      The `start_ubuntu.sh` script help on the host
         ```shell
         cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
         sudo ./start_ubuntu.sh -h
@@ -372,7 +370,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
                   eg. "--display full-screen,connectors.0=HDMI-1,connectors.1=DP-1"
                 sub-param: max-outputs=[number of displays], set the max number of displays for guest vm, eg. "max-outputs=2"
                 sub-param: full-screen, switch the guest vm display to full-screen mode.
-                sub-param: show-fps, show fps info in the guest vm primary display.
+                sub-param: show-fps, show fps info on the guest vm primary display.
                 sub-param: connectors.[index]=[connector name], assign a connected display connector to guest vm.
                 sub-param: extend-abs-mode, enable extend absolute mode across all monitors.
                 sub-param: disable-host-input, disallow host's HID devices to control the guest.
@@ -394,20 +392,23 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
         ```
  + Launch Multiple Ubuntu Guest VMs
 
-   Run the `start_all_ubuntu.sh`
+   Run the `start_all_ubuntu.sh`, Please be patient, it will take some time
     ```shell
-    #in the host
+    #on the host
     cd /home/$USER/scripts/setup_guest/ubuntu/
     sudo ./start_all_ubuntu.sh
     ```
    
-    Script enablements:
-    1. It has created multiple copies of `OVMF` files.
-    2. It has created and setup the Ubuntu guest images. You can check that the images are named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and `ubuntu4.qcow2`.
-    3. Run to start 4 VMs.
-
+   After running start_all_ubuntu.sh, it will help you do the following:
+   
+   1. create multiple copies of `OVMF` files.
+   
+   2. create and setup the Ubuntu guest images. And the images will be named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and ubuntu4.qcow2`.
+   
+   3. start 4 VMs
+   
     Script content:
-
+   
     ```shell
     #!/bin/bash
     # Sample script to launch multiple Ubuntu guests
