@@ -86,9 +86,8 @@ fi
 
 if [[ $IS_SOURCED -ne 1 ]]; then
     log_clean
-    log_func check_network
 fi
-
+log_func check_network
 log_func sriov_install_packages
 
 if [[ $IS_SOURCED -ne 1 ]]; then

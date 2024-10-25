@@ -76,6 +76,15 @@ Two installation methods are provided, please choose one of them.
 
     sudo ./scripts/setup_host/sriov_setup_debian.sh
     ```
+4. Modify file `/etc/modprobe.d/*-blacklist.conf`,  save and exit
+
+    ```shell
+    sudo vi /etc/modprobe.d/*-blacklist.conf
+
+    # add the following command to the file
+
+    blacklist evbug
+    ```
 
 ### Setup Host From PPA
 
@@ -93,7 +102,7 @@ Two installation methods are provided, please choose one of them.
     sudo reboot
     ```
 
-3. Setup debian after reboot
+3. Install software after reboot
 
     ```sh
     cd /home/$USER/sriov

@@ -96,6 +96,12 @@ function check_network() {
         if [ $? -ne 0 ]; then
             echo "Error: Network issue, unable to access $site" | tee -a $WORK_DIR/$LOG_FILE
             echo "Error: Please check the internet access connection" | tee -a $WORK_DIR/$LOG_FILE
+            echo "Solution to Network Problems One: Add a Proxy"
+            echo "Proxy address depends on user environment. Usually by “export http_proxy=http://proxy_ip_url:proxy_port”"
+            echo "Proxy address depends on user environment. Usually by “export https_proxy=https://proxy_ip_url:proxy_port”"
+            echo "For example:"
+            echo "export http_proxy=http://proxy-domain.com:912"
+            echo "export https_proxy=http://proxy-domain.com:912"
             exit
         fi
     done

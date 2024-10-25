@@ -90,7 +90,7 @@ if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     del_existing_folder $INSTALL_DIR/neo
     del_existing_folder $INSTALL_DIR
 fi
-
+log_func check_network
 
 git config --global advice.detachedHead false
 # media

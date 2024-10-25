@@ -221,7 +221,7 @@ parse_arg "$@" || exit -1
 log_clean
 log_func check_os
 log_func check_kernel_version
-
+log_func check_network
 if [[ $IS_BSP -ne 1 ]]; then
     log_func check_network
 fi
