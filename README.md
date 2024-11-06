@@ -152,7 +152,7 @@ Two installation methods are provided, please choose one of them.
 
 3. Sign kernel with the MOK key
 
-    *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)
+    *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)*
 
     ```sh
     sbsign --key MOK.priv --cert MOK.pem "/boot/vmlinuz-6.6.32-debian-sriov" --output "/boot/vmlinuz-6.6.32-debian-sriov.tmp"
