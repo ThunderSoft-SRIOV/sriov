@@ -110,13 +110,15 @@ Two installation methods are provided, please choose one of them.
 
 1. Create a custom MOK
 
-    First make sure the key doesn't exist yet:
+    First of all you need to check if you have a key already with the following commands. 
 
     ```sh
     ls /var/lib/shim-signed/mok/
     ```
 
-    If you see the key there (consisting of the files `MOK.der`, `MOK.pem` and `MOK.priv`) then you can use these, rather than creating your own.
+    If the key (consisting of the files `MOK.der`, `MOK.pem` and `MOK.priv`) does exist, then you can just use them and no need to create yourself.
+
+    If the key does not exist, you can create your own according to the following steps:
 
     ```sh
     mkdir -p /var/lib/shim-signed/mok/
@@ -135,7 +137,7 @@ Two installation methods are provided, please choose one of them.
     sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
     ```
 
-    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+    At next reboot, the device firmware should launch its MOK manager and prompt the user to review the new key and confirm its enrollment using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
 
     To verify the MOK was loaded correctly:
 
@@ -148,7 +150,7 @@ Two installation methods are provided, please choose one of them.
     /var/lib/shim-signed/mok/MOK.der is already enrolled
     ```
 
-3. Using the key to sign kernel
+3. Sign kernel with the MOK key
 
     *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)
 

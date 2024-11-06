@@ -88,11 +88,17 @@ There are three options provided, option 2 and 3 are in progress.
 
     <img src=./media/virtsetup5.png width="80%">
 
-6. Choose firmware. Click *Firmware* and choose **UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd** -> click *Apply* -> click *Begin Installation*
+6. Choose firmware. Click *Firmware* and choose *UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd* -> click *Apply* -> click *Begin Installation*
 
     <img src=./media/virtsetup6.png width="80%">
 
-    Please follow the installation steps until the installation is successful.
+7. Add Hardware. Click *Add Hardware* -> click *PCI Host Device* -> Select *0000:00:02:1 Intel Corporation Alder Lake-P Integrated Graphics Controller* -> Click *Finish*
+
+    <img src=./media/virtsetup7.png width="80%">
+
+8. Now you can see that the PCI device has been added. Then click *Begin Installtion* to start installing Windows guest vm.
+
+    <img src=./media/virtsetup8.png width="80%">
 
 ### Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
