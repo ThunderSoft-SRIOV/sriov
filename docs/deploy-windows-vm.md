@@ -10,23 +10,26 @@
     1. [Create Windows VM Image](#create-windows-vm-image)
         1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
         1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager)
-        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh) (EXPERIMENTAL)
+        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh)
+    1. [Launch Windows VM](#launch-windows-vm)
+        1. [Launch From `qemu`](#launch-from-qemu)
+        1. [Launch From `virt-manager`](#launch-from-virt-manager)
+        1. [Launch From `virsh`](#launch-from-virsh)
     1. [Install Windows Update and Drivers](#install-windows-update-and-drivers)
         1. [Install Windows Update](#install-windows-update)
         1. [Install Intel Graphics Driver](#install-intel-graphics-driver)
         1. [Install SR-IOV Zero Copy Driver](#install-sr-iov-zero-copy-driver)
         1. [Install Virtio Driver](#install-virtio-driver)
-1. [Launch Windows VM](#launch-windows-vm)
 1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
-## Prerequisites
+# Prerequisites
 
 * Windows 11 ISO. In this example we are using Windows 11 version 23H2
 * [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
 * [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
 * [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
 
-## Preparation
+# Preparation
 
 1. Download Windows iso image and save the iso file as `windows.iso`
 2. Copy the `windows.iso` to setup directory
@@ -35,7 +38,7 @@
     mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
     ```
 
-## Installation
+# Installation
 
 ## Create Windows VM Image
 
@@ -43,14 +46,14 @@ There are three options provided, option 2 and 3 are in progress.
 
 * [Option 1] Create Windows VM Image Using `qemu`
 * [Option 2] Create Windows VM Image Using `virt-manager`
-* [Option 3] Create Windows VM Image Using `virsh` (EXPERIMENTAL)
+* [Option 3] Create Windows VM Image Using `virsh`
 
 ### Create Windows VM Image Using `qemu`
 
 1. Run `install_windows.sh` to start windows vm installation
 
     ```sh
-    # Start guest VM to install Windows
+    # Start installing Windows guest vm
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/install_windows.sh
     ```
@@ -62,6 +65,8 @@ There are three options provided, option 2 and 3 are in progress.
 3. Select *Drive 0 Unallocated Space* and click *Next* and wait for Windows installation to succeed
 
     <img src=./media/winsetup2.png width="80%">
+
+4. Shutdown the Windows guest
 
 ### Create Windows VM Image Using `virt-manager`
 
@@ -100,17 +105,33 @@ There are three options provided, option 2 and 3 are in progress.
 
     <img src=./media/virtsetup8.png width="80%">
 
-### Create Windows VM Image Using `virsh` (EXPERIMENTAL)
+9. Shutdown the Windows guest
 
-1. Run `virsh_install_windows.sh` to start idv guest installation.
+### Create Windows VM Image Using `virsh`
+
+1. Download [virtio win image](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) and copy it to `/tmp` directory
+
+2. Run `virsh_install_windows.sh` to start idv guest installation.
 
     ```sh
-    # Start guest VM to install Windows
+    # Start installing Windows guest vm
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/virsh_install_windows.sh
     ```
 
-2. Follow Windows installation steps until installation is successful.
+    If no driver is found, click *Load driver*
+    <img src=./media/virshinstall1.png width="80%">
+
+    Click *Browse*
+    <img src=./media/virshinstall2.png width="80%">
+
+    Select *virtio-win-0.1.221* -> *amd64* -> *win11*
+    <img src=./media/virshinstall3.png width="80%">
+
+    Click *Next* to start installing Windows vm
+    <img src=./media/virshinstall4.png width="80%">
+
+3. View all Windows guest vms after successful installation
 
     *Note: To view all guest vms, run `sudo virsh list --all`*
 
@@ -123,6 +144,58 @@ There are three options provided, option 2 and 3 are in progress.
     Id   Name    State
     ------------------------
     1    win11   running
+    ```
+
+5. Attach device
+
+    ```sh
+    # Replace <domain> with the vm domain name viewed in the above steps.
+    ./scripts/setup_guest/win11/virsh_attach_device.sh -n <domain>
+    ```
+
+6. Shutdown the Windows guest
+
+## Launch Windows VM
+
+There are three options provided, option 3 is in progress. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch From `qemu`
+* [Option 2] Launch From `virt-manager`
+* [Option 3] Launch From `virsh`
+
+### Launch From `qemu`
+
+1. Run `start_windows.sh` to launch windows virtual machine
+
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/win11/start_windows.sh
+    ```
+
+### Launch From `virt-manager`
+
+1. Run `virt-manager` to launch windows virtual machine
+
+    ```sh
+    virt-manager
+    ```
+
+    <img src=./media/virtstart1.png width="80%">
+
+### Launch From `virsh`
+
+1. Run `virsh` to launch windows virtual machine
+
+    ```sh
+    # Replace <domain> with the vm domain name viewed by `sudo virsh list --all`
+    sudo virsh start <domain>
+    ```
+
+2. Run `virt-viewer` to start the GUI
+
+    ```sh
+    # Replace <domain> with the vm domain name viewed by `sudo virsh list --all`
+    sudo virt-viewer <domain>
     ```
 
 ## Install Windows Update and Drivers
@@ -190,42 +263,7 @@ automatically.
     D:\> Start-Process .\guest-agent\qemu-ga-x86_64.msi
     ```
 
-## Launch Windows VM
-
-There are three options provided, option 3 is in progress. Choose the corresponding launch method according to your installation method.
-
-* [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager`
-* [Option 3] Launch From `virsh` (EXPERIMENTAL)
-
-### Launch From `qemu`
-
-1. Run `start_windows.sh` to launch windows virtual machine
-
-    ```sh
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/start_windows.sh
-    ```
-
-### Launch From `virt-manager`
-
-1. Run `virt-manager` to launch windows virtual machine
-
-    ```sh
-    virt-manager
-    ```
-
-    <img src=./media/virtstart1.png width="80%">
-
-### Launch From `virsh` (EXPERIMENTAL)
-
-1. Run `virsh` to launch windows virtual machine
-
-    ```sh
-    sudo virsh start win11
-    ```
-
-## Advanced Guest VM Launch
+# Advanced Guest VM Launch
 
 + Customize launch single VM
 
@@ -262,7 +300,7 @@ There are three options provided, option 3 is in progress. Choose the correspond
                 sub-param: show-fps, show fps info on the guest vm primary display.
                 sub-param: connectors.[index]=[connector name], assign a connected display connector to guest vm.
                 sub-param: extend-abs-mode, enable extend absolute mode across all monitors.
-                sub-param: disable-host-input, disallow host's HID devices to control the guest.
+                sub-param: disable-host-input, disallow host\'s HID devices to control the guest.
         --enable-pwr-ctrl option allow guest power control from host via qga socket.
         --spice enable SPICE feature with sub-parameters,
                   eg. "--spice display=egl-headless,port=3002,disable-ticketing=on,spice-audio=on,usb-redir=1"
@@ -278,7 +316,7 @@ There are three options provided, option 3 is in progress. Choose the correspond
                 sub-param: server=[audio server], set audio server, eg. "unix:/run/user/1000/pulse/native"
                 sub-param: sink=[audio sink], set audio stream routing. Use "pacmd list-sinks" to find available audio sinks
                 sub-param: timer-period=[period], set timer period in microseconds (us), eg. "timer-period=5000"
-        ```
+    ```
 
 + Launch Multiple Windows Guest VMs
 
