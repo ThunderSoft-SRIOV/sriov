@@ -122,7 +122,7 @@ There are three options provided, option 2 and 3 are in progress.
     If no driver is found, click *Load driver*
     <img src=./media/virshinstall1.png width="80%">
 
-    Click *Browse*
+    Click *Browse* to search for driver
     <img src=./media/virshinstall2.png width="80%">
 
     Select *virtio-win-0.1.221* -> *amd64* -> *win11*
