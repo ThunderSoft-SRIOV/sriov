@@ -42,7 +42,7 @@ The key benefits of Intel Graphics SR-IOV are:
 
     ```sh
     sudo apt update
-    sudo apt install -y git
+    sudo apt install -y git vim
     ```
 
 2. Clone from github
@@ -74,7 +74,7 @@ Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host fr
 1. Modify file `/etc/modprobe.d/*-blacklist.conf`, save and exit
 
     ```shell
-    sudo vi /etc/modprobe.d/*-blacklist.conf
+    sudo vim /etc/modprobe.d/*-blacklist.conf
 
     # add the following line to the file
     blacklist evbug

@@ -40,14 +40,14 @@
     If the key does not exist, you can create your own according to the following steps:
 
     ```sh
-    mkdir -p /var/lib/shim-signed/mok/
+    sudo mkdir -p /var/lib/shim-signed/mok/
 
     cd /var/lib/shim-signed/mok/
 
     # Replace "/CN=My Name/" to your own information, eg. "/CN=ThunderSoft/"
-    openssl req -nodes -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -days 3650 -subj "/CN=My Name/"
+    sudo openssl req -nodes -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -days 3650 -subj "/CN=My Name/"
 
-    openssl x509 -inform der -in MOK.der -out MOK.pem
+    sudo openssl x509 -inform der -in MOK.der -out MOK.pem
     ```
 
 2. Enroll the key
@@ -74,7 +74,7 @@
     *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)*
 
     ```sh
-    sbsign --key MOK.priv --cert MOK.pem "/boot/vmlinuz-6.6.32-debian-sriov" --output "/boot/vmlinuz-6.6.32-debian-sriov.tmp"
+    sudo sbsign --key MOK.priv --cert MOK.pem "/boot/vmlinuz-6.6.32-debian-sriov" --output "/boot/vmlinuz-6.6.32-debian-sriov.tmp"
     sudo mv "/boot/vmlinuz-6.6.32-debian-sriov.tmp" "/boot/vmlinuz-6.6.32-debian-sriov"
     ```
 
