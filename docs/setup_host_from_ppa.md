@@ -5,20 +5,32 @@
 
 # Install Software Packages
 
-1. Install kernel packages
+1. Make sure you have disabled Secure Boot
+
+    ```sh
+    sudo mokutil --sb-state
+    ```
+
+    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. And you need to disable Secure Boot by following steps: 
+    1) Reboot the system
+    2) Enter the BIOS configuration interface
+    3) Select *Security* -> *Secure Boot* -> *Disabled*
+    4) Save and exit
+
+2. Install kernel packages
 
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
     ```
 
-2. Reboot the host
+3. Reboot the host
 
     ```sh
     sudo reboot
     ```
 
-3. Install software after reboot
+4. Install software after reboot
 
     ```sh
     cd /home/$USER/sriov
@@ -37,17 +49,24 @@
 2. Enroll the key
 
     ```sh
-    cd /home/$USER/sriov
-    sudo mokutil --import MOK.der
+    sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
     ```
 
-    At next reboot, the device firmware should launch its MOK manager and prompt the user to review the new key and confirm its enrollment using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+    *Note: You will be prompted here to enter a one-time password, please remember the password*
 
-    To verify the MOK was loaded correctly:
+    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+
+    <img src=./media/secureboot1.png width="80%">
+    <img src=./media/secureboot2.png width="80%">
+    <img src=./media/secureboot3.png width="80%">
+    <img src=./media/secureboot4.png width="80%">
+    <img src=./media/secureboot5.png width="80%">
+    <img src=./media/secureboot6.png width="80%">
+
+    To verify the MOK was loaded correctly after reboot:
 
     ```sh
-    cd /home/$USER/sriov
-    sudo mokutil --test-key MOK.der
+    sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der
     ```
 
     output
@@ -61,7 +80,7 @@
     sudo mokutil --sb-state
     ```
 
-    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. Otherwise, you need to enable Secure Boot by following steps: 
+    If system returns **SecureBoot disabled**, you need to enable Secure Boot by following steps: 
     1) Reboot the system
     2) Enter the BIOS configuration interface
     3) Select *Security* -> *Secure Boot* -> *Enabled*

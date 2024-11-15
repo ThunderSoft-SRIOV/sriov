@@ -248,7 +248,7 @@ automatically.
 ### Install Virtio Driver
 
 1. Download [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) from browser.
-2. Double click the iso file in File Explorerto mount it.
+2. Double click the iso file in File Explorer to mount it.
 3. Search for **Windows PowerShell** and run it as an administrator.
 4. Navigate to the folder of the extracted files.
 5. Use the following command to install VIOSerial.
