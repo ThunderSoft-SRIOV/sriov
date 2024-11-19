@@ -32,7 +32,7 @@ if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ];then
  	echo "not exists file "/usr/share/ovmf""
  	sudo apt update
 	sudo apt -y -t bookworm-backports upgrade 
-	sudo apt install -y -t bookworm-backports omvf
+	sudo apt install -y -t bookworm-backports ovmf
  	exit
 elif [ ! -f $SRIOV_PATH/$INSTALL_DIR/OVMF_CODE.fd ];then
 	
