@@ -1,6 +1,7 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
 1. [Install Software Packages](#install-software-packages)
+1. [Check The Software Package Version](#check-the-software-package-version)
 1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
 
 # Install Software Packages
@@ -35,6 +36,79 @@
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_host/sriov_setup_debian.sh
+    ```
+
+# Check The Software Package Version
+
+1. Check the kernel version
+
+    ```shell
+    uname -r
+    ```
+
+    Example output
+    ```shell
+    6.6.32-debian-sriov
+    ```
+
+2. Check the version of all software packages
+
+    ```shell
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_host/sriov_check_version.sh
+    ```
+
+    Example output
+    ```shell
+    gmmlib-sriov                        2410-1
+    libdrm-amdgpu1:amd64                2.4.123-1~bpo12+1
+    libdrm-common                       2.4.123-1~bpo12+1
+    libdrm-dev:amd64                    2.4.123-1~bpo12+1
+    libdrm-intel1:amd64                 2.4.123-1~bpo12+1
+    libdrm-nouveau2:amd64               2.4.123-1~bpo12+1
+    libdrm-radeon1:amd64                2.4.123-1~bpo12+1
+    libdrm-sriov                        2410-1
+    libdrm2:amd64                       2.4.123-1~bpo12+1
+    libva-drm2:amd64                    2.17.0-1
+    libva-sriov                         2410-1
+    libva-utils-sriov                   2410-1
+    libva-x11-2:amd64                   2.17.0-1
+    libva2:amd64                        2.17.0-1
+    libvariable-magic-perl              0.63-1+b1
+    libva-utils-sriov                   2410-1
+    media-driver-sriov                  2410-1
+    libegl-mesa0:amd64                  24.2.4-1~bpo12+1
+    libegl1-mesa:amd64                  22.3.6-1+deb12u1
+    libegl1-mesa-dev:amd64              24.2.4-1~bpo12+1
+    libgl1-mesa-dri:amd64               24.2.4-1~bpo12+1
+    libglapi-mesa:amd64                 24.2.4-1~bpo12+1
+    libglu1-mesa:amd64                  9.0.2-1.1
+    libglx-mesa0:amd64                  24.2.4-1~bpo12+1
+    mesa-common-dev:amd64               24.2.4-1~bpo12+1
+    mesa-libgallium:amd64               24.2.4-1~bpo12+1
+    mesa-sriov                          2410-1
+    mesa-utils                          8.5.0-1
+    mesa-utils-bin:amd64                8.5.0-1
+    mesa-va-drivers:amd64               24.2.4-1~bpo12+1
+    mesa-vdpau-drivers:amd64            24.2.4-1~bpo12+1
+    mesa-vulkan-drivers:amd64           24.2.4-1~bpo12+1
+    onevpl-gpu-sriov                    2410-1
+    onevpl-gpu-sriov                    2410-1
+    onevpl-sriov                        2410-1
+    libspice-client-glib-2.0-8:amd64    0.42-1
+    libspice-client-gtk-3.0-5:amd64     0.42-1
+    spice-client                        2410-1
+    spice-client-glib-usb-acl-helper    0.42-1
+    libspice-protocol-dev               0.14.3-1
+    spice-protocol                      2410-1
+    libspice-server-dev:amd64           0.15.1-1
+    libspice-server1:amd64              0.15.1-1
+    spice-server                        2410-1
+    intel-igc-core                      1.0.13700.14
+    intel-igc-opencl                    1.0.13700.14
+    intel-level-zero-gpu                1.3.26032.30
+    intel-opencl-icd                    23.13.26032.30
+    libigdgmm12:amd64                   22.3.3+ds1-1
     ```
 
 # Enable UEFI Secure Boot
