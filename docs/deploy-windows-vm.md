@@ -106,7 +106,7 @@ There are three options provided, option 3 is in progress. Choose the correspond
 3. Launch the windows vm
     ```sh
     cd /home/$USER/sriov/virsh_enable/
-    sudo ./launch_multios.sh -f -d windows11 -g sriov windows11
+    sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
     ```
 
 ## Install Windows Update and Drivers
