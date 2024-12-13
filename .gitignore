@@ -2,3 +2,4 @@
 packages/*
 *_build/*
 *_install/*
+install_dir/

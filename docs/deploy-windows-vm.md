@@ -4,23 +4,23 @@
 
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Prerequisites](#prerequisites)
-1. [Preparation](#preparation)
-1. [Installation](#installation)
-    1. [Create Windows VM Image](#create-windows-vm-image)
-        1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
-        1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager)
-        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh)
-    1. [Launch Windows VM](#launch-windows-vm)
-        1. [Launch From `qemu`](#launch-from-qemu)
-        1. [Launch From `virt-manager`](#launch-from-virt-manager)
-        1. [Launch From `virsh`](#launch-from-virsh)
-    1. [Install Windows Update and Drivers](#install-windows-update-and-drivers)
-        1. [Install Windows Update](#install-windows-update)
-        1. [Install Intel Graphics Driver](#install-intel-graphics-driver)
-        1. [Install SR-IOV Zero Copy Driver](#install-sr-iov-zero-copy-driver)
-        1. [Install Virtio Driver](#install-virtio-driver)
-1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+- [Microsoft Windows 11 VM](#microsoft-windows-11-vm)
+- [Table of Contents](#table-of-contents)
+- [Prerequisites](#prerequisites)
+- [Preparation](#preparation)
+- [Installation](#installation)
+  - [Create Windows VM Image](#create-windows-vm-image)
+    - [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
+  - [Launch Windows VM](#launch-windows-vm)
+    - [Launch VM Using `qemu`](#launch-vm-using-qemu)
+    - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
+    - [Launch VM Using `libvirt`](#launch-vm-using-libvirt)
+  - [Install Windows Update and Drivers](#install-windows-update-and-drivers)
+    - [Install Windows Update](#install-windows-update)
+    - [Install Intel Graphics Driver](#install-intel-graphics-driver)
+    - [Install SR-IOV Zero Copy Driver](#install-sr-iov-zero-copy-driver)
+    - [Install Virtio Driver](#install-virtio-driver)
+- [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
 # Prerequisites
 
@@ -42,12 +42,6 @@
 
 ## Create Windows VM Image
 
-There are three options provided, option 2 and 3 are in progress.
-
-* [Option 1] Create Windows VM Image Using `qemu`
-* [Option 2] Create Windows VM Image Using `virt-manager`
-* [Option 3] Create Windows VM Image Using `virsh`
-
 ### Create Windows VM Image Using `qemu`
 
 1. Run `install_windows.sh` to start windows vm installation
@@ -68,93 +62,6 @@ There are three options provided, option 2 and 3 are in progress.
 
 4. Shutdown the Windows guest
 
-### Create Windows VM Image Using `virt-manager`
-
-1. Run `virt-manager` to start idv guest installation.
-
-    ```sh
-    virt-manager
-    ```
-
-2. Choose ISO install media
-
-    <img src=./media/virtsetup1.png width="80%">
-    <img src=./media/virtsetup2.png width="80%">
-
-3. Choose memory and cpu settings
-
-    <img src=./media/virtsetup3.png width="80%">
-
-4. Create a disk image for virtual machine
-
-    <img src=./media/virtsetup4.png width="80%">
-
-5. Customize configuration. *Customize configuration before install* -> click *Finish* 
-
-    <img src=./media/virtsetup5.png width="80%">
-
-6. Choose firmware. Click *Firmware* and choose *UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd* -> click *Apply* -> click *Begin Installation*
-
-    <img src=./media/virtsetup6.png width="80%">
-
-7. Add Hardware. Click *Add Hardware* -> click *PCI Host Device* -> Select *0000:00:02:1 Intel Corporation Alder Lake-P Integrated Graphics Controller* -> Click *Finish*
-
-    <img src=./media/virtsetup7.png width="80%">
-
-8. Now you can see that the PCI device has been added. Then click *Begin Installtion* to start installing Windows guest vm.
-
-    <img src=./media/virtsetup8.png width="80%">
-
-9. Shutdown the Windows guest
-
-### Create Windows VM Image Using `virsh`
-
-1. Download [virtio win image](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) and copy it to `/tmp` directory
-
-2. Run `virsh_install_windows.sh` to start idv guest installation.
-
-    ```sh
-    # Start installing Windows guest vm
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/virsh_install_windows.sh
-    ```
-
-    If no driver is found, click *Load driver*
-    <img src=./media/virshinstall1.png width="80%">
-
-    Click *Browse* to search for driver
-    <img src=./media/virshinstall2.png width="80%">
-
-    Select *virtio-win-0.1.221* -> *amd64* -> *win11*
-    <img src=./media/virshinstall3.png width="80%">
-
-    Click *Next* to start installing Windows vm
-    <img src=./media/virshinstall4.png width="80%">
-
-3. View all Windows guest vms after successful installation
-
-    *Note: To view all guest vms, run `sudo virsh list --all`*
-
-    ```sh
-    sudo virsh list --all
-    ```
-
-    output:
-    ```sh
-    Id   Name    State
-    ------------------------
-    1    win11   running
-    ```
-
-5. Attach device
-
-    ```sh
-    # Replace <domain> with the vm domain name viewed in the above steps.
-    ./scripts/setup_guest/win11/virsh_attach_device.sh -n <domain>
-    ```
-
-6. Shutdown the Windows guest
-
 ## Launch Windows VM
 
 There are three options provided, option 3 is in progress. Choose the corresponding launch method according to your installation method.
@@ -163,7 +70,7 @@ There are three options provided, option 3 is in progress. Choose the correspond
 * [Option 2] Launch From `virt-manager`
 * [Option 3] Launch From `virsh`
 
-### Launch From `qemu`
+### Launch VM Using `qemu`
 
 1. Run `start_windows.sh` to launch windows virtual machine
 
@@ -172,7 +79,7 @@ There are three options provided, option 3 is in progress. Choose the correspond
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
 
-### Launch From `virt-manager`
+### Launch VM Using `virt-manager`
 
 1. Run `virt-manager` to launch windows virtual machine
 
@@ -182,20 +89,24 @@ There are three options provided, option 3 is in progress. Choose the correspond
 
     <img src=./media/virtstart1.png width="80%">
 
-### Launch From `virsh`
+### Launch VM Using `libvirt`
 
-1. Run `virsh` to launch windows virtual machine
+1. Setup libvirt on host
 
     ```sh
-    # Replace <domain> with the vm domain name viewed by `sudo virsh list --all`
-    sudo virsh start <domain>
+    cd /home/$USER/sriov/virsh_enable/host_setup/debian
+    ./setup_libvirt.sh
     ```
 
-2. Run `virt-viewer` to start the GUI
-
+2. Reboot the system
     ```sh
-    # Replace <domain> with the vm domain name viewed by `sudo virsh list --all`
-    sudo virt-viewer <domain>
+    sudo reboot
+    ```
+
+3. Launch the windows vm
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+    sudo ./launch_multios.sh -f -d windows11 -g sriov windows11
     ```
 
 ## Install Windows Update and Drivers

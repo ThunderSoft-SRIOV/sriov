@@ -1,8 +1,9 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Install Software Packages](#install-software-packages)
-1. [Check The Software Package Version](#check-the-software-package-version)
-1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
+- [Table of Contents](#table-of-contents)
+- [Install Software Packages](#install-software-packages)
+- [Check The Software Package Version](#check-the-software-package-version)
+- [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
 
 # Install Software Packages
 
@@ -169,6 +170,7 @@
     *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)*
 
     ```sh
+    cd /var/lib/shim-signed/mok/
     sudo sbsign --key MOK.priv --cert MOK.pem "/boot/vmlinuz-6.6.32-debian-sriov" --output "/boot/vmlinuz-6.6.32-debian-sriov.tmp"
     sudo mv "/boot/vmlinuz-6.6.32-debian-sriov.tmp" "/boot/vmlinuz-6.6.32-debian-sriov"
     ```
