@@ -75,7 +75,7 @@
       <model type="e1000e"/>
     </interface>
     -->
-     <interface type="user">
+    <interface type="user">
       <link state="up"/>
       <mac address="52:54:00:ab:cd:23"/>
       <model type="e1000e"/>
@@ -109,6 +109,12 @@
       <model type="virtio" heads="1" blob="on"/>
       <driver name="qemu"/>
     </video>
+    <hostdev mode='subsystem' type='usb'>
+      <source>
+        <vendor id='0x047f'/>
+        <product id='0xc056'/>
+      </source>
+    </hostdev>
   </devices>
   <qemu:commandline>
     <!-- enable blob for virtio-vga-->

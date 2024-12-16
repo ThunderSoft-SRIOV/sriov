@@ -1,17 +1,18 @@
 # Guest Ubuntu Virtual Machine
 
 # Table of Contents
-1. [Prerequisites](#prerequisites)
-1. [Preparation](#preparation)
-1. [Installation](#installation)
-    1. [Create Ubuntu VM Image](#create-ubuntu-vm-image)
-        1. [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
-        1. [Create Ubuntu VM Image Using `virt-manager`](#create-ubuntu-vm-image-using-virt-manager) (EXPERIMENTAL)
-        1. [Create Ubuntu VM Image Using `virsh`](#create-ubuntu-vm-image-using-virsh) (EXPERIMENTAL)
-    1. [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-1. [Check the installation program](#check-the-installation-program)
-1. [Launch Ubuntu VM](#launch-ubuntu-vm)
-1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+- [Prerequisites](#prerequisites)
+- [Preparation](#preparation)
+- [Installation](#installation)
+    - [Create Ubuntu VM Image](#create-ubuntu-vm-image)
+        - [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
+    - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+  - [Check the installation program](#check-the-installation-program)
+  - [Launch Ubuntu VM](#launch-ubuntu-vm)
+    - [Launch VM Using `qemu`](#launch-vm-using-qemu)
+    - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
+    - [Launch VM Using `libvirt`](#launch-vm-using-libvirt)
+- [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
 ## Prerequisites
 
@@ -53,48 +54,6 @@ There are three options provided, option 2 and 3 are in progress.
     <img src=./media/ubuntusetup1.png width="80%">
 
 3. Run Ubuntu OS installation to install into the guest image and shutdown after completion, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-
-### Create Ubuntu VM Image Using `virt-manager`  (EXPERIMENTAL)
-
-1. Run `virt-manager` to start Ubuntu guest installation on the host.
-
-    ```shell
-    virt-manager
-    ```
-
-2. Select image and follow Ubuntu installation steps until installation is successful.
-
-    <img src=./media/setup_ubuntu1.png width="80%">
-    <img src=./media/virtsetup3.png width="80%">
-    <img src=./media/virtsetup4.png width="80%">
-    <img src=./media/setup_ubuntu2.png width="80%">
-
-3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-
-### Create Ubuntu VM Image Using `virsh`  (EXPERIMENTAL)
-
-1. Run `virsh_install_ubuntu.sh` to start ubuntu guest installation.
-
-    ```sh
-    # on the host
-    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./virsh_install_ubuntu.sh
-    ```
-
-2. Follow ubuntu installation steps until installation is successful.
-
-    ```sh
-    sudo virsh list --all
-    ```
-
-    Output
-    ```sh
-    Id   Name    State
-    ------------------------
-    1    ubuntu   running
-    ```
-
-3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
@@ -310,10 +269,10 @@ There are three options provided, option 2 and 3 are in progress.
 There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
 
 * [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager` (EXPERIMENTAL)
-* [Option 3] Launch From `virsh` (EXPERIMENTAL)
+* [Option 2] Launch From `virt-manager`
+* [Option 3] Launch From `virsh`
 
-### Launch From `qemu`
+### Launch VM Using `qemu` 
 
 1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
 
@@ -322,7 +281,7 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
     sudo ./start_ubuntu.sh
     ```
 
-### Launch From `virt-manager` (EXPERIMENTAL)
+### Launch VM Using `virt-manager`
 
 1. Run `virt-manager` to launch ubuntu virtual machine
     ```shell
@@ -330,14 +289,25 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
     ```
     <img src=./media/ubuntu_virt.png width="80%">
 
-### Launch From `virsh` (EXPERIMENTAL)
+### Launch VM Using `libvirt`
 
-1. Run `virsh` to launch ubuntu  virtual machine
+1. Setup libvirt on host
 
     ```sh
-    sudo virsh start ubuntu
+    cd /home/$USER/sriov/virsh_enable/host_setup/debian
+    ./setup_libvirt.sh
     ```
 
+2. Reboot the system
+    ```sh
+    sudo reboot
+    ```
+
+3. Launch the ubuntu vm
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+    sudo ./guest_setup/ubuntu_multios.sh -f -d ubuntu -g sriov ubuntu
+    ```
 ## Advanced Guest VM Launch
 
 + Customize launch single VM
