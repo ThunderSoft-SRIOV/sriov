@@ -1,11 +1,11 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Install Software Packages](#install-software-packages)
-- [Check The Software Package Version](#check-the-software-package-version)
-- [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
+1. [Disable UEFI Secure Boot](#disable-uefi-secure-boot)
+1. [Install Software Packages](#install-software-packages)
+1. [Check The Software Package Version](#check-the-software-package-version)
+1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
 
-# Install Software Packages
+# Disable UEFI Secure Boot
 
 1. Make sure you have disabled Secure Boot
 
@@ -19,20 +19,22 @@
     3) Select *Security* -> *Secure Boot* -> *Disabled*
     4) Save and exit
 
-2. Install kernel packages
+# Install Software Packages
+
+1. Install kernel packages
 
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_host/sriov_setup_kernel.sh
     ```
 
-3. Reboot the host
+2. Reboot the host
 
     ```sh
     sudo reboot
     ```
 
-4. Install software after reboot
+3. Install software after reboot
 
     ```sh
     cd /home/$USER/sriov

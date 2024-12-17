@@ -13,14 +13,18 @@
     - [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
   - [Launch Windows VM](#launch-windows-vm)
     - [Launch VM Using `qemu`](#launch-vm-using-qemu)
-    - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
-    - [Launch VM Using `libvirt`](#launch-vm-using-libvirt)
+    - [Launch VM Using `virsh`](#launch-vm-using-virsh)
   - [Install Windows Update and Drivers](#install-windows-update-and-drivers)
     - [Install Windows Update](#install-windows-update)
     - [Install Intel Graphics Driver](#install-intel-graphics-driver)
     - [Install SR-IOV Zero Copy Driver](#install-sr-iov-zero-copy-driver)
     - [Install Virtio Driver](#install-virtio-driver)
+  - [Post Install Launch](#post-install-launch)
+    - [Launch VM With `qemu`](#launch-vm-with-qemu)
+    - [Launch VM With `virsh`](#launch-vm-with-virsh)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+  - [Launch Multiple Windows Guest VMs](#launch-multiple-windows-guest-vms)
+    - [Launch Multiple Windows Guest VMs Using `qemu`](#launch-multiple-windows-guest-vms-using-qemu)
 
 # Prerequisites
 
@@ -64,11 +68,10 @@
 
 ## Launch Windows VM
 
-There are three options provided, option 3 is in progress. Choose the corresponding launch method according to your installation method.
+There are two options provided. Choose the corresponding launch method according to your installation method.
 
-* [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager`
-* [Option 3] Launch From `virsh`
+* [Option 1] Launch VM Using `qemu`
+* [Option 2] Launch VM Using `virsh`
 
 ### Launch VM Using `qemu`
 
@@ -79,33 +82,34 @@ There are three options provided, option 3 is in progress. Choose the correspond
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
 
-### Launch VM Using `virt-manager`
-
-1. Run `virt-manager` to launch windows virtual machine
-
-    ```sh
-    virt-manager
-    ```
-
-    <img src=./media/virtstart1.png width="80%">
-
-### Launch VM Using `libvirt`
+### Launch VM Using `virsh`
 
 1. Setup libvirt on host
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/host_setup/debian
+
+    # load br_netfilter module
+    sudo modprobe br_netfilter
+
     ./setup_libvirt.sh
     ```
 
 2. Reboot the system
+
     ```sh
     sudo reboot
     ```
 
 3. Launch the windows vm
+
     ```sh
     cd /home/$USER/sriov/virsh_enable/
+
+    # init windows guest vm
+    ./guest_setup/idv.sh init windows11
+
+    # launch vm
     sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
     ```
 
@@ -174,6 +178,36 @@ automatically.
     D:\> Start-Process .\guest-agent\qemu-ga-x86_64.msi
     ```
 
+### Post Install Launch
+
+There are two options provided. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch VM With `qemu`
+* [Option 2] Launch VM With `virsh`
+
+### Launch VM With `qemu`
+
+1. Run `start_windows.sh` to launch windows virtual machine
+
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/win11/start_windows.sh
+    ```
+
+### Launch VM With `virsh`
+
+1. Launch the windows vm
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init windows guest vm
+    ./guest_setup/idv.sh init windows11
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
+    ```
+
 # Advanced Guest VM Launch
 
 + Customize launch single VM
@@ -229,9 +263,11 @@ automatically.
                 sub-param: timer-period=[period], set timer period in microseconds (us), eg. "timer-period=5000"
     ```
 
-+ Launch Multiple Windows Guest VMs
+## Launch Multiple Windows Guest VMs
 
-    Run the `start_all_windows.sh`, Please be patient, it will take some time
+### Launch Multiple Windows Guest VMs Using `qemu`
+
+1. Run the `start_all_windows.sh`, Please be patient, it will take some time
 
     ```shell
     # on the host
