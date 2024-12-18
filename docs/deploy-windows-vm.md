@@ -4,50 +4,56 @@
 
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Prerequisites](#prerequisites)
-1. [Preparation](#preparation)
-1. [Installation](#installation)
-    1. [Create Windows VM Image](#create-windows-vm-image)
-        1. [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
-        1. [Create Windows VM Image Using `virt-manager`](#create-windows-vm-image-using-virt-manager) (EXPERIMENTAL)
-        1. [Create Windows VM Image Using `virsh`](#create-windows-vm-image-using-virsh) (EXPERIMENTAL)
-    1. [Install Drivers](#install-drivers)
-1. [Launch Windows VM](#launch-windows-vm)
+- [Microsoft Windows 11 VM](#microsoft-windows-11-vm)
+- [Table of Contents](#table-of-contents)
+- [Prerequisites](#prerequisites)
+- [Preparation](#preparation)
+- [Installation](#installation)
+  - [Create Windows VM Image](#create-windows-vm-image)
+    - [Create Windows VM Image Using `qemu`](#create-windows-vm-image-using-qemu)
+  - [Launch Windows VM](#launch-windows-vm)
+    - [Launch VM Using `qemu`](#launch-vm-using-qemu)
+    - [Launch VM Using `virsh`](#launch-vm-using-virsh)
+  - [Install Windows Update and Drivers](#install-windows-update-and-drivers)
+    - [Install Windows Update](#install-windows-update)
+    - [Install Intel Graphics Driver](#install-intel-graphics-driver)
+    - [Install SR-IOV Zero Copy Driver](#install-sr-iov-zero-copy-driver)
+    - [Install Virtio Driver](#install-virtio-driver)
+  - [Post Install Launch](#post-install-launch)
+    - [Launch VM With `qemu`](#launch-vm-with-qemu)
+    - [Launch VM With `virsh`](#launch-vm-with-virsh)
+    - [Launch VM With `virt-manager`](#launch-vm-with-virt-manager)
+- [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+  - [Launch Multiple Windows Guest VMs](#launch-multiple-windows-guest-vms)
+    - [Launch Multiple Windows Guest VMs Using `qemu`](#launch-multiple-windows-guest-vms-using-qemu)
 
-## Prerequisites
+# Prerequisites
 
 * Windows 11 ISO. In this example we are using Windows 11 version 23H2
-* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
-* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
-* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
+* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432) version 31.0.101.5081
+* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927) version 4.0.0.1447
+* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) version 0.1.221
 
-## Preparation
+# Preparation
 
 1. Download Windows iso image and save the iso file as `windows.iso`
-
 2. Copy the `windows.iso` to setup directory
 
     ```sh
     mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
     ```
 
-## Installation
+# Installation
 
 ## Create Windows VM Image
-
-There are three options provided, option 2 and 3 are in progress.
-
-* [Option 1] Create Windows VM Image Using `qemu`
-* [Option 2] Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
-* [Option 3] Create Windows VM Image Using `virsh` (EXPERIMENTAL)
 
 ### Create Windows VM Image Using `qemu`
 
 1. Run `install_windows.sh` to start windows vm installation
 
     ```sh
+    # Start installing Windows guest vm
     cd /home/$USER/sriov
-
     sudo ./scripts/setup_guest/win11/install_windows.sh
     ```
 
@@ -59,149 +65,234 @@ There are three options provided, option 2 and 3 are in progress.
 
     <img src=./media/winsetup2.png width="80%">
 
-4. Disable the automatic updates temporarily with the following steps: open *Settings* -> click *Windows Update* -> click *Check for updates* and wait for all updates to complete -> click *Pause for 1 week*
-
-5. Shutdown the Windows guest
-
-6. [Optional] Install multiple windows VMs
-
-    Specify the `install_multiple_windows.sh -n N`, it will install N (1-4) virtual machines as you needed.
-
-
-    ```sh
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/install_multiple_windows.sh -n 2
-    ```
-
-### Create Windows VM Image Using `virt-manager` (EXPERIMENTAL)
-
-1. Run `virt-manager` to start idv guest installation.
-
-    ```sh
-    virt-manager
-    ```
-
-2. Choose ISO install media
-
-    <img src=./media/virtsetup1.png width="80%">
-    <img src=./media/virtsetup2.png width="80%">
-
-3. Choose memory and cpu settings
-
-    <img src=./media/virtsetup3.png width="80%">
-
-4. Create a disk image for virtual machine
-
-    <img src=./media/virtsetup4.png width="80%">
-
-5. Customize configuration. *Customize configuration before install* -> click *Finish* 
-
-    <img src=./media/virtsetup5.png width="80%">
-
-6. Choose firmware. Click *Firmware* and choose **UEFI X86_64: /usr/share/OVMF/OVMF_CODE_4M.ms.fd** -> click *Apply* -> click *Begin Installation*
-
-    <img src=./media/virtsetup6.png width="80%">
-
-    Please follow the installation steps until the installation is successful.
-
-7. Shutdown the Windows guest
-
-8. [Optional] Install Multiple idv Guest VMs. Please refer to the steps 2 to 5
-
-### Create Windows VM Image Using `virsh` (EXPERIMENTAL)
-
-1. Run `virsh_install_windows.sh` to start idv guest installation.
-
-    ```sh
-    cd /home/$USER/sriov
-
-    sudo ./scripts/setup_guest/win11/virsh_install_windows.sh
-    ```
-
-2. Follow Windows installation steps until installation is successful.
-
-    *Note: To view all guest vms, run `sudo virsh list --all`*
-
-    ```sh
-    sudo virsh list --all
-    ```
-
-    output:
-    ```sh
-    Id   Name    State
-    ------------------------
-    1    win11   running
-    ```
-
-3. Shutdown the Windows guest
-
-## Install Drivers
-1. Launch guest in the corrsponding way to your installation.
-2. Download the following drivers by browser on the guest.
-* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432)
-* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927)
-* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso)
-
-3. Unzip SR-IOV Zero Copy Driver installer, search for 'Windows PowerShell' and run it as an administrator, enter the unziped directory and run the following command to install the drivers. 
-
-    ```sh
-    C:\> Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope CurrentUser
-    C:\> .\DVInstaller.ps1
-    ```
-    Make sure SR-IOV Zero Copy Driver is successfully installed
-    <img src=./media/zerocopydrv.png width="80%">
-
-3. Unzip Intel Graphics Driver installer and navigate into the install folder and double click on installer.exe to launch the installer. 
-
-
-    <img src=./media/gfxdrvinstall.png width="80%">
-
-    Make sure Intel Graphics Driver is successfully installed.    
-    <img src=./media/gfxdrv.png width="80%">
+4. Shutdown the Windows guest
 
 ## Launch Windows VM
 
-There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
+There are two options provided. Choose the corresponding launch method according to your installation method.
 
-* [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager` (EXPERIMENTAL)
-* [Option 3] Launch From `virsh` (EXPERIMENTAL)
+* [Option 1] Launch VM Using `qemu`
+* [Option 2] Launch VM Using `virsh`
 
-### Launch From `qemu`
+### Launch VM Using `qemu`
 
-There are 2 options to luanch VMs. You can choose the coresponding method.
+1. Run `start_windows.sh` to launch windows virtual machine
 
-+ [Option 1.1] Launch single VM alone
-    Run `start_windows.sh` to launch windows virtual machine
     ```sh
     cd /home/$USER/sriov
     sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
-+ [Option 1.2] Launch multiple VMs 
-    Specify the `start_multiple_windows.sh -n N`, it will launch N (1-4) virtual machines as you need, which are installed by `install_multiple_windows.sh`
+
+### Launch VM Using `virsh`
+
+1. Setup libvirt on host
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/host_setup/debian
+
+    # load br_netfilter module
+    sudo modprobe br_netfilter
+
+    ./setup_libvirt.sh
+    ```
+
+2. Reboot the system
+
+    ```sh
+    sudo reboot
+    ```
+
+3. Launch the windows vm
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init windows guest vm
+    ./guest_setup/idv.sh init windows11
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
+    ```
+
+## Install Windows Update and Drivers
+
+### Install Windows Update
+
+1. Install Windows update with the following steps:
+    1) Open *Settings*
+    2) Click *Windows Update*
+    3) Click *Check for updates* and wait for the update to complete.
+    4) Click *Pause for 1 week* to disable the automatic updates temporarily.
+
+### Install Intel Graphics Driver
+
+1. Download [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432) from browser.
+2. Use File Explorer to extract the zip file.
+3. Navigate into the install folder and double click on `installer.exe` to launch the installer.
+4. Click *Begin installation*
+
+    <img src=./media/gfxdrvinstall.png width="80%">
+
+5. After the installation has completed, click the *Reboot Required* button to reboot.
+6. After reboot, launch the **Device Manager** to check the installation.
+
+    <img src=./media/gfxdrv.png width="80%">
+
+### Install SR-IOV Zero Copy Driver
+
+1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927) from browser.
+2. Use File Explorer to extract the zip file.
+3. Search for **Windows PowerShell** and run it as an administrator.
+4. Enter the following command and when prompted, enter "Y/Yes" to continue.
+
+    ```sh
+    C:\> Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope CurrentUser
+    ```
+
+5. Run the command below to install the *DVServerKMD* and *DVServerUMD* device drivers. When prompted, enter "[R] Run once" to continue.
+
+    ```sh
+    C:\> .\DVInstaller.ps1
+    ```
+
+6. Once the driver installation completes, the Windows Guest VM will reboot 
+automatically.
+7. After reboot, launch the **Device Manager** to check the installation.
+
+    <img src=./media/zerocopydrv.png width="80%">
+
+### Install Virtio Driver
+
+1. Download [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) from browser.
+2. Double click the iso file in File Explorer to mount it.
+3. Search for **Windows PowerShell** and run it as an administrator.
+4. Navigate to the folder of the extracted files.
+5. Use the following command to install VIOSerial.
+
+    ```sh
+    D:\> pnputil.exe /add-driver .\vioserial\w11\amd64\vioser.inf /install
+    ```
+
+6. Use the following command to install qemu-guest-agent.
+
+    ```sh
+    D:\> Start-Process .\guest-agent\qemu-ga-x86_64.msi
+    ```
+
+### Post Install Launch
+
+There are three options provided. Choose the corresponding launch method according to your installation method.
+
+*Note: Option 3 should be executed after option 2*
+
+* [Option 1] Launch VM With `qemu`
+* [Option 2] Launch VM With `virsh`
+* [Option 3] Launch VM With `virt-manager`
+
+### Launch VM With `qemu`
+
+1. Run `start_windows.sh` to launch windows virtual machine
 
     ```sh
     cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/start_multiple_windows.sh -n 2
+    sudo ./scripts/setup_guest/win11/start_windows.sh
     ```
 
-### Launch From `virt-manager` (EXPERIMENTAL)
+### Launch VM With `virsh`
 
-1. Run `virt-manager` to launch windows virtual machine
+1. Launch the windows vm
 
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init windows guest vm
+    ./guest_setup/idv.sh init windows11
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
+    ```
+
+### Launch VM With `virt-manager`
+
+1. Run virt-manager to launch windows virtual machine
 
     ```sh
     virt-manager
     ```
 
-    <img src=./media/virtstart1.png width="80%">
+2. Passthrough usb device. Click *Open* button -> click *Add Hardware* and select the usb device you need -> click *Finish*
 
-### Launch From `virsh` (EXPERIMENTAL)
+    <img src=./media/virt1.png width="80%">
+    <img src=./media/virt2.png width="80%">
+    <img src=./media/passthrough-usb.png width="80%">
 
-1. Run `virsh` to launch windows virtual machine
+3. Launch the windows vm. Click *Virtual Machine* -> click *Run*
 
-    ```sh
-    sudo virsh start win11
+# Advanced Guest VM Launch
+
++ Customize launch single VM
+
+    The `start_windows.sh` script help on the host
+
+    ```shell
+    cd /home/$USER/sriov/
+    sudo ./scripts/setup_guest/win11/start_windows.sh -h
+    ```
+
+    Output
+
+    ```shell
+    start_windows.sh [-h] [-m] [-c] [-n] [-d] [-f] [-p] [-e] [--passthrough-pci-usb] [--passthrough-pci-udc] [--passthrough-pci-audio] [--passthrough-pci-eth] [--passthrough-pci-wifi] [--disable-kernel-irqchip] [--display] [--enable-pwr-ctrl] [--spice] [--audio]
+    Options:
+        -h  show this help message
+        -m  specify guest memory size, eg. "-m 4G or -m 4096M"
+        -c  specify guest cpu number, eg. "-c 4"
+        -n  specify guest vm name, eg. "-n <guest_name>"
+        -d  specify guest virtual disk image, eg. "-d /path/to/<guest_image>"
+        -f  specify guest firmware OVMF variable image, eg. "-d /path/to/<ovmf_vars.fd>"
+        -p  specify host forward ports, current support ssh, eg. "-p ssh=2222"
+        -e  specify extra qemu cmd, eg. "-e "-monitor stdio""
+        --passthrough-pci-usb passthrough USB PCI bus to guest.
+        --passthrough-pci-udc passthrough USB Device Controller ie. UDC PCI bus to guest.
+        --passthrough-pci-audio passthrough Audio PCI bus to guest.
+        --passthrough-pci-eth passthrough Ethernet PCI bus to guest.
+        --passthrough-pci-wifi passthrough WiFi PCI bus to guest.
+        --disable-kernel-irqchip set kernel_irqchip=off.
+        --display specify guest display connectors configuration with HPD (Hot Plug Display) feature,
+                  eg. "--display full-screen,connectors.0=HDMI-1,connectors.1=DP-1"
+                sub-param: max-outputs=[number of displays], set the max number of displays for guest vm, eg. "max-outputs=2"
+                sub-param: full-screen, switch the guest vm display to full-screen mode.
+                sub-param: show-fps, show fps info on the guest vm primary display.
+                sub-param: connectors.[index]=[connector name], assign a connected display connector to guest vm.
+                sub-param: extend-abs-mode, enable extend absolute mode across all monitors.
+                sub-param: disable-host-input, disallow host\'s HID devices to control the guest.
+        --enable-pwr-ctrl option allow guest power control from host via qga socket.
+        --spice enable SPICE feature with sub-parameters,
+                  eg. "--spice display=egl-headless,port=3002,disable-ticketing=on,spice-audio=on,usb-redir=1"
+                sub-param: display=[display mode], set display mode, eg. "display=egl-headless"
+                sub-param: port=[spice port], assign spice port, eg. "port=3002"
+                sub-param: disable-ticketing=[on|off], set disable-ticketing, eg. "disable-ticketing=on"
+                sub-param: spice-audio=[on|off], set spice audio eg. "spice-audio=on"
+                sub-param: usb-redir=[number of USB redir channel], set USB redirection channel number, eg. "usb-redir=2"
+        --audio enable hda audio for guest vm with sub-parameters,
+                  eg. "--audio device=intel-hda,name=hda-audio,sink=alsa_output.pci-0000_00_1f.3.analog-stereo,timer-period=5000"
+                sub-param: device=[device], set audio device, eg. "device=intel-hda"
+                sub-param: name=[name], set audio device name, eg. "name=hda-audio"
+                sub-param: server=[audio server], set audio server, eg. "unix:/run/user/1000/pulse/native"
+                sub-param: sink=[audio sink], set audio stream routing. Use "pacmd list-sinks" to find available audio sinks
+                sub-param: timer-period=[period], set timer period in microseconds (us), eg. "timer-period=5000"
+    ```
+
+## Launch Multiple Windows Guest VMs
+
+### Launch Multiple Windows Guest VMs Using `qemu`
+
+1. Run the `start_all_windows.sh`, Please be patient, it will take some time
+
+    ```shell
+    # on the host
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/win11/start_all_windows.sh
     ```
 
 <p align="right">(<a href="#win11-vm-top">back to top</a>)</p>

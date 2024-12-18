@@ -1,3 +1,5 @@
+<a name="readme-top"></a>
+
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
 1. [Introduction](#introduction)
@@ -9,10 +11,14 @@
 1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
     1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
     1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
+1. [Disable Automatic Loading of evbug Module](#disable-automatic-loading-of-evbug-module)
+1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
+    1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
+    1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
 1. [LICENSE](#license)
 
 <!-- INSTRUCTION -->
-## Introduction
+# Introduction
 
 **Intel Graphics SR-IOV Technology**
 
@@ -25,17 +31,18 @@ The key benefits of Intel Graphics SR-IOV are:
   * Support multiple guest operating system
 
 <!-- PREREQUISITES -->
-## Prerequisites
+# Prerequisites
 
   * A working [Debian 12.5](https://get.debian.org/images/archive/12.5.0/amd64/iso-dvd/debian-12.5.0-amd64-DVD-1.iso) host.
 
-## Preparation
+<!-- PREPARATION -->
+# Preparation
 
 1. Install `git`
 
     ```sh
     sudo apt update
-    sudo apt install -y git
+    sudo apt install -y git vim
     ```
 
 2. Clone from github
@@ -46,84 +53,49 @@ The key benefits of Intel Graphics SR-IOV are:
     ```
 
 <!-- HOST SETUP -->
-## Host Setup
+# Host Setup
 
 Two installation methods are provided, please choose one of them.
 
   * [Option 1] Setup Host From Source Code
   * [Option 2] Setup Host From PPA
 
-### Setup Host From Source Code
+## Setup Host From Source Code
 
-1. Setup kernel 
+Please refer [here](docs/setup_host.md) for steps on setting up host from source code.
 
-    ```sh
-    cd /home/$USER/sriov
+## Setup Host From PPA
 
-    sudo ./scripts/setup_host/sriov_setup_kernel.sh
-    ```
+Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host from ppa.
 
-2. Reboot the host
+<!-- DISABLE AUTOMATIC LOADING OF EVBUG MODULE -->
+# Disable Automatic Loading of evbug Module
 
-    ```sh
-    sudo reboot
-    ```
-
-3. Install software after reboot
-
-    ```sh
-    cd /home/$USER/sriov
-
-    sudo ./scripts/setup_host/sriov_setup_debian.sh
-    ```
-4. Modify file `/etc/modprobe.d/*-blacklist.conf`,  save and exit
+1. Modify file `/etc/modprobe.d/*-blacklist.conf`, save and exit
 
     ```shell
-    sudo vi /etc/modprobe.d/*-blacklist.conf
+    sudo vim /etc/modprobe.d/*-blacklist.conf
 
-    # add the following command to the file
-
+    # add the following line to the file
     blacklist evbug
     ```
 
-### Setup Host From PPA
-
-1. Setup kernel
-
-    ```sh
-    cd /home/$USER/sriov
-
-    sudo ./scripts/setup_host/sriov_setup_kernel.sh --use-ppa-files
-    ```
-
-2. Reboot the host
-
-    ```sh
-    sudo reboot
-    ```
-
-3. Install software after reboot
-
-    ```sh
-    cd /home/$USER/sriov
-
-    sudo ./scripts/setup_host/sriov_setup_debian.sh --use-ppa-files
-    ```
-
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
-## Virtual Machine Image Creation
+# Virtual Machine Image Creation
 
-Follow the links below for instructions on how to setup and deploy virtual machines using scripts in this repos.
+Follow links below for instructions on how to setup and deploy virtual machines using scripts in this repo.
 
-### Deploy Windows Virtual Machine
+## Deploy Windows Virtual Machine
 
 Please refer [deploy-windows-vm](docs/deploy-windows-vm.md) for steps on creating Windows VM image.
 
-### Deploy Ubuntu Virtual Machine
+## Deploy Ubuntu Virtual Machine
 
 Please refer [deploy-ubuntu-vm](docs/deploy-ubuntu-vm.md) for steps on creating Ubuntu VM image.
 
 <!-- LICENSE -->
-## License
+# License
 
 Distributed under the Apache License, Version 2.0. See *LICENSE* for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

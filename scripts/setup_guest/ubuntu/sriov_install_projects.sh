@@ -189,7 +189,7 @@ cd $BUILD_DIR
 
 
 #libdrm
-log_func init_deb_name libdrm-sriov
+log_func init_deb_name libdrm-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch libdrm-2.4.114 --depth 1 https://gitlab.freedesktop.org/mesa/drm.git media/$component_name
@@ -231,7 +231,7 @@ cd $BUILD_DIR
 
 
 #libva
-log_func init_deb_name libva-sriov
+log_func init_deb_name libva-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch 2.18.0 --depth 1 https://github.com/intel/libva.git media/$component_name
@@ -263,7 +263,7 @@ cd $BUILD_DIR
 
 
 #libva-utils
-log_func init_deb_name libva-utils-sriov
+log_func init_deb_name libva-utils-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch 2.18.0 --depth 1 https://github.com/intel/libva-utils.git media/$component_name
@@ -289,7 +289,7 @@ cd $BUILD_DIR
 
 
 #gmmlib
-log_func init_deb_name gmmlib-sriov
+log_func init_deb_name gmmlib-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch intel-gmmlib-22.3.5 --depth 1 https://github.com/intel/gmmlib.git media/$component_name
@@ -319,7 +319,7 @@ cd $BUILD_DIR
 
 
 #media-driver
-log_func init_deb_name media-driver-sriov
+log_func init_deb_name media-driver-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch intel-media-23.1.0 --depth 1 https://github.com/intel/media-driver.git media/$component_name
@@ -357,7 +357,7 @@ echo ""                                | sudo tee -a /etc/igfx_user_feature_next
 
 
 #onevpl-gpu
-log_func init_deb_name onevpl-gpu-sriov
+log_func init_deb_name onevpl-gpu-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch intel-onevpl-22.6.5 --depth 1 https://github.com/oneapi-src/oneVPL-intel-gpu.git media/$component_name
@@ -386,7 +386,7 @@ cd $BUILD_DIR
 
 
 #onevpl
-log_func init_deb_name onevpl-sriov
+log_func init_deb_name onevpl-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch v2023.1.3 --depth 1 https://github.com/oneapi-src/oneVPL.git media/$component_name
@@ -416,7 +416,7 @@ cd $BUILD_DIR
 
 
 #gstreamer
-log_func init_deb_name gstreamer-sriov
+log_func init_deb_name gstreamer-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     mkdir -p gstreamer
@@ -450,7 +450,7 @@ cd $BUILD_DIR
 
 
 #gst-plugins-base
-log_func init_deb_name gst-plugins-base-sriov
+log_func init_deb_name gst-plugins-base-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -492,7 +492,7 @@ cd $BUILD_DIR
 
 
 #gst-plugins-good
-log_func init_deb_name gst-plugins-good-sriov
+log_func init_deb_name gst-plugins-good-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -531,7 +531,7 @@ cd $BUILD_DIR
 
 
 #gst-plugins-bad
-log_func init_deb_name gst-plugins-bad-sriov
+log_func init_deb_name gst-plugins-bad-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -573,7 +573,7 @@ cd $BUILD_DIR
 
 
 #gst-plugins-ugly
-log_func init_deb_name gst-plugins-ugly-sriov
+log_func init_deb_name gst-plugins-ugly-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -603,7 +603,7 @@ cd $BUILD_DIR
 
 
 #gstreamer-vaapi
-log_func init_deb_name gstreamer-vaapi-sriov
+log_func init_deb_name gstreamer-vaapi-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -636,7 +636,7 @@ cd $BUILD_DIR
 
 
 #gst-rtsp-server
-log_func init_deb_name gst-rtsp-server-sriov
+log_func init_deb_name gst-rtsp-server-sriov-iot-2405
 #if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     cd gstreamer
@@ -669,7 +669,7 @@ cd $BUILD_DIR
 
 
 #mesa
-log_func init_deb_name mesa-sriov
+log_func init_deb_name mesa-sriov-iot-2405
 if [[ $USE_INSTALL_FILES -ne 1 ]]; then
     # Prepare build
     git clone --branch mesa-23.2.1 --depth 1  https://gitlab.freedesktop.org/mesa/mesa.git graphics/$component_name

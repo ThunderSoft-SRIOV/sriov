@@ -1,17 +1,21 @@
 # Guest Ubuntu Virtual Machine
 
 # Table of Contents
-1. [Prerequisites](#prerequisites)
-1. [Preparation](#preparation)
-1. [Installation](#installation)
-    1. [Create Ubuntu VM Image](#create-ubuntu-vm-image)
-        1. [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
-        1. [Create Ubuntu VM Image Using `virt-manager`](#create-ubuntu-vm-image-using-virt-manager) (EXPERIMENTAL)
-        1. [Create Ubuntu VM Image Using `virsh`](#create-ubuntu-vm-image-using-virsh) (EXPERIMENTAL)
-    1. [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-1. [Check the installation program](#check-the-installation-program)
-1. [Launch Ubuntu VM](#launch-ubuntu-vm)
-1. [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+- [Prerequisites](#prerequisites)
+- [Preparation](#preparation)
+- [Installation](#installation)
+  - [Create Ubuntu VM Image](#create-ubuntu-vm-image)
+    - [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
+  - [Launch Ubuntu VM](#launch-ubuntu-vm)
+    - [Launch VM Using `qemu`](#launch-vm-using-qemu)
+    - [Launch VM Using `virsh`](#launch-vm-using-virsh)
+  - [Post Install Launch](#post-install-launch)
+    - [Launch VM With `qemu`](#launch-vm-with-qemu)
+    - [Launch VM With `virsh`](#launch-vm-with-virsh)
+    - [Launch VM With `virt-manager`](#launch-vm-with-virt-manager)
+  - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+  - [Check the installation program](#check-the-installation-program)
+- [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
 ## Prerequisites
 
@@ -31,12 +35,6 @@
 
 ## Create Ubuntu VM Image
 
-There are three options provided, option 2 and 3 are in progress.
-
-* [Option 1] Create Ubuntu VM Image Using `qemu`
-* [Option 2] Create Ubuntu VM Image Using `virt-manager` (EXPERIMENTAL)
-* [Option 3] Create Ubuntu VM Image Using `virsh` (EXPERIMENTAL)
-
 ### Create Ubuntu VM Image Using `qemu`
 
 1. Execute the following command on the host
@@ -54,47 +52,96 @@ There are three options provided, option 2 and 3 are in progress.
 
 3. Run Ubuntu OS installation to install into the guest image and shutdown after completion, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
-### Create Ubuntu VM Image Using `virt-manager`  (EXPERIMENTAL)
 
-1. Run `virt-manager` to start Ubuntu guest installation on the host.
+## Launch Ubuntu VM
 
+There are two options provided. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch From `qemu`
+* [Option 2] Launch From `virsh`
+
+### Launch VM Using `qemu` 
+
+1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
+
+    ```sh
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    sudo ./start_ubuntu.sh
+    ```
+
+### Launch VM Using `virsh`
+
+1. Setup libvirt on host
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/host_setup/debian
+    ./setup_libvirt.sh
+    ```
+
+2. Reboot the system
+    ```sh
+    sudo reboot
+    ```
+
+3. Launch the ubuntu vm
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init ubuntu guest vm
+    ./guest_setup/idv.sh init ubuntu
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
+    ```
+
+
+### Post Install Launch
+
+There are three options provided. Choose the corresponding launch method according to your installation method.
+
+*Note: Option 3 should be executed after option 2*
+
+* [Option 1] Launch VM With `qemu`
+* [Option 2] Launch VM With `virsh`
+* [Option 3] Launch VM With `virt-manager`
+
+### Launch VM With `qemu`
+
+1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
+
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/ubuntu/start_ubuntu.sh
+    ```
+
+### Launch VM With `virsh`
+
+1. Launch the ubuntu vm
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init ubuntu guest vm
+    ./guest_setup/idv.sh init ubuntu
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
+    ```
+### Launch VM With `virt-manager`
+
+1. Run `virt-manager` to launch ubuntu virtual machine
     ```shell
     virt-manager
     ```
 
-2. Select image and follow Ubuntu installation steps until installation is successful.
+2. Passthrough usb device. Click *Open* button -> click *Add Hardware* and select the usb device you need -> click *Finish*
 
-    <img src=./media/setup_ubuntu1.png width="80%">
-    <img src=./media/virtsetup3.png width="80%">
-    <img src=./media/virtsetup4.png width="80%">
-    <img src=./media/setup_ubuntu2.png width="80%">
+    <img src=./media/ubuntu_virt.png width="80%">
+    <img src=./media/ubuntu_virt_2.png width="80%">
+    <img src=./media/passthrough-usb.png width="80%">
 
-3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-
-### Create Ubuntu VM Image Using `virsh`  (EXPERIMENTAL)
-
-1. Run `virsh_install_ubuntu.sh` to start ubuntu guest installation.
-
-    ```sh
-    # on the host
-    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./virsh_install_ubuntu.sh
-    ```
-
-2. Follow ubuntu installation steps until installation is successful.
-
-    ```sh
-    sudo virsh list --all
-    ```
-
-    Output
-    ```sh
-    Id   Name    State
-    ------------------------
-    1    ubuntu   running
-    ```
-
-3. After successful installation,  shutdown the virtual machine, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+3. Launch the ubuntu vm. Click *Virtual Machine* -> click *Run*
 
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
@@ -145,6 +192,7 @@ There are three options provided, option 2 and 3 are in progress.
     ```
 
 7. After rebooting, check if the kernel is the installed version.
+    *Note: If installation fails, please delete the generated folder*
 
     ```shell
     uname -r
@@ -305,68 +353,39 @@ There are three options provided, option 2 and 3 are in progress.
     OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.2.1 (git-49a47f187e)
     OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20`
     ```
-## Launch Ubuntu VM
 
-There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
-
-* [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager` (EXPERIMENTAL)
-* [Option 3] Launch From `virsh` (EXPERIMENTAL)
-
-### Launch From `qemu`
-
-1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
-
-    ```sh
-    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./start_ubuntu.sh
-    ```
-
-### Launch From `virt-manager` (EXPERIMENTAL)
-
-1. Run `virt-manager` to launch ubuntu virtual machine
-    ```shell
-    virt-manager
-    ```
-    <img src=./media/ubuntu_virt.png width="80%">
-
-### Launch From `virsh` (EXPERIMENTAL)
-
-1. Run `virsh` to launch ubuntu  virtual machine
-
-    ```sh
-    sudo virsh start ubuntu
-    ```
 
 ## Advanced Guest VM Launch
 
-   + Customize launch single VM
-      The `start_ubuntu.sh` script help on the host
-        ```shell
-        cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-        sudo ./start_ubuntu.sh -h
-        ```
++ Customize launch single VM
 
-        Output
+    The `start_ubuntu.sh` script help on the host
 
-        ```shell
-        start_ubuntu.sh [-h] [-m] [-c] [-n] [-d] [-f] [-p] [-e] [--passthrough-pci-usb] [--passthrough-pci-udc] [--passthrough-pci-audio] [--passthrough-pci-eth] [--passthrough-pci-wifi] [--disable-kernel-irqchip] [--display] [--enable-pwr-ctrl] [--spice] [--audio]
-        Options:
-            -h  show this help message
-            -m  specify guest memory size, eg. "-m 4G or -m 4096M"
-            -c  specify guest cpu number, eg. "-c 4"
-            -n  specify guest vm name, eg. "-n <guest_name>"
-            -d  specify guest virtual disk image, eg. "-d /path/to/<guest_image>"
-            -f  specify guest firmware OVMF variable image, eg. "-d /path/to/<ovmf_vars.fd>"
-            -p  specify host forward ports, current support ssh, eg. "-p ssh=2222"
-            -e  specify extra qemu cmd, eg. "-e "-monitor stdio""
-            --passthrough-pci-usb passthrough USB PCI bus to guest.
-            --passthrough-pci-udc passthrough USB Device Controller ie. UDC PCI bus to guest.
-            --passthrough-pci-audio passthrough Audio PCI bus to guest.
-            --passthrough-pci-eth passthrough Ethernet PCI bus to guest.
-            --passthrough-pci-wifi passthrough WiFi PCI bus to guest.
-            --disable-kernel-irqchip set kernel_irqchip=off.
-            --display specify guest display connectors configuration with HPD (Hot Plug Display) feature,
+    ```shell
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    sudo ./start_ubuntu.sh -h
+    ```
+
+    Output
+
+    ```shell
+    start_ubuntu.sh [-h] [-m] [-c] [-n] [-d] [-f] [-p] [-e] [--passthrough-pci-usb] [--passthrough-pci-udc] [--passthrough-pci-audio] [--passthrough-pci-eth] [--passthrough-pci-wifi] [--disable-kernel-irqchip] [--display] [--enable-pwr-ctrl] [--spice] [--audio]
+    Options:
+        -h  show this help message
+        -m  specify guest memory size, eg. "-m 4G or -m 4096M"
+        -c  specify guest cpu number, eg. "-c 4"
+        -n  specify guest vm name, eg. "-n <guest_name>"
+        -d  specify guest virtual disk image, eg. "-d /path/to/<guest_image>"
+        -f  specify guest firmware OVMF variable image, eg. "-d /path/to/<ovmf_vars.fd>"
+        -p  specify host forward ports, current support ssh, eg. "-p ssh=2222"
+        -e  specify extra qemu cmd, eg. "-e "-monitor stdio""
+        --passthrough-pci-usb passthrough USB PCI bus to guest.
+        --passthrough-pci-udc passthrough USB Device Controller ie. UDC PCI bus to guest.
+        --passthrough-pci-audio passthrough Audio PCI bus to guest.
+        --passthrough-pci-eth passthrough Ethernet PCI bus to guest.
+        --passthrough-pci-wifi passthrough WiFi PCI bus to guest.
+        --disable-kernel-irqchip set kernel_irqchip=off.
+        --display specify guest display connectors configuration with HPD (Hot Plug Display) feature,
                   eg. "--display full-screen,connectors.0=HDMI-1,connectors.1=DP-1"
                 sub-param: max-outputs=[number of displays], set the max number of displays for guest vm, eg. "max-outputs=2"
                 sub-param: full-screen, switch the guest vm display to full-screen mode.
@@ -374,38 +393,40 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
                 sub-param: connectors.[index]=[connector name], assign a connected display connector to guest vm.
                 sub-param: extend-abs-mode, enable extend absolute mode across all monitors.
                 sub-param: disable-host-input, disallow host's HID devices to control the guest.
-            --enable-pwr-ctrl option allow guest power control from host via qga socket.
-            --spice enable SPICE feature with sub-parameters,
+        --enable-pwr-ctrl option allow guest power control from host via qga socket.
+        --spice enable SPICE feature with sub-parameters,
                   eg. "--spice display=egl-headless,port=3002,disable-ticketing=on,spice-audio=on,usb-redir=1"
                 sub-param: display=[display mode], set display mode, eg. "display=egl-headless"
                 sub-param: port=[spice port], assign spice port, eg. "port=3002"
                 sub-param: disable-ticketing=[on|off], set disable-ticketing, eg. "disable-ticketing=on"
                 sub-param: spice-audio=[on|off], set spice audio eg. "spice-audio=on"
                 sub-param: usb-redir=[number of USB redir channel], set USB redirection channel number, eg. "usb-redir=2"
-            --audio enable hda audio for guest vm with sub-parameters,
+        --audio enable hda audio for guest vm with sub-parameters,
                   eg. "--audio device=intel-hda,name=hda-audio,sink=alsa_output.pci-0000_00_1f.3.analog-stereo,timer-period=5000"
                 sub-param: device=[device], set audio device, eg. "device=intel-hda"
                 sub-param: name=[name], set audio device name, eg. "name=hda-audio"
                 sub-param: server=[audio server], set audio server, eg. "unix:/run/user/1000/pulse/native"
                 sub-param: sink=[audio sink], set audio stream routing. Use "pacmd list-sinks" to find available audio sinks
                 sub-param: timer-period=[period], set timer period in microseconds (us), eg. "timer-period=5000"
-        ```
- + Launch Multiple Ubuntu Guest VMs
+    ```
 
-   Run the `start_all_ubuntu.sh`, Please be patient, it will take some time
++ Launch Multiple Ubuntu Guest VMs
+
+    Run the `start_all_ubuntu.sh`, Please be patient, it will take some time
+    
     ```shell
-    #on the host
+    # on the host
     cd /home/$USER/scripts/setup_guest/ubuntu/
     sudo ./start_all_ubuntu.sh
     ```
    
-   After running start_all_ubuntu.sh, it will help you do the following:
+    After running start_all_ubuntu.sh, it will help you do the following:
    
-   1. create multiple copies of `OVMF` files.
+    1. create multiple copies of `OVMF` files.
    
-   2. create and setup the Ubuntu guest images. And the images will be named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and `ubuntu4.qcow2`.
+    2. create and setup the Ubuntu guest images. And the images will be named as `ubuntu.qcow2`, `ubuntu2.qcow2`, `ubuntu3.qcow2` and `ubuntu4.qcow2`.
    
-   3. start 4 VMs
+    3. start 4 VMs
    
     Script content:
    
