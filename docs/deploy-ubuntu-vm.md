@@ -192,7 +192,6 @@ There are three options provided. Choose the corresponding launch method accordi
     ```
 
 7. After rebooting, check if the kernel is the installed version.
-    *Note: If installation fails, please delete the generated folder*
 
     ```shell
     uname -r
@@ -212,6 +211,7 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./sriov_install_projects.sh
     
     # After executing the above command, 3 folders will be generated
+    Note:If installation fails, please delete the following folders
     # ./sriov/scripts/setup_guest/ubuntu/packages
     # ./sriov/scripts/setup_guest/ubuntu/sriov_install
     # ./sriov/scripts/setup_guest/ubuntu/sriov_build
