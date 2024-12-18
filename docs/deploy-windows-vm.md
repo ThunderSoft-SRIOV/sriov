@@ -14,7 +14,6 @@
   - [Launch Windows VM](#launch-windows-vm)
     - [Launch VM Using `qemu`](#launch-vm-using-qemu)
     - [Launch VM Using `virsh`](#launch-vm-using-virsh)
-    - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
   - [Install Windows Update and Drivers](#install-windows-update-and-drivers)
     - [Install Windows Update](#install-windows-update)
     - [Install Intel Graphics Driver](#install-intel-graphics-driver)
@@ -23,6 +22,7 @@
   - [Post Install Launch](#post-install-launch)
     - [Launch VM With `qemu`](#launch-vm-with-qemu)
     - [Launch VM With `virsh`](#launch-vm-with-virsh)
+    - [Launch VM With `virt-manager`](#launch-vm-with-virt-manager)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
   - [Launch Multiple Windows Guest VMs](#launch-multiple-windows-guest-vms)
     - [Launch Multiple Windows Guest VMs Using `qemu`](#launch-multiple-windows-guest-vms-using-qemu)
@@ -73,7 +73,6 @@ There are two options provided. Choose the corresponding launch method according
 
 * [Option 1] Launch VM Using `qemu`
 * [Option 2] Launch VM Using `virsh`
-* [Option 3] Launch VM Using `virt-manager`
 
 ### Launch VM Using `qemu`
 
@@ -114,22 +113,6 @@ There are two options provided. Choose the corresponding launch method according
     # launch vm
     sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
     ```
-
-### Launch VM Using `virt-manager`
-
-1. Run virt-manager to launch windows virtual machine
-
-    ```sh
-    virt-manager
-    ```
-
-2. Passthrough usb device. Click *Open* button -> click *Add Hardware* and select the usb device you need -> click *Finish*
-
-    <img src=./media/virt1.png width="80%">
-    <img src=./media/virt2.png width="80%">
-    <img src=./media/passthrough-usb.png width="80%">
-
-3. Launch the windows vm. Click *Virtual Machine* -> click *Run*
 
 ## Install Windows Update and Drivers
 
@@ -198,10 +181,13 @@ automatically.
 
 ### Post Install Launch
 
-There are two options provided. Choose the corresponding launch method according to your installation method.
+There are three options provided. Choose the corresponding launch method according to your installation method.
+
+*Note: Option 3 should be executed after option 2*
 
 * [Option 1] Launch VM With `qemu`
 * [Option 2] Launch VM With `virsh`
+* [Option 3] Launch VM With `virt-manager`
 
 ### Launch VM With `qemu`
 
@@ -225,6 +211,22 @@ There are two options provided. Choose the corresponding launch method according
     # launch vm
     sudo ./guest_setup/launch_multios.sh -f -d windows11 -g sriov windows11
     ```
+
+### Launch VM With `virt-manager`
+
+1. Run virt-manager to launch windows virtual machine
+
+    ```sh
+    virt-manager
+    ```
+
+2. Passthrough usb device. Click *Open* button -> click *Add Hardware* and select the usb device you need -> click *Finish*
+
+    <img src=./media/virt1.png width="80%">
+    <img src=./media/virt2.png width="80%">
+    <img src=./media/passthrough-usb.png width="80%">
+
+3. Launch the windows vm. Click *Virtual Machine* -> click *Run*
 
 # Advanced Guest VM Launch
 

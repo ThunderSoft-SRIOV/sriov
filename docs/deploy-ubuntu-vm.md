@@ -9,10 +9,10 @@
   - [Launch Ubuntu VM](#launch-ubuntu-vm)
     - [Launch VM Using `qemu`](#launch-vm-using-qemu)
     - [Launch VM Using `virsh`](#launch-vm-using-virsh)
-    - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
   - [Post Install Launch](#post-install-launch)
     - [Launch VM With `qemu`](#launch-vm-with-qemu)
     - [Launch VM With `virsh`](#launch-vm-with-virsh)
+    - [Launch VM With `virt-manager`](#launch-vm-with-virt-manager)
   - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
   - [Check the installation program](#check-the-installation-program)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
@@ -35,12 +35,6 @@
 
 ## Create Ubuntu VM Image
 
-There are three options provided, option 2 and 3 are in progress.
-
-* [Option 1] Create Ubuntu VM Image Using `qemu`
-* [Option 2] Create Ubuntu VM Image Using `virt-manager`
-* [Option 3] Create Ubuntu VM Image Using `virsh`
-
 ### Create Ubuntu VM Image Using `qemu`
 
 1. Execute the following command on the host
@@ -61,11 +55,10 @@ There are three options provided, option 2 and 3 are in progress.
 
 ## Launch Ubuntu VM
 
-There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
+There are two options provided. Choose the corresponding launch method according to your installation method.
 
 * [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager`
-* [Option 3] Launch From `virsh`
+* [Option 2] Launch From `virsh`
 
 ### Launch VM Using `qemu` 
 
@@ -91,30 +84,31 @@ There are three options provided, option 2 and 3 are in progress. Choose the cor
     ```
 
 3. Launch the ubuntu vm
+
     ```sh
     cd /home/$USER/sriov/virsh_enable/
-    sudo ./guest_setup/ubuntu_multios.sh -f -d ubuntu -g sriov ubuntu
-    ```
 
-### Launch VM Using `virt-manager`
+    # init ubuntu guest vm
+    ./guest_setup/idv.sh init ubuntu
 
-1. Run `virt-manager` to launch ubuntu virtual machine
-    ```shell
-    virt-manager
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
     ```
-    <img src=./media/ubuntu_virt.png width="80%">
 
 
 ### Post Install Launch
 
-There are two options provided. Choose the corresponding launch method according to your installation method.
+There are three options provided. Choose the corresponding launch method according to your installation method.
+
+*Note: Option 3 should be executed after option 2*
 
 * [Option 1] Launch VM With `qemu`
 * [Option 2] Launch VM With `virsh`
+* [Option 3] Launch VM With `virt-manager`
 
 ### Launch VM With `qemu`
 
-1. Run `start_windows.sh` to launch ubuntu virtual machine
+1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
 
     ```sh
     cd /home/$USER/sriov
@@ -123,17 +117,32 @@ There are two options provided. Choose the corresponding launch method according
 
 ### Launch VM With `virsh`
 
-1. Launch the windows vm
+1. Launch the ubuntu vm
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/
 
-    # init windows guest vm
+    # init ubuntu guest vm
     ./guest_setup/idv.sh init ubuntu
 
     # launch vm
     sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
     ```
+### Launch VM With `virt-manager`
+
+1. Run `virt-manager` to launch ubuntu virtual machine
+    ```shell
+    virt-manager
+    ```
+
+2. Passthrough usb device. Click *Open* button -> click *Add Hardware* and select the usb device you need -> click *Finish*
+
+    <img src=./media/ubuntu_virt.png width="80%">
+    <img src=./media/ubuntu_virt_2.png width="80%">
+    <img src=./media/passthrough-usb.png width="80%">
+
+3. Launch the ubuntu vm. Click *Virtual Machine* -> click *Run*
+
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
 1. on the host, start the ubuntu VM
@@ -183,6 +192,7 @@ There are two options provided. Choose the corresponding launch method according
     ```
 
 7. After rebooting, check if the kernel is the installed version.
+    *Note: If installation fails, please delete the generated folder*
 
     ```shell
     uname -r
