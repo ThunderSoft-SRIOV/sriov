@@ -4,14 +4,17 @@
 - [Prerequisites](#prerequisites)
 - [Preparation](#preparation)
 - [Installation](#installation)
-    - [Create Ubuntu VM Image](#create-ubuntu-vm-image)
-        - [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
-    - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
-  - [Check the installation program](#check-the-installation-program)
+  - [Create Ubuntu VM Image](#create-ubuntu-vm-image)
+    - [Create Ubuntu VM Image Using `qemu`](#create-ubuntu-vm-image-using-qemu)
   - [Launch Ubuntu VM](#launch-ubuntu-vm)
     - [Launch VM Using `qemu`](#launch-vm-using-qemu)
+    - [Launch VM Using `virsh`](#launch-vm-using-virsh)
     - [Launch VM Using `virt-manager`](#launch-vm-using-virt-manager)
-    - [Launch VM Using `libvirt`](#launch-vm-using-libvirt)
+  - [Post Install Launch](#post-install-launch)
+    - [Launch VM With `qemu`](#launch-vm-with-qemu)
+    - [Launch VM With `virsh`](#launch-vm-with-virsh)
+  - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
+  - [Check the installation program](#check-the-installation-program)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 
 ## Prerequisites
@@ -35,8 +38,8 @@
 There are three options provided, option 2 and 3 are in progress.
 
 * [Option 1] Create Ubuntu VM Image Using `qemu`
-* [Option 2] Create Ubuntu VM Image Using `virt-manager` (EXPERIMENTAL)
-* [Option 3] Create Ubuntu VM Image Using `virsh` (EXPERIMENTAL)
+* [Option 2] Create Ubuntu VM Image Using `virt-manager`
+* [Option 3] Create Ubuntu VM Image Using `virsh`
 
 ### Create Ubuntu VM Image Using `qemu`
 
@@ -55,6 +58,82 @@ There are three options provided, option 2 and 3 are in progress.
 
 3. Run Ubuntu OS installation to install into the guest image and shutdown after completion, continue to execute [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
 
+
+## Launch Ubuntu VM
+
+There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch From `qemu`
+* [Option 2] Launch From `virt-manager`
+* [Option 3] Launch From `virsh`
+
+### Launch VM Using `qemu` 
+
+1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
+
+    ```sh
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    sudo ./start_ubuntu.sh
+    ```
+
+### Launch VM Using `virsh`
+
+1. Setup libvirt on host
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/host_setup/debian
+    ./setup_libvirt.sh
+    ```
+
+2. Reboot the system
+    ```sh
+    sudo reboot
+    ```
+
+3. Launch the ubuntu vm
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+    sudo ./guest_setup/ubuntu_multios.sh -f -d ubuntu -g sriov ubuntu
+    ```
+
+### Launch VM Using `virt-manager`
+
+1. Run `virt-manager` to launch ubuntu virtual machine
+    ```shell
+    virt-manager
+    ```
+    <img src=./media/ubuntu_virt.png width="80%">
+
+
+### Post Install Launch
+
+There are two options provided. Choose the corresponding launch method according to your installation method.
+
+* [Option 1] Launch VM With `qemu`
+* [Option 2] Launch VM With `virsh`
+
+### Launch VM With `qemu`
+
+1. Run `start_windows.sh` to launch ubuntu virtual machine
+
+    ```sh
+    cd /home/$USER/sriov
+    sudo ./scripts/setup_guest/ubuntu/start_ubuntu.sh
+    ```
+
+### Launch VM With `virsh`
+
+1. Launch the windows vm
+
+    ```sh
+    cd /home/$USER/sriov/virsh_enable/
+
+    # init windows guest vm
+    ./guest_setup/idv.sh init ubuntu
+
+    # launch vm
+    sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
+    ```
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
 1. on the host, start the ubuntu VM
@@ -264,50 +343,8 @@ There are three options provided, option 2 and 3 are in progress.
     OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.2.1 (git-49a47f187e)
     OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20`
     ```
-## Launch Ubuntu VM
 
-There are three options provided, option 2 and 3 are in progress. Choose the corresponding launch method according to your installation method.
 
-* [Option 1] Launch From `qemu`
-* [Option 2] Launch From `virt-manager`
-* [Option 3] Launch From `virsh`
-
-### Launch VM Using `qemu` 
-
-1. Run `start_ubuntu.sh` to launch ubuntu virtual machine
-
-    ```sh
-    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./start_ubuntu.sh
-    ```
-
-### Launch VM Using `virt-manager`
-
-1. Run `virt-manager` to launch ubuntu virtual machine
-    ```shell
-    virt-manager
-    ```
-    <img src=./media/ubuntu_virt.png width="80%">
-
-### Launch VM Using `libvirt`
-
-1. Setup libvirt on host
-
-    ```sh
-    cd /home/$USER/sriov/virsh_enable/host_setup/debian
-    ./setup_libvirt.sh
-    ```
-
-2. Reboot the system
-    ```sh
-    sudo reboot
-    ```
-
-3. Launch the ubuntu vm
-    ```sh
-    cd /home/$USER/sriov/virsh_enable/
-    sudo ./guest_setup/ubuntu_multios.sh -f -d ubuntu -g sriov ubuntu
-    ```
 ## Advanced Guest VM Launch
 
 + Customize launch single VM

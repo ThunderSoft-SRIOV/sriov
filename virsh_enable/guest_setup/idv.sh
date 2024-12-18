@@ -8,19 +8,39 @@
 set -e
 
 #----------------------------------      Global variable      --------------------------------------
-IDVUSER=$USER
+WORK_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
-VM_IMAGE_DIR="/home/$IDVUSER/sriov/install_dir"
-VM_IMAGE_PATH="$VM_IMAGE_DIR/win.qcow2"
+IDV_USER=$USER
+VM_IMAGE_DIR="/home/$IDV_USER/sriov/install_dir"
 
-VM_NAME=""
-VM_OVMF_CODE="$VM_IMAGE_DIR/OVMF_CODE.fd"
-VM_OVMF_VARS="$VM_IMAGE_DIR/OVMF_VARS_windows.fd"
+declare -A VM_DOMAIN=(
+    ["ubuntu"]="ubuntu_sriov.xml"
+    ["windows11"]="windows11_sriov_ovmf.xml"
+)
 
-TEMPLATE_FILE="/home/$IDVUSER/sriov/virsh_enable/template.xml"
-VM_CONFIG_FILE="/home/$IDVUSER/sriov/virsh_enable/windows11_sriov_ovmf.xml"
+declare -A VM_IMAGE=(
+    ["ubuntu"]="ubuntu.qcow2"
+    ["windows11"]="win.qcow2"
+)
+
+declare -A VM_OVMF=(
+    ["ubuntu"]="OVMF_VARS_ubuntu.fd"
+    ["windows11"]="OVMF_VARS_windows.fd"
+)
 
 #----------------------------------         Functions         --------------------------------------
+function get_vm_config()  {
+    local domain=$1
+
+    VM_NAME=$domain
+    VM_OVMF_VARS="$VM_IMAGE_DIR/${VM_OVMF[$domain]}"
+    VM_IMAGE_PATH="$VM_IMAGE_DIR/${VM_IMAGE[$domain]}"
+    VM_OVMF_CODE="$VM_IMAGE_DIR/OVMF_CODE.fd"
+
+    TEMPLATE_FILE="$WORK_DIR/../template.xml"
+    VM_CONFIG_FILE="$WORK_DIR/../${VM_DOMAIN[$domain]}"
+}
+
 function gen_vm_xml() {
     sed -e "s;%VM_NAME%;${VM_NAME};" \
         -e "s;%VM_OVMF_CODE%;${VM_OVMF_CODE};" \
@@ -34,8 +54,14 @@ function init() {
         show_help
         exit -1
     fi
-    VM_NAME=$1
 
+    if [[ ! "${!VM_DOMAIN[*]}" =~ $1 ]]; then
+        echo "Domain $1 is not supported."
+        show_help
+        exit 255
+    fi
+
+    get_vm_config $1
     gen_vm_xml
 }
 
@@ -43,7 +69,7 @@ function show_help() {
     printf "$(basename "$0") [option]\n"
     printf "Options:\n"
     printf "\t-h  show this help message\n"
-    printf "\tinit\t[all|vm_name]\t initialize virtual machine, eg: init all\n"
+    printf "\tinit\t[vm_name]\t initialize virtual machine, eg: init windows11\n"
 }
 
 function parse_arg() {
