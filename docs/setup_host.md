@@ -170,6 +170,9 @@
 3. Sign kernel with the MOK key
 
     *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)*
+    ```
+    sudo apt install -y sbsigntool
+    ```
 
     ```sh
     cd /var/lib/shim-signed/mok/

@@ -54,7 +54,7 @@ elif [ -f $SCRIPT_DIR/ubuntu.iso ];then
 fi
 
 if [ ! -f $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 ];then
-	qemu-img create -f qcow2 $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 100G
+	qemu-img create -f qcow2 $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 60G
 fi
 
 cd $SRIOV_PATH/$INSTALL_DIR/

@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -eE
 
 sudo chmod -t /tmp
 
@@ -13,7 +13,7 @@ if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ]; then
  	echo "not exists file "/usr/share/ovmf""
  	sudo apt update
 	sudo apt -y -t bookworm-backports upgrade 
-	sudo apt install -y -t  -f bookworm-backports omvf
+	sudo apt install -y -t  -f bookworm-backports ovmf
  	exit
 elif [ ! -f $INSTALL_DIR/OVMF_CODE.fd ]; then
 	ln -sf /usr/share/OVMF/OVMF_CODE.fd  $INSTALL_DIR/OVMF_CODE.fd

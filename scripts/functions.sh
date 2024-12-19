@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -Eeuo
 
 #----------------------------------      Global variable      --------------------------------------
 RED='\033[0;31m'

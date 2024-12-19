@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -x
 
 #----------------------------------      Global variable      --------------------------------------
 INSTALL_DIR=$PWD/install_dir
@@ -187,7 +187,7 @@ if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ]; then
  	echo "not found file "/usr/share/OVMF""
  	sudo apt update
 	sudo apt -y -t bookworm-backports upgrade 
-	sudo apt install -y -t bookworm-backports omvf
+	sudo apt install -y -t bookworm-backports ovmf
  	exit
 elif [ ! -f './OVMF_CODE.fd' ]; then
 	ln -sf /usr/share/OVMF/OVMF_CODE.fd $INSTALL_DIR/OVMF_CODE.fd
