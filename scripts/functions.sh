@@ -48,20 +48,6 @@ function check_build_error(){
     fi
 }
 
-function check_kernel_version() {
-    local cur_ver=$(uname -r)
-    local req_ver="6.6.32-debian-sriov"
-    kernel_maj_ver=${cur_ver:0:1}
-
-    if [[ $IS_BSP -ne 1 ]]; then
-        if [[ ! $cur_ver =~ $req_ver ]]; then
-            echo "Error: Detected Linux version is $cur_ver" | tee -a $WORK_DIR/$LOG_FILE
-            echo "Error: Please install and boot with an $req_ver kernel" | tee -a $WORK_DIR/$LOG_FILE
-            exit
-        fi
-    fi
-}
-
 function check_network() {
     websites=("https://git.kernel.org/"
               "https://github.com/")
