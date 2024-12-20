@@ -40,7 +40,7 @@
 2. Copy the `windows.iso` to setup directory
 
     ```sh
-    mv windows.iso /home/$USER/sriov/scripts/setup_guest/win11/
+    mv windows.iso /home/$USER/sriov/install_dir/
     ```
 
 # Installation
@@ -53,8 +53,8 @@
 
     ```sh
     # Start installing Windows guest vm
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/install_windows.sh
+    cd /home/$USER/sriov/scripts/setup_guest/win11
+    sudo ./install_windows.sh
     ```
 
 2. Choose language and other preferences and click *Next*
@@ -79,13 +79,15 @@ There are two options provided. Choose the corresponding launch method according
 1. Run `start_windows.sh` to launch windows virtual machine
 
     ```sh
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/start_windows.sh
+    cd /home/$USER/sriov/scripts/setup_guest/win11
+    sudo ./start_windows.sh
     ```
 
 ### Launch VM Using `virsh`
 
-1. Setup libvirt on host
+1. Setup libvirt on host.
+
+    *Note: Skip this step if it has been run before*
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/host_setup/debian
@@ -96,13 +98,12 @@ There are two options provided. Choose the corresponding launch method according
     ./setup_libvirt.sh
     ```
 
-2. Reboot the system
-
     ```sh
+    # reboot the system
     sudo reboot
     ```
 
-3. Launch the windows vm
+2. Launch the windows vm
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/
@@ -235,8 +236,8 @@ There are three options provided. Choose the corresponding launch method accordi
     The `start_windows.sh` script help on the host
 
     ```shell
-    cd /home/$USER/sriov/
-    sudo ./scripts/setup_guest/win11/start_windows.sh -h
+    cd /home/$USER/sriov/scripts/setup_guest/win11
+    sudo ./start_windows.sh -h
     ```
 
     Output
@@ -291,8 +292,8 @@ There are three options provided. Choose the corresponding launch method accordi
 
     ```shell
     # on the host
-    cd /home/$USER/sriov
-    sudo ./scripts/setup_guest/win11/start_all_windows.sh
+    cd /home/$USER/sriov/scripts/setup_guest/win11
+    sudo ./start_all_windows.sh
     ```
 
 <p align="right">(<a href="#win11-vm-top">back to top</a>)</p>

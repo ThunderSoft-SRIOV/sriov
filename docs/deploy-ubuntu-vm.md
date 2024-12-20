@@ -28,7 +28,7 @@
 2. Copy the `ubuntu.iso` to setup directory
 
     ```sh
-    mv ubuntu-22.04-desktop-amd64+intel-iot.iso ./sriov/scripts/setup_guest/ubuntu/ubuntu.iso
+    mv ubuntu-22.04-desktop-amd64+intel-iot.iso /home/$USER/sriov/install_dir/ubuntu.iso
     ```
 
 ## Installation
@@ -71,10 +71,17 @@ There are two options provided. Choose the corresponding launch method according
 
 ### Launch VM Using `virsh`
 
+
 1. Setup libvirt on host
+
+    *Note: Skip this step if it has been run before*
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/host_setup/debian
+    
+    # load br_netfilter module
+    sudo modprobe br_netfilter
+
     ./setup_libvirt.sh
     ```
 
@@ -152,7 +159,7 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./start_ubuntu.sh
     ```
     
-2. Open a `Terminal` withon the guest VM.
+2. Open a `Terminal` in the guest VM.
 
 3. Run the command shown below to upgrade Ubuntu software to the latest in the guest VM.
 

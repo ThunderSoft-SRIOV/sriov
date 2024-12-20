@@ -20,9 +20,14 @@ elif [ ! -f $INSTALL_DIR/OVMF_CODE.fd ]; then
 fi
 
 #------------------------------------------------------      Global variable    ----------------------------------------------------------
+
+FILE_PATH="$0"
+SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*} 
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
+INSTALL_DIR=$SRIOV_PATH/install_dir
+
 kernel_maj_ver=0
-WORK_DIR=$PWD
-INSTALL_DIR=$WORK_DIR/install_dir
 TPM_DIR=$INSTALL_DIR/win.qcow2.d
 SETUP_LOCK=/tmp/sriov.setup.lock
 VF_USED=0

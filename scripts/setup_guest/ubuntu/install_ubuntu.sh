@@ -46,11 +46,9 @@ elif [ ! -f $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd ];then
 	cp /usr/share/OVMF/OVMF_VARS.fd  $SRIOV_PATH/$INSTALL_DIR/OVMF_VARS_ubuntu.fd
 fi
 
-if [ ! -f $SCRIPT_DIR/ubuntu.iso ];then
-	echo "not exists file ${SCRIPT_DIR}/ubuntu.iso"
+if [ ! -f $SRIOV_PATH/$INSTALL_DIR/ubuntu.iso ];then
+	echo "not exists file ${SRIOV_PATH}/${INSTALL_DIR}/ubuntu.iso"
 	exit
-elif [ -f $SCRIPT_DIR/ubuntu.iso ];then
-  cp -rf $SCRIPT_DIR/ubuntu.iso $SRIOV_PATH/$INSTALL_DIR/
 fi
 
 if [ ! -f $SRIOV_PATH/$INSTALL_DIR/ubuntu.qcow2 ];then

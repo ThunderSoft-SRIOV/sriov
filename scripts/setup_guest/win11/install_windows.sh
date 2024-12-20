@@ -8,11 +8,16 @@
 set -x
 
 #----------------------------------      Global variable      --------------------------------------
-INSTALL_DIR=$PWD/install_dir
+
+FILE_PATH="$0"
+SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*} 
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
+INSTALL_DIR=$SRIOV_PATH/install_dir
+
 GUEST_IMAGE_FILE=$INSTALL_DIR/win.qcow2
 GUEST_FIRMWARE_FILE=$INSTALL_DIR/OVMF_VARS_windows.fd
 TPM_DIR=$INSTALL_DIR/win.qcow2.d
-WIN_ISO_PATH=$PWD/scripts/setup_guest/win11
 WIN_ISO=windows.iso
 
 EMULATOR_PATH=$(which qemu-system-x86_64)
@@ -39,7 +44,7 @@ GUEST_USB_DEV="\
 	-usb \
 	-device usb-tablet"
 
-GUEST_ISO_FILE="-drive file=$WIN_ISO_PATH/$WIN_ISO,media=cdrom"
+GUEST_ISO_FILE="-drive file=$INSTALL_DIR/$WIN_ISO,media=cdrom"
 
 #----------------------------------         Functions         --------------------------------------
 
@@ -174,13 +179,9 @@ function parse_arg() {
 
 parse_arg "$@" || exit -1
 
-if [ ! -f $WIN_ISO_PATH/$WIN_ISO ]; then
-	echo "Please copy windows iso image to $WIN_ISO_PATH"
+if [ ! -f $INSTALL_DIR/$WIN_ISO ]; then
+	echo "Please copy windows iso image to $INSTALL_DIR"
 	exit
-fi
-
-if [ ! -f $INSTALL_DIR ]; then
-	sudo mkdir -p $INSTALL_DIR
 fi
 
 if [ ! -f "/usr/share/OVMF/OVMF_CODE.fd" ]; then

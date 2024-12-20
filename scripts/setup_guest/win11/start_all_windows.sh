@@ -13,12 +13,15 @@
 # - core allocated
 # Propagate signal to children
 
+#----------------------------------      Global variable      --------------------------------------
+
 FILE_PATH="$0"
 SCRIPT_ABSOLUTE_PATH=$(readlink -f "$FILE_PATH")  
-SCRIPT_DIR=$(dirname "$FILE_PATH") 
+SCRIPT_DIR=${SCRIPT_ABSOLUTE_PATH%/*} 
+SRIOV_PATH=${SCRIPT_ABSOLUTE_PATH%/*/*/*/*}
+INSTALL_DIR=$SRIOV_PATH/install_dir
 
-WORK_DIR=$PWD
-INSTALL_DIR=$WORK_DIR/install_dir
+#----------------------------------       Main Processes      --------------------------------------
 
 if [ ! -e $INSTALL_DIR/OVMF_VARS_windows2.fd ] & [ ! -e $INSTALL_DIR/win2.qcow2 ]; then
     echo "Copying win2.qcow2 file, Please be patient, it will take some time, file directory:${INSTALL_DIR}"
