@@ -5,13 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-set -Eeuo
-
-#----------------------------------      Global variable      --------------------------------------
-RED='\033[0;31m'
-NC='\033[0m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+set -Ee
 
 #----------------------------------         Functions         --------------------------------------
 
@@ -37,15 +31,6 @@ function log_clean() {
 
 function log_success() {
     echo "Success" | tee -a $WORK_DIR/$LOG_FILE
-}
-
-function check_build_error(){
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}$1: Build Error ${NC}"
-        exit -1
-     else
-         echo -e "${GREEN}$1: Build Success${NC}"
-    fi
 }
 
 function check_network() {
@@ -74,10 +59,6 @@ function del_existing_folder() {
         echo "Deleting existing folder $1"
         rm -fr $1
     fi
-}
-
-function log_success(){
-    echo "Success" | tee -a $WORK_DIR/$LOG_FILE
 }
 
 function ask_reboot(){

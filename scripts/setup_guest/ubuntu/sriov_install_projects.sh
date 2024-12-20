@@ -30,12 +30,12 @@ export WrkDir=`pwd`
 #---------      Functions    -------------------
 
 function check_build_error(){
-        if [ $? -ne 0 ]; then
-                echo -e "${RED}$1: Build Error ${NC}"
-                exit -1
-        else
-                echo -e "${GREEN}$1: Build Success${NC}"
-        fi
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}$1: Build Error ${NC}"
+        exit -1
+    else
+        echo -e "${GREEN}$1: Build Success${NC}"
+    fi
 }
 
 function init_deb_name(){

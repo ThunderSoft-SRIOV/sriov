@@ -15,6 +15,7 @@ PACKAGES_DIR=$WORK_DIR/packages
 reboot_required=0
 
 IS_BSP=0
+USE_INSTALL_FILES=0
 
 #----------------------------------         Functions         --------------------------------------
 

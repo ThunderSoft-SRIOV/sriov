@@ -8,6 +8,12 @@
 set -e
 
 #----------------------------------      Global variable      --------------------------------------
+
+RED='\033[0;31m'
+NC='\033[0m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+
 WORK_DIR=$(pwd)
 LOG_FILE="sriov_install_projects.log"
 BUILD_DIR=$WORK_DIR/sriov_build
@@ -21,6 +27,15 @@ export LibPath=/usr/lib/x86_64-linux-gnu
 reboot_required=0
 
 #----------------------------------         Functions         --------------------------------------
+
+function check_build_error(){
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}$1: Build Error ${NC}"
+        exit -1
+    else
+         echo -e "${GREEN}$1: Build Success${NC}"
+    fi
+}
 
 function init_deb_name(){
     # Set debian file settings
