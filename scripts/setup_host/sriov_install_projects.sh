@@ -20,6 +20,8 @@ export LibPath=/usr/lib/x86_64-linux-gnu
 
 reboot_required=0
 
+USE_INSTALL_FILES=0
+
 #----------------------------------         Functions         --------------------------------------
 
 function init_deb_name(){

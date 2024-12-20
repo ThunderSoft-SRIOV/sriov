@@ -48,30 +48,6 @@ function check_build_error(){
     fi
 }
 
-function check_os() {
-    # Check OS
-    local version=`cat /proc/version`
-    if [[ ! $version =~ "Debian" ]]; then
-        echo "Error: Only Debian is supported" | tee -a $WORK_DIR/$LOG_FILE
-        exit
-    fi
-
-    # Check Debian version
-    req_version="12"
-    cur_version=$(lsb_release -rs)
-    if [[ $cur_version != $req_version ]]; then
-        echo "Error: Debian $cur_version is not supported" | tee -a $WORK_DIR/$LOG_FILE
-        echo "Error: Please use Debian $req_version" | tee -a $WORK_DIR/$LOG_FILE
-        exit
-    fi
-
-    # Check for Intel BSP image
-    if [[ $(apt-cache policy | grep http | awk '{print $2}' | grep intel | wc -l) > 0 ]]; then
-        IS_BSP=1
-        echo "Warning: Intel BSP image detected. Kernel installation skipped"
-    fi
-}
-
 function check_kernel_version() {
     local cur_ver=$(uname -r)
     local req_ver="6.6.32-debian-sriov"

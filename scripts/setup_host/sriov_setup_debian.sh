@@ -12,6 +12,8 @@ WORK_DIR=$(pwd)
 LOG_FILE="sriov_setup_debian.log"
 reboot_required=0
 
+IS_BSP=0
+
 #----------------------------------         Functions         --------------------------------------
 
 function sriov_disable_auto_upgrade() {
@@ -210,6 +212,30 @@ function parse_arg() {
         esac
         shift
     done
+}
+
+function check_os() {
+    # Check OS
+    local version=`cat /proc/version`
+    if [[ ! $version =~ "Debian" ]]; then
+        echo "Error: Only Debian is supported" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check Debian version
+    req_version="12"
+    cur_version=$(lsb_release -rs)
+    if [[ $cur_version != $req_version ]]; then
+        echo "Error: Debian $cur_version is not supported" | tee -a $WORK_DIR/$LOG_FILE
+        echo "Error: Please use Debian $req_version" | tee -a $WORK_DIR/$LOG_FILE
+        exit
+    fi
+
+    # Check for Intel BSP image
+    if [[ $(apt-cache policy | grep http | awk '{print $2}' | grep intel | wc -l) > 0 ]]; then
+        IS_BSP=1
+        echo "Warning: Intel BSP image detected. Kernel installation skipped"
+    fi
 }
 
 #----------------------------------       Main Processes      --------------------------------------
