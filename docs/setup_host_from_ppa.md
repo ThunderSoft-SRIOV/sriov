@@ -119,7 +119,8 @@
 1. Download `MOK.der` from ppa
 
     ```sh
-    cd /home/$USER/sriov
+    sudo mkdir -p /var/lib/shim-signed/mok/
+    cd /var/lib/shim-signed/mok/
     sudo curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/MOK.der
     ```
 
