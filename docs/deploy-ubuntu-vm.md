@@ -189,7 +189,7 @@ There are three options provided. Choose the corresponding launch method accordi
     # This will install kernel and firmware, and update grub
     cd ./sriov/scripts/setup_guest/ubuntu/
     sudo ./sriov_prepare_projects.sh
-    sudo ./sriov_setup_ubuntu_guest_kernel.sh
+    sudo ./sriov_setup_ubuntu_guest_kernel.sh --use-ppa-files
     ```
 
 6. Reboot the system.

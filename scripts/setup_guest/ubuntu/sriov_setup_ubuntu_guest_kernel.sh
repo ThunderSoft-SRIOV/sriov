@@ -150,7 +150,17 @@ function sriov_ax210_workaround(){
 }
 
 function sriov_install_kernel(){
-       if [[ $USE_INSTALL_FILES -ne 1 ]]; then
+    if [[ $USE_PPA_FILES -eq 1 ]]; then
+
+        # Install from ppa
+        sudo -E curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ubuntu.ppa/ubuntu/doc/KEY.gpg
+        sudo -E curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ubuntu.ppa/ubuntu/doc/thundersoft-sriov.list
+        sudo apt update
+        sudo apt install -y linux-image-6.6.32-ubuntu-sriov linux-headers-6.6.32-ubuntu-sriov linux-libc-dev
+        kernel_file_version="6.6.32-ubuntu-sriov"
+
+    else
+
         # Create temporary folder
         del_existing_folder $WORK_DIR/kernel_install
         mkdir $WORK_DIR/kernel_install
@@ -176,13 +186,6 @@ function sriov_install_kernel(){
         # Clean up
         cd $WORK_DIR
         del_existing_folder $WORK_DIR/kernel_install
-    else
-        # Install from ppa
-        sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
-        sudo curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
-        sudo apt update
-        sudo apt install -y linux-image-6.6.32-debian-sriov linux-headers-6.6.32-debian-sriov linux-libc-dev
-        kernel_file_version="6.6.32-debian-sriov"
     fi
 
     reboot_required=1
@@ -223,7 +226,37 @@ function ask_reboot(){
     fi
 }
 
+function show_help() {
+    printf "$(basename "$0") [-h] [--use-ppa-files]\n"
+    printf "\t-h or --help          show this help message\n"
+    printf "\t--use-ppa-files       setup with ppa files for faster setup\n"
+}
+
+function parse_arg() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|-\?|--help)
+                show_help
+                exit
+                ;;
+
+            --use-ppa-files)
+                USE_PPA_FILES=1
+                ;;
+
+            *)
+                echo "Error: Invalid option: $1"
+                show_help
+                return -1
+                ;;
+        esac
+        shift
+    done
+}
+
 #-------------    main processes    -------------
+
+parse_arg "$@" || exit -1
 
 log_clean
 log_func check_os

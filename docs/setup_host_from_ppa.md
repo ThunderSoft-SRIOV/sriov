@@ -1,23 +1,8 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Disable UEFI Secure Boot](#disable-uefi-secure-boot)
 1. [Install Software Packages](#install-software-packages)
 1. [Check The Software Package Version](#check-the-software-package-version)
 1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
-
-# Disable UEFI Secure Boot
-
-1. Make sure you have disabled Secure Boot
-
-    ```sh
-    sudo mokutil --sb-state
-    ```
-
-    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. And you need to disable Secure Boot by following steps: 
-    1) Reboot the system
-    2) Enter the BIOS configuration interface
-    3) Select *Security* -> *Secure Boot* -> *Disabled*
-    4) Save and exit
 
 # Install Software Packages
 
@@ -116,15 +101,23 @@
 
 # Enable UEFI Secure Boot
 
-1. Download `MOK.der` from ppa
+1. Check the secure boot state
+
+    ```sh
+    sudo mokutil --sb-state
+    ```
+
+    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. Skip the following steps eo enable secure boot.
+
+2. Download `MOK.der` from ppa
 
     ```sh
     sudo mkdir -p /var/lib/shim-signed/mok/
     cd /var/lib/shim-signed/mok/
-    sudo curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/MOK.der
+    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/MOK.der
     ```
 
-2. Enroll the key
+3. Enroll the key
 
     ```sh
     sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
@@ -152,7 +145,7 @@
     /var/lib/shim-signed/mok/MOK.der is already enrolled
     ```
 
-3. Check the secure boot state
+4. Check the secure boot state
 
     ```sh
     sudo mokutil --sb-state

@@ -1,23 +1,8 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Disable UEFI Secure Boot](#disable-uefi-secure-boot)
 1. [Install Software Packages](#install-software-packages)
 1. [Check The Software Package Version](#check-the-software-package-version)
 1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
-
-# Disable UEFI Secure Boot
-
-1. Make sure you have disabled Secure Boot
-
-    ```sh
-    sudo mokutil --sb-state
-    ```
-
-    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. And you need to disable Secure Boot by following steps: 
-    1) Reboot the system
-    2) Enter the BIOS configuration interface
-    3) Select *Security* -> *Secure Boot* -> *Disabled*
-    4) Save and exit
 
 # Install Software Packages
 
@@ -116,7 +101,15 @@
 
 # Enable UEFI Secure Boot
 
-1. Create a custom MOK
+1. Check the secure boot state
+
+    ```sh
+    sudo mokutil --sb-state
+    ```
+
+    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. Skip the following steps eo enable secure boot.
+
+2. Create a custom MOK
 
     First of all you need to check if you have a key already with the following commands. 
 
@@ -139,7 +132,7 @@
     sudo openssl x509 -inform der -in MOK.der -out MOK.pem
     ```
 
-2. Enroll the key
+3. Enroll the key
 
     ```sh
     sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
@@ -167,7 +160,7 @@
     /var/lib/shim-signed/mok/MOK.der is already enrolled
     ```
 
-3. Sign kernel with the MOK key
+4. Sign kernel with the MOK key
 
     *Note: First, install [sbsigntool](https://packages.debian.org/search?keywords=sbsigntool)*
     ```
@@ -180,7 +173,7 @@
     sudo mv "/boot/vmlinuz-6.6.32-debian-sriov.tmp" "/boot/vmlinuz-6.6.32-debian-sriov"
     ```
 
-4. Check the secure boot state
+5. Check the secure boot state
 
     ```sh
     sudo mokutil --sb-state

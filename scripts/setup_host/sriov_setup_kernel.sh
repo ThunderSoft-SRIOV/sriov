@@ -105,8 +105,8 @@ function sriov_install_kernel() {
         del_existing_folder $WORK_DIR/kernel_install
     else
         # Install from ppa
-        sudo curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
-        sudo curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
+        sudo -E curl -SsL -o /etc/apt/trusted.gpg.d/thundersoft-sriov.asc https://ThunderSoft-SRIOV.github.io/ppa/debian/KEY.gpg
+        sudo -E curl -SsL -o /etc/apt/sources.list.d/thundersoft-sriov.list https://ThunderSoft-SRIOV.github.io/ppa/debian/thundersoft-sriov.list
         sudo apt update
         sudo apt install -y linux-image-6.6.32-debian-sriov linux-headers-6.6.32-debian-sriov linux-libc-dev
         kernel_file_version="6.6.32-debian-sriov"
