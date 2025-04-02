@@ -114,7 +114,7 @@
     ```sh
     sudo mkdir -p /var/lib/shim-signed/mok/
     cd /var/lib/shim-signed/mok/
-    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/MOK.der
+    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/doc/MOK.der
     ```
 
 3. Enroll the key

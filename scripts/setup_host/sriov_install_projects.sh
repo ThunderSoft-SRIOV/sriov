@@ -776,6 +776,8 @@ else
 fi
 cd $BUILD_DIR
 
+# Clean up all qemu-related packages before installing qemu
+sudo apt purge -y $(dpkg --get-selections | grep '^qemu' | awk '{print $1}')
 
 # qemu
 log_func init_deb_name qemu
@@ -796,10 +798,10 @@ log_func init_deb_name qemu
                 --enable-usb-redir \
                 --enable-gtk \
                 --enable-slirp
+
     # Build and install package
     cd build
     ninja && sudo ninja install
-    check_build_error
 
 # else
 #     # Install from ppa
