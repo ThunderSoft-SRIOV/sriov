@@ -26,6 +26,8 @@
     sudo ./scripts/setup_host/sriov_setup_debian.sh
     ```
 
+    *Note: Please run command `sudo apt purge -y $(dpkg --get-selections | grep '^qemu' | awk '{print $1}')` first if you re-run the above script*
+
 # Check The Software Package Version
 
 1. Check the kernel version
