@@ -29,18 +29,17 @@
 
 # Prerequisites
 
-* Windows 11 ISO. In this example we are using Windows 11 version 23H2
-* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432) version 31.0.101.5081
-* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927) version 4.0.0.1447
-* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) version 0.1.221
+* Windows 11 ISO. In this example we are using Windows 11 version 23H2 (OS Build 22631.4890)
+* [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=843233) version 32.0.101.6314
+* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/843228/display-virtualization-drivers-for-display-virtualization-drivers-for-meteor-lake-u-h-and-meteor-lake-ps.html?cache=1734486750) version 4.0.0.1742
+* [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win.iso) version 0.1.240-1
 
 # Preparation
 
-1. Download Windows iso image and save the iso file as `windows.iso`
-2. Copy the `windows.iso` to setup directory
+1. Download the Windows 11 iso image, save it as `windows.iso` and copy it to setup directory
 
     ```sh
-    mv windows.iso /home/$USER/sriov/install_dir/
+    cp windows.iso /home/$USER/sriov/install_dir/
     ```
 
 # Installation
@@ -127,7 +126,7 @@ There are two options provided. Choose the corresponding launch method according
 
 ### Install Intel Graphics Driver
 
-1. Download [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=816432) from browser.
+1. Download [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=843233) from browser.
 2. Use File Explorer to extract the zip file.
 3. Navigate into the install folder and double click on `installer.exe` to launch the installer.
 4. Click *Begin installation*
@@ -137,11 +136,11 @@ There are two options provided. Choose the corresponding launch method according
 5. After the installation has completed, click the *Reboot Required* button to reboot.
 6. After reboot, launch the **Device Manager** to check the installation.
 
-    <img src=./media/gfxdrv.png width="80%">
+    <img src=./media/mr2/gfxdrv.png width="80%">
 
 ### Install SR-IOV Zero Copy Driver
 
-1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927) from browser.
+1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/843228/display-virtualization-drivers-for-display-virtualization-drivers-for-meteor-lake-u-h-and-meteor-lake-ps.html?cache=1734486750) from browser.
 2. Use File Explorer to extract the zip file.
 3. Search for **Windows PowerShell** and run it as an administrator.
 4. Enter the following command and when prompted, enter "Y/Yes" to continue.
@@ -160,24 +159,25 @@ There are two options provided. Choose the corresponding launch method according
 automatically.
 7. After reboot, launch the **Device Manager** to check the installation.
 
-    <img src=./media/zerocopydrv.png width="80%">
+    <img src=./media/mr2/zerocopydrv.png width="80%">
 
 ### Install Virtio Driver
 
-1. Download [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.221-1/virtio-win.iso) from browser.
+1. Download [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win.iso) from browser.
 2. Double click the iso file in File Explorer to mount it.
 3. Search for **Windows PowerShell** and run it as an administrator.
 4. Navigate to the folder of the extracted files.
 5. Use the following command to install VIOSerial.
 
     ```sh
-    D:\> pnputil.exe /add-driver .\vioserial\w11\amd64\vioser.inf /install
+    Start-Process msiexec.exe -Wait -ArgumentList '/i ".\virtio-win-gt-x64.msi" ADDLOCAL="FE_network_driver,FE_balloon_driver,FE_pvpanic_driver,FE_qemupciserial_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver"'
     ```
 
-6. Use the following command to install qemu-guest-agent.
+6. Install QEMU guest agent in Windows VM.
 
     ```sh
-    D:\> Start-Process .\guest-agent\qemu-ga-x86_64.msi
+    # Replace <virtio-win-is-path> in below command with the path where virtio-win iso has been mounted to in Windows VM.
+    Start-Process msiexec.exe -ArgumentList '/i ".\guest-agent\qemu-ga-x86_64.msi"'
     ```
 
 ### Post Install Launch

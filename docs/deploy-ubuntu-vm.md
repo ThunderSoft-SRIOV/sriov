@@ -20,15 +20,24 @@
 ## Prerequisites
 
 * [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso). In this example we are using Intel IOT Ubuntu 22.04 LTS
+* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso).In this example we are using Ubuntu 24.04
 
 ## Preparation
-
-1. Download ubuntu iso image and save the iso file as `ubuntu.iso`
+### VM for ubuntu 22.04
+1. Download ubuntu_22.04 iso image and save the iso file as `ubuntu.iso`
 
 2. Copy the `ubuntu.iso` to setup directory
 
     ```sh
     mv ubuntu-22.04-desktop-amd64+intel-iot.iso /home/$USER/sriov/install_dir/ubuntu.iso
+    ```
+### VM for ubuntu 24.04
+1. Download ubuntu_24.04 iso image and save the iso file as `ubuntu.iso`
+
+2. Copy the `ubuntu.iso` to setup directory
+
+    ```sh
+    mv ubuntu-24.04.2-desktop-amd64.iso /home/$USER/sriov/install_dir/ubuntu.iso
     ```
 
 ## Installation
@@ -176,26 +185,23 @@ There are three options provided. Choose the corresponding launch method accordi
     # on the host
     cd /home/$USER/
     # `idvuser` is the user name of the virtual machine Ubuntu system, Please replace it yourself
-    rsync -avz -e "ssh -p 2222" --exclude '*.qcow2' --exclude '*.iso' ./sriov idvuser@localhost:/home/idvuser/
+    rsync -avz -e "ssh -p 2222" ./sriovs/cripts/setup_guest/ idvuser@localhost:/home/idvuser/
     ```
 
-5. Run sriov_setup_kernel.sh in Ubuntu guest VM. Please be patient, it will take a few hours
+5. Run `./setup_bsp.sh` in Ubuntu guest VM. Please be patient, it will take a few hours
 
     ```shell
     # in the guest
-    cd /home/$USER/
-    cp -rf ./sriov/sriov_patches ./sriov/scripts/setup_guest/ubuntu/
-
-    # This will install kernel and firmware, and update grub
-    cd ./sriov/scripts/setup_guest/ubuntu/
-    sudo ./sriov_prepare_projects.sh
-    sudo ./sriov_setup_ubuntu_guest_kernel.sh --use-ppa-files
+    cd /home/$USER/ubuntu/
+    sudo ./setup_bsp.sh -kp 6.6-intel
     ```
 
-6. Reboot the system.
+6. Shut down the VM and start it using script `./start_ubuntu.sh`
 
     ```shell
-    sudo reboot
+    # on host
+    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
+    sudo ./start_ubuntu.sh
     ```
 
 7. After rebooting, check if the kernel is the installed version.
@@ -207,35 +213,24 @@ There are three options provided. Choose the corresponding launch method accordi
     Output
 
     ```shell
-    6.6.32-ubuntu-sriov
+    6.6-intel
     ```
 
-8. Prepare and generate the install files in Ubuntu guest VM.
+8. Setup OpenVINO for use with Intel GPU in guest VM. After the installation completed.
 
     ```shell
     # on the guest
-    cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./sriov_install_projects.sh
-    
-    # After executing the above command, 3 folders will be generated
-    Note:If installation fails, please delete the following folders
-    # ./sriov/scripts/setup_guest/ubuntu/packages
-    # ./sriov/scripts/setup_guest/ubuntu/sriov_install
-    # ./sriov/scripts/setup_guest/ubuntu/sriov_build
+    cd /home/$USER/ubuntu/
+    ./setup_openvino.sh --neo
     ```
-
-9. Run configure_ubuntu_guest.sh in Ubuntu guest VM.
-
+9. Shutdown the VM again and restart it.
     ```shell
-    # on the guest
-    # This will install userspace libraries and tools
+    # on host
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
-    sudo ./configure_ubuntu_guest.sh
+    sudo ./start_ubuntu.sh
     ```
 
-10. After the installation completed, reboot the guest when prompted.
-
-11. Next, shutdown the guest properly. The Ubuntu image `Ubuntu.qcow2` is now ready to use.
+10. Next, Waite for successful restart of VM, The Ubuntu image Ubuntu.qcow2 is now ready to use.
 
 ## Check the installation program
 
@@ -315,11 +310,9 @@ There are three options provided. Choose the corresponding launch method accordi
     Example output
     
     ```shell
-    GRUB_DEFAULT="Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux 6.6.32-ubuntu"
+    GRUB_DEFAULT="Advanced options for Debian GNU/Linux>Debian GNU/Linux, with Linux 6.6-intel"
     .....
-    GRUB_CMDLINE_LINUX_DEFAULT="quiet console=tty0,115200n8 intel_iommu=on iommu=soft vt_handoff=7"
-    GRUB_CMDLINE_LINUX="splash i915.enable_guc=3 i915.force_probe=* udmabuf.list_limit=8192"
-    
+    GRUB_CMDLINE_LINUX="  i915.force_probe=* i915.enable_guc=0x3 i915.max_vfs=0 udmabuf.list_limit=8192 "
     ```
 
 4. Check the loading driver
@@ -335,8 +328,8 @@ There are three options provided. Choose the corresponding launch method accordi
     direct rendering: Yes
     Extended renderer info (GLX_MESA_query_renderer):
         Vendor: Intel (0x8086)
-        Device: Mesa Intel(R) Graphics (ADL GT2) (0x46a6)
-        Version: 23.2.1
+        Device: Mesa Intel(R) Arc(tm) Graphics (MTL) (0x7d55)
+        Version: 24.0.5
         Accelerated: yes
         Video memory: 1974MB
         Unified memory: yes
@@ -346,19 +339,19 @@ There are three options provided. Choose the corresponding launch method accordi
         Max GLES1 profile version: 1.1
         Max GLES[23] profile version: 3.2
     OpenGL vendor string: Intel
-    OpenGL renderer string: Mesa Intel(R) Graphics (ADL GT2)
-    OpenGL core profile version string: 4.6 (Core Profile) Mesa 23.2.1 (git-49a47f187e)
+    OpenGL renderer string: Mesa Intel(R) Arc(tm) Graphics (MTL)
+    OpenGL core profile version string: 4.6 (Core Profile) Mesa 24.0.5-1ppa1~jammy2 (git-7737614720)
     OpenGL core profile shading language version string: 4.60
     OpenGL core profile context flags: (none)
     OpenGL core profile profile mask: core profile
-    
-    OpenGL version string: 4.6 (Compatibility Profile) Mesa 23.2.1 (git-49a47f187e)
+
+    OpenGL version string: 4.6 (Compatibility Profile) Mesa 24.0.5-1ppa1~jammy2 (git-7737614720)
     OpenGL shading language version string: 4.60
     OpenGL context flags: (none)
     OpenGL profile mask: compatibility profile
-    
-    OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.2.1 (git-49a47f187e)
-    OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20`
+
+    OpenGL ES profile version string: OpenGL ES 3.2 Mesa 24.0.5-1ppa1~jammy2 (git-7737614720)
+    OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.20
     ```
 
 

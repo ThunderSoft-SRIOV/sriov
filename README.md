@@ -6,12 +6,6 @@
 1. [Prerequisites](#prerequisites)
 1. [Preparation](#preparation)
 1. [Host Setup](#host-setup)
-    1. [Setup Host From Source Code](#setup-host-from-source-code)
-    1. [Setup Host From PPA](#setup-host-from-ppa)
-1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
-    1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
-    1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
-1. [Disable Automatic Loading of evbug Module](#disable-automatic-loading-of-evbug-module)
 1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
     1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
     1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
@@ -33,19 +27,28 @@ The key benefits of Intel Graphics SR-IOV are:
 <!-- PREREQUISITES -->
 # Prerequisites
 
-  * A working [Debian 12.5](https://get.debian.org/images/archive/12.5.0/amd64/iso-dvd/debian-12.5.0-amd64-DVD-1.iso) host.
+  * A working [Debian 12.9](https://get.debian.org/images/archive/12.9.0/amd64/iso-dvd/debian-12.9.0-amd64-DVD-1.iso) host.
 
 <!-- PREPARATION -->
 # Preparation
 
-1. Install `git`
+1. Install software packages
 
     ```sh
     sudo apt update
-    sudo apt install -y git vim
+    sudo apt install -y git vim curl
     ```
 
-2. Clone from github
+2. Disable automatic loading of evbug module
+
+    ```shell
+    sudo vim /etc/modprobe.d/*-blacklist.conf
+
+    # Add the following line to the end of the file, save and exit
+    blacklist evbug
+    ```
+
+3. Clone from github
 
     ```sh
     cd /home/$USER/
@@ -55,30 +58,7 @@ The key benefits of Intel Graphics SR-IOV are:
 <!-- HOST SETUP -->
 # Host Setup
 
-Two installation methods are provided, please choose one of them.
-
-  * [Option 1] Setup Host From Source Code
-  * [Option 2] Setup Host From PPA
-
-## Setup Host From Source Code
-
-Please refer [here](docs/setup_host.md) for steps on setting up host from source code.
-
-## Setup Host From PPA
-
-Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host from ppa.
-
-<!-- DISABLE AUTOMATIC LOADING OF EVBUG MODULE -->
-# Disable Automatic Loading of evbug Module
-
-1. Modify file `/etc/modprobe.d/*-blacklist.conf`, save and exit
-
-    ```shell
-    sudo vim /etc/modprobe.d/*-blacklist.conf
-
-    # add the following line to the file
-    blacklist evbug
-    ```
+Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host.
 
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 # Virtual Machine Image Creation
