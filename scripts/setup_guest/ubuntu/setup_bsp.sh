@@ -8,8 +8,11 @@ set -Eeuo pipefail
 #---------      Global variable     -------------------
 # PPA url for Intel overlay installation
 # Add each required entry on new line
-PPA_URLS=(
+PPA_URLS_22=(
     "https://download.01.org/intel-linux-overlay/ubuntu jammy main non-free multimedia kernels"
+)
+PPA_URLS_24=(
+    "https://download.01.org/intel-linux-overlay/ubuntu noble main non-free multimedia kernels"
 )
 # corresponding GPG key to use for each PPA_URL entry above in same sequence.
 # If GPG key is not set correctly,
@@ -40,7 +43,8 @@ PPA_APT_CONF=(
 )
 # PPA APT repository pin and priority
 # Reference: https://wiki.debian.org/AptConfiguration#Always_prefer_packages_from_a_repository
-PPA_PIN="release o=intel-iot-linux-overlay"
+PPA_PIN_22="release o=intel-iot-linux-overlay"
+PPA_PIN_24="release o=intel-iot-linux-overlay-noble"
 PPA_PIN_PRIORITY=2000
 
 # Add entry for each additional package to install into guest VM
@@ -63,6 +67,15 @@ script=$(realpath "${BASH_SOURCE[0]}")
 LOGTAG=$(basename "$script")
 LOGD="logger -t $LOGTAG"
 LOGE="logger -s -t $LOGTAG"
+
+os_version=`lsb_release -rs`
+if [[ "$os_version" =~ "24" ]]; then
+	PPA_URLS=$PPA_URLS_24
+	PPA_PIN=$PPA_PIN_24
+elif [[ "$os_version" =~ "22" ]]; then
+	PPA_URLS=$PPA_URLS_22
+	PPA_PIN=$PPA_PIN_22
+fi
 
 #---------      Functions    -------------------
 declare -F "check_non_symlink" >/dev/null || function check_non_symlink() {
@@ -181,7 +194,6 @@ function install_kernel_from_ppa() {
     # Install Intel kernel overlay
     echo "kernel PPA version: $1"
     sudo apt --fix-broken install -y
-    sudo dpkg -i --force-all /var/cache/apt/archives/libgl1-mesa-dri*.deb
     sudo apt install -y --allow-downgrades linux-headers-"$1" linux-image-"$1" || return 255
 
     # Update boot menu to boot to the new kernel
@@ -256,7 +268,7 @@ function install_userspace_pkgs() {
 
     # bsp packages as per Intel bsp overlay release
     local overlay_packages=(
-    vim ocl-icd-libopencl1 curl openssh-server net-tools gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 gir1.2-gst-rtsp-server-1.0 gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-opencv gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-apps gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio gstreamer1.0-qt5 gstreamer1.0-rtsp gstreamer1.0-tools gstreamer1.0-vaapi gstreamer1.0-wpe gstreamer1.0-x intel-media-va-driver-non-free jhi jhi-tests itt-dev itt-staticdev libmfx1 libmfx-dev libmfx-tools libd3dadapter9-mesa libd3dadapter9-mesa-dev libdrm-amdgpu1 libdrm-common libdrm-dev libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libdrm-tests libdrm2 libegl-mesa0 libegl1-mesa libegl1-mesa-dev libgbm-dev libgbm1 libgl1-mesa-dev libgl1-mesa-dri libgl1-mesa-glx libglapi-mesa libgles2-mesa libgles2-mesa-dev libglx-mesa0 libgstrtspserver-1.0-dev libgstrtspserver-1.0-0 libgstreamer-gl1.0-0 libgstreamer-opencv1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-0 libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-0 libgstreamer-plugins-good1.0-dev libgstreamer1.0-0 libgstreamer1.0-dev libigdgmm-dev libigdgmm12 libigfxcmrt-dev libigfxcmrt7 libmfx-gen1.2 libosmesa6 libosmesa6-dev libtpms-dev libtpms0 libva-dev libva-drm2 libva-glx2 libva-wayland2 libva-x11-2 libva2 libwayland-bin libwayland-client0 libwayland-cursor0 libwayland-dev libwayland-doc libwayland-egl-backend-dev libwayland-egl1 libwayland-egl1-mesa libwayland-server0 libweston-9-0 libweston-9-dev libxatracker-dev libxatracker2 mesa-common-dev mesa-utils mesa-va-drivers mesa-vdpau-drivers mesa-vulkan-drivers libvpl-dev libmfx-gen-dev onevpl-tools qemu-guest-agent va-driver-all vainfo weston xserver-xorg-core swtpm swtpm-tools bmap-tools adb autoconf automake libtool cmake g++ gcc git intel-gpu-tools libssl3 libssl-dev make mosquitto mosquitto-clients build-essential apt-transport-https default-jre ffmpeg git-lfs gnuplot lbzip2 libglew-dev libglm-dev libsdl2-dev mc openssl pciutils python3-pandas python3-pip python3-seaborn terminator vim wmctrl wayland-protocols gdbserver ethtool iperf3 msr-tools powertop linuxptp lsscsi tpm2-tools tpm2-abrmd binutils cifs-utils i2c-tools xdotool gnupg lsb-release intel-igc-core intel-igc-opencl intel-opencl-icd intel-level-zero-gpu ethtool iproute2 socat spice-client-gtk
+    vim ocl-icd-libopencl1 curl openssh-server net-tools gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 gir1.2-gst-rtsp-server-1.0 gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-opencv gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-apps gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio gstreamer1.0-qt5 gstreamer1.0-rtsp gstreamer1.0-tools gstreamer1.0-vaapi gstreamer1.0-wpe gstreamer1.0-x intel-media-va-driver-non-free jhi jhi-tests itt-dev itt-staticdev libmfx1 libmfx-dev libmfx-tools libd3dadapter9-mesa libd3dadapter9-mesa-dev libdrm-amdgpu1 libdrm-common libdrm-dev libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libdrm-tests libdrm2 libegl-mesa0 libegl1-mesa libegl1-mesa-dev libgbm-dev libgbm1 libgl1-mesa-dev libgl1-mesa-dri libgl1-mesa-glx libglapi-mesa libgles2-mesa libgles2-mesa-dev libglx-mesa0 libgstrtspserver-1.0-dev libgstrtspserver-1.0-0 libgstreamer-gl1.0-0 libgstreamer-opencv1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-0 libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-0 libgstreamer-plugins-good1.0-dev libgstreamer1.0-0 libgstreamer1.0-dev libigdgmm-dev libigdgmm12 libigfxcmrt-dev libigfxcmrt7 libmfx-gen1.2 libosmesa6 libosmesa6-dev libtpms-dev libtpms0 libva-dev libva-drm2 libva-glx2 libva-wayland2 libva-x11-2 libva2 libwayland-bin libwayland-client0 libwayland-cursor0 libwayland-dev libwayland-doc libwayland-egl-backend-dev libwayland-egl1 libwayland-egl1-mesa libwayland-server0 libweston-9-0 libweston-9-dev libxatracker-dev libxatracker2 mesa-common-dev mesa-utils mesa-va-drivers mesa-vdpau-drivers mesa-vulkan-drivers libvpl-dev libmfx-gen-dev onevpl-tools qemu-guest-agent va-driver-all vainfo weston xserver-xorg-core swtpm swtpm-tools bmap-tools adb autoconf automake libtool cmake g++ gcc git intel-gpu-tools libssl3 libssl-dev make mosquitto mosquitto-clients build-essential apt-transport-https default-jre ffmpeg git-lfs gnuplot lbzip2 libglew-dev libglm-dev libsdl2-dev mc openssl pciutils python3-pandas python3-pip python3-seaborn terminator vim wmctrl wayland-protocols gdbserver ethtool msr-tools powertop linuxptp lsscsi tpm2-tools tpm2-abrmd binutils cifs-utils i2c-tools xdotool gnupg lsb-release intel-igc-core intel-igc-opencl intel-opencl-icd intel-level-zero-gpu ethtool iproute2 socat spice-client-gtk
     )
     if [[ -n $LINUX_FW_PPA_VER ]]; then
         overlay_packages+=("linux-firmware=$LINUX_FW_PPA_VER")

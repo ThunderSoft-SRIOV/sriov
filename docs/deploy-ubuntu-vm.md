@@ -20,7 +20,7 @@
 ## Prerequisites
 
 * [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso). In this example we are using Intel IOT Ubuntu 22.04 LTS
-* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso).In this example we are using Ubuntu 24.04
+* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso). In this example we are using Ubuntu 24.04
 
 ## Preparation
 ### VM for ubuntu 22.04

@@ -141,7 +141,7 @@
     ```sh
     sudo mkdir -p /var/lib/shim-signed/mok/
     cd /var/lib/shim-signed/mok/
-    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/doc/MOK.der
+    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/debian.ppa/debian/doc/MOK.der
     ```
 
 2. Check if the key is already enrolled

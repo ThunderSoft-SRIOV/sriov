@@ -128,12 +128,18 @@ There are two options provided. Choose the corresponding launch method according
 
 1. Download [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=843233) from browser.
 2. Use File Explorer to extract the zip file.
-3. Navigate into the install folder and double click on `installer.exe` to launch the installer.
+3. Navigate into the install folder and double click on `Installer.exe` to launch the installer.
+
 4. Click *Begin installation*
 
-    <img src=./media/gfxdrvinstall.png width="80%">
+    <img src=./media/mr2/gfxdrv1.png width="80%">
+    <img src=./media/mr2/gfxdrv2.png width="80%">
+    <img src=./media/mr2/gfxdrv3.png width="80%">
 
 5. After the installation has completed, click the *Reboot Required* button to reboot.
+
+    <img src=./media/mr2/gfxdrv4.png width="80%">
+
 6. After reboot, launch the **Device Manager** to check the installation.
 
     <img src=./media/mr2/gfxdrv.png width="80%">
@@ -141,23 +147,20 @@ There are two options provided. Choose the corresponding launch method according
 ### Install SR-IOV Zero Copy Driver
 
 1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/843228/display-virtualization-drivers-for-display-virtualization-drivers-for-meteor-lake-u-h-and-meteor-lake-ps.html?cache=1734486750) from browser.
-2. Use File Explorer to extract the zip file.
-3. Search for **Windows PowerShell** and run it as an administrator.
-4. Enter the following command and when prompted, enter "Y/Yes" to continue.
+2. Navigate into the install folder and double click on `ZeroCopyInstaller.exe` to launch the installer.
 
-    ```sh
-    C:\> Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope CurrentUser
-    ```
+    <img src=./media/mr2/zerocopydrv1.png width="80%">
 
-5. Run the command below to install the *DVServerKMD* and *DVServerUMD* device drivers. When prompted, enter "[R] Run once" to continue.
+3. Click on the *Install* button when prompted.
 
-    ```sh
-    C:\> .\DVInstaller.ps1
-    ```
+    <img src=./media/mr2/zerocopydrv2.png width="80%">
+    <img src=./media/mr2/zerocopydrv3.png width="80%">
 
-6. Once the driver installation completes, the Windows Guest VM will reboot 
-automatically.
-7. After reboot, launch the **Device Manager** to check the installation.
+4. Once the driver installation completes, click *Finish* and the Windows Guest VM will reboot automatically.
+
+    <img src=./media/mr2/zerocopydrv4.png width="80%">
+
+5. After reboot, launch the **Device Manager** to check the installation.
 
     <img src=./media/mr2/zerocopydrv.png width="80%">
 
@@ -170,14 +173,15 @@ automatically.
 5. Use the following command to install VIOSerial.
 
     ```sh
-    Start-Process msiexec.exe -Wait -ArgumentList '/i ".\virtio-win-gt-x64.msi" ADDLOCAL="FE_network_driver,FE_balloon_driver,FE_pvpanic_driver,FE_qemupciserial_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver"'
+    # Replace <virtio-win-is-path> in below command with the path where virtio-win iso has been mounted to in Windows VM.
+    Start-Process msiexec.exe -Wait -ArgumentList '/i "<virtio-win-is-path>\virtio-win-gt-x64.msi" ADDLOCAL="FE_network_driver,FE_balloon_driver,FE_pvpanic_driver,FE_qemupciserial_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver"'
     ```
 
 6. Install QEMU guest agent in Windows VM.
 
     ```sh
     # Replace <virtio-win-is-path> in below command with the path where virtio-win iso has been mounted to in Windows VM.
-    Start-Process msiexec.exe -ArgumentList '/i ".\guest-agent\qemu-ga-x86_64.msi"'
+    Start-Process msiexec.exe -ArgumentList '/i "<virtio-win-is-path>\guest-agent\qemu-ga-x86_64.msi"'
     ```
 
 ### Post Install Launch
