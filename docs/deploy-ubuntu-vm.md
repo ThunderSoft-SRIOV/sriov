@@ -191,7 +191,7 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./sriov_prepare_projects.sh
     sudo ./sriov_setup_ubuntu_guest_kernel.sh --use-ppa-files
     ```
-
+    *Note: If the execution is interrupted, enter “q” to continue the script.*
 6. Reboot the system.
 
     ```shell
@@ -473,3 +473,51 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm4 -f OVMF_VARS_ubuntu4.fd -d ubuntu4.qcow2 -p ssh=2225 &
     wait
     ```
+# Reduce the Size of Guest VM
+
+## Inside the VM
+
+1. Delete the sriov directory
+    ```shell
+    rm -rf ~/sriov
+    ```
+
+2. Create a Temporary File:
+
+* Use the dd command to create a file filled with zeros:
+
+    ```shell
+    dd if=/dev/zero of=/mytempfile
+    ```
+3. Remove the Temporary File:
+
+* Delete the file to free up space:
+
+    ```shell
+    rm -f /mytempfile
+    ```
+
+## On the Host
+
+1. Backup the Disk Image
+
+* Convert the current disk image to a backup
+    
+    ```shell
+    # Please replace the <ubuntu_image> with your actual image name
+    cd ~/sriov/install_dir/
+    qemu-img convert -O qcow2 <ubuntu_image>.qcow2 <ubuntu_image>.qcow2_backup
+    ```
+
+2. Replace the Original Disk Image
+
+* Remove the original image and replace it with the backup
+
+    ```shell
+    # Please replace the <ubuntu_image> with your actual image name
+    cd ~/sriov/install_dir/
+    rm <ubuntu_image>.qcow2
+    mv <ubuntu_image>.qcow2_backup <ubuntu_image>.qcow2
+    ```
+
+<p align="right">(<a href="#win11-vm-top">back to top</a>)</p>

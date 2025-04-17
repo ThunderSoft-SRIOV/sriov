@@ -26,6 +26,7 @@
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
   - [Launch Multiple Windows Guest VMs](#launch-multiple-windows-guest-vms)
     - [Launch Multiple Windows Guest VMs Using `qemu`](#launch-multiple-windows-guest-vms-using-qemu)
+- [Reduce the Size of Guest VM](#reduce-the-size-of-guest-vm)
 
 # Prerequisites
 
@@ -294,6 +295,43 @@ There are three options provided. Choose the corresponding launch method accordi
     # on the host
     cd /home/$USER/sriov/scripts/setup_guest/win11
     sudo ./start_all_windows.sh
+    ```
+
+# Reduce the Size of Guest VM
+
+## Inside the VM
+
+1. Download and Prepare Sdelete
+
+* Obtain [Sdelete](https://learn.microsoft.com/en-us/sysinternals/downloads/sdelete) from Microsoft SysInternals and unzip the package.
+
+2. Run Sdelete
+
+* Execute `sdelete.exe` in Command Prompt with the -z flag on the C: drive
+
+    ```shell
+    sdelete.exe -z C:\
+    ```
+
+## On the Host
+
+1. Backup the Disk Image
+
+* Convert the current disk image to a backup
+    
+    ```shell
+    # Please replace the <win11_image> with your actual image name
+    qemu-img convert -O qcow2 <win11_image>.qcow2 <win11_image>.qcow2_backup
+    ```
+
+2. Replace the Original Disk Image
+
+* Remove the original image and replace it with the backup
+
+    ```shell
+    # Please replace the <win11_image> with your actual image name
+    rm <win11_image>.qcow2
+    mv <win11_image>.qcow2_backup <win11_image>.qcow2
     ```
 
 <p align="right">(<a href="#win11-vm-top">back to top</a>)</p>

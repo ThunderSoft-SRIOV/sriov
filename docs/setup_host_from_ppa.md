@@ -1,10 +1,82 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
-1. [Install Software Packages](#install-software-packages)
-1. [Check The Software Package Version](#check-the-software-package-version)
-1. [Enable UEFI Secure Boot](#enable-uefi-secure-boot)
 
-# Install Software Packages
+- [Register ThunderSoft Machine Owner Key for Secure Boot](#register-thundersoft-machine-owner-key-for-secure-boot)
+- [Enable Secure Boot in BIOS](#enable-secure-boot-in-bios)
+- [Install Software Packages](#install-software-packages)
+- [Check The Software Package Version](#check-the-software-package-version)
+
+## Register ThunderSoft Machine Owner Key for Secure Boot
+
+1. Download `MOK.der` from ppa
+
+    ```sh
+    sudo mkdir -p /var/lib/shim-signed/mok/
+    cd /var/lib/shim-signed/mok/
+    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/doc/MOK.der
+    ```
+
+2. Check if the key is already enrolled
+
+    ```sh
+    sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der
+    ```
+
+    *If system returns */var/lib/shim-signed/mok/MOK.der is already enrolled* , it means that the key has been already enrolled. Skip the following steps*
+
+3. Enroll the key
+
+    ```sh
+    sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
+    ```
+
+    *Note: You will be prompted here to enter a one-time password, please remember the password*
+
+4. Reboot the host
+
+    ```sh
+    sudo reboot
+    ```
+
+    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+
+    <img src=./media/secureboot1.png width="80%">
+    <img src=./media/secureboot2.png width="80%">
+    <img src=./media/secureboot3.png width="80%">
+    <img src=./media/secureboot4.png width="80%">
+    <img src=./media/secureboot5.png width="80%">
+    <img src=./media/secureboot6.png width="80%">
+
+    To verify the MOK was loaded correctly after reboot:
+
+    ```sh
+    sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der
+    ```
+
+    output
+
+    ```sh
+    /var/lib/shim-signed/mok/MOK.der is already enrolled
+    ```
+
+## Enable Secure Boot in BIOS
+
+1. Check the secure boot state
+
+    ```sh
+    sudo mokutil --sb-state
+    ```
+
+    *Note: If system returns **SecureBoot enabled**, it means that the system has booted via Secure Boot. Skip the following steps*
+
+2. Enable Secure Boot in BIOS
+
+    1) Reboot the system
+    2) Enter the BIOS configuration interface
+    3) Select *Security* -> *Secure Boot* -> *Enabled*
+    4) Save and exit
+
+## Install Software Packages
 
 1. Install kernel packages
 
@@ -26,9 +98,7 @@
     sudo ./scripts/setup_host/sriov_setup_debian.sh --use-ppa-files
     ```
 
-    *Note: Please run command `sudo apt purge -y $(dpkg --get-selections | grep '^qemu' | awk '{print $1}')` first if you re-run the above script*
-
-# Check The Software Package Version
+## Check The Software Package Version
 
 1. Check the kernel version
 
@@ -37,6 +107,7 @@
     ```
 
     Example output
+
     ```shell
     6.6.32-debian-sriov
     ```
@@ -49,6 +120,7 @@
     ```
 
     Example output
+
     ```shell
     gmmlib-sriov                        2410-1
     libdrm-amdgpu1:amd64                2.4.123-1~bpo12+1
@@ -100,61 +172,3 @@
     intel-opencl-icd                    23.13.26032.30
     libigdgmm12:amd64                   22.3.3+ds1-1
     ```
-
-# Enable UEFI Secure Boot
-
-1. Check the secure boot state
-
-    ```sh
-    sudo mokutil --sb-state
-    ```
-
-    If system returns **SecureBoot enabled** , it means that the system has booted via Secure Boot. Skip the following steps eo enable secure boot.
-
-2. Download `MOK.der` from ppa
-
-    ```sh
-    sudo mkdir -p /var/lib/shim-signed/mok/
-    cd /var/lib/shim-signed/mok/
-    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/doc/MOK.der
-    ```
-
-3. Enroll the key
-
-    ```sh
-    sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
-    ```
-
-    *Note: You will be prompted here to enter a one-time password, please remember the password*
-
-    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
-
-    <img src=./media/secureboot1.png width="80%">
-    <img src=./media/secureboot2.png width="80%">
-    <img src=./media/secureboot3.png width="80%">
-    <img src=./media/secureboot4.png width="80%">
-    <img src=./media/secureboot5.png width="80%">
-    <img src=./media/secureboot6.png width="80%">
-
-    To verify the MOK was loaded correctly after reboot:
-
-    ```sh
-    sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der
-    ```
-
-    output
-    ```
-    /var/lib/shim-signed/mok/MOK.der is already enrolled
-    ```
-
-4. Check the secure boot state
-
-    ```sh
-    sudo mokutil --sb-state
-    ```
-
-    If system returns **SecureBoot disabled**, you need to enable Secure Boot by following steps: 
-    1) Reboot the system
-    2) Enter the BIOS configuration interface
-    3) Select *Security* -> *Secure Boot* -> *Enabled*
-    4) Save and exit
