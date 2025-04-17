@@ -1,5 +1,8 @@
+<a name="ubuntu-vm-top"></a>
+
 # Guest Ubuntu Virtual Machine
 
+<!-- TABLE OF CONTENTS -->
 # Table of Contents
 - [Prerequisites](#prerequisites)
 - [Preparation](#preparation)
@@ -519,5 +522,4 @@ There are three options provided. Choose the corresponding launch method accordi
     rm <ubuntu_image>.qcow2
     mv <ubuntu_image>.qcow2_backup <ubuntu_image>.qcow2
     ```
-
-<p align="right">(<a href="#win11-vm-top">back to top</a>)</p>
+<p align="right">(<a href="#ubuntu-vm-top">back to top</a>)</p>
