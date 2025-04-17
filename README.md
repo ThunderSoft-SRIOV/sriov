@@ -3,19 +3,18 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
 1. [Introduction](#introduction)
-1. [Prerequisites](#prerequisites)
-1. [Preparation](#preparation)
-1. [Host Setup](#host-setup)
+2. [Prerequisites](#prerequisites)
+3. [Preparation](#preparation)
+4. [Host Setup](#host-setup)
     1. [Setup Host From Source Code](#setup-host-from-source-code)
-    1. [Setup Host From PPA](#setup-host-from-ppa)
-1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
+    2. [Setup Host From PPA](#setup-host-from-ppa)
+5. [Virtual Machine Image Creation](#virtual-machine-image-creation)
     1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
-    1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
-1. [Disable Automatic Loading of evbug Module](#disable-automatic-loading-of-evbug-module)
-1. [Virtual Machine Image Creation](#virtual-machine-image-creation)
+    2. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
+6. [Virtual Machine Image Creation](#virtual-machine-image-creation)
     1. [Deploy Windows Virtual Machine](#deploy-windows-virtual-machine)
-    1. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
-1. [LICENSE](#license)
+    2. [Deploy Ubuntu Virtual Machine](#deploy-ubuntu-virtual-machine)
+7. [LICENSE](#license)
 
 <!-- INSTRUCTION -->
 # Introduction
@@ -38,18 +37,27 @@ The key benefits of Intel Graphics SR-IOV are:
 <!-- PREPARATION -->
 # Preparation
 
-1. Install `git`
+1. Install software packages
 
     ```sh
     sudo apt update
-    sudo apt install -y git vim
+    sudo apt install -y git vim curl
     ```
 
-2. Clone from github
+2. Disable automatic loading of evbug module
+
+    ```shell
+    sudo vim /etc/modprobe.d/*-blacklist.conf
+
+    # Add the following line to the end of the file, save and exit
+    blacklist evbug
+    ```
+
+3. Clone from github
 
     ```sh
     cd /home/$USER/
-    git clone https://github.com/ThunderSoft-SRIOV/sriov.git
+    git clone -b v0.7.0 https://github.com/ThunderSoft-SRIOV/sriov.git
     ```
 
 <!-- HOST SETUP -->
@@ -67,18 +75,6 @@ Please refer [here](docs/setup_host.md) for steps on setting up host from source
 ## Setup Host From PPA
 
 Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host from ppa.
-
-<!-- DISABLE AUTOMATIC LOADING OF EVBUG MODULE -->
-# Disable Automatic Loading of evbug Module
-
-1. Modify file `/etc/modprobe.d/*-blacklist.conf`, save and exit
-
-    ```shell
-    sudo vim /etc/modprobe.d/*-blacklist.conf
-
-    # add the following line to the file
-    blacklist evbug
-    ```
 
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 # Virtual Machine Image Creation

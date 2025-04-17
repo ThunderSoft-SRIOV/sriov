@@ -142,7 +142,7 @@
 
     *Note: You will be prompted here to enter a one-time password, please remember the password*
 
-    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+    At next reboot, the device firmware should launch its MOK manager and prompt the user to review the new key and confirm its enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
 
     <img src=./media/secureboot1.png width="80%">
     <img src=./media/secureboot2.png width="80%">
