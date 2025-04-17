@@ -52,13 +52,24 @@ The key benefits of Intel Graphics SR-IOV are:
 
     ```sh
     cd /home/$USER/
-    git clone https://github.com/ThunderSoft-SRIOV/sriov.git
+    git clone -b mr2 https://github.com/ThunderSoft-SRIOV/sriov.git
     ```
 
 <!-- HOST SETUP -->
 # Host Setup
 
+Two installation methods are provided, please choose one of them.
+
+* [Option 1] Setup Host From PPA
+* [Option 2] Build Debian Packages
+
+## Setup Host From PPA
+
 Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host.
+
+## Build Debian Packages
+
+Please refer [here](docs/build_package.md) for steps on building debian packages.
 
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 # Virtual Machine Image Creation

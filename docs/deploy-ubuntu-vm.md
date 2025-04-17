@@ -1,5 +1,7 @@
+<a name="ubuntu-vm-top"></a>
 # Guest Ubuntu Virtual Machine
 
+<!-- TABLE OF CONTENTS -->
 # Table of Contents
 - [Prerequisites](#prerequisites)
 - [Preparation](#preparation)
@@ -20,7 +22,6 @@
 ## Prerequisites
 
 * [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso). In this example we are using Intel IOT Ubuntu 22.04 LTS
-* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso). In this example we are using Ubuntu 24.04
 
 ## Preparation
 ### VM for ubuntu 22.04
@@ -30,14 +31,6 @@
 
     ```sh
     mv ubuntu-22.04-desktop-amd64+intel-iot.iso /home/$USER/sriov/install_dir/ubuntu.iso
-    ```
-### VM for ubuntu 24.04
-1. Download ubuntu_24.04 iso image and save the iso file as `ubuntu.iso`
-
-2. Copy the `ubuntu.iso` to setup directory
-
-    ```sh
-    mv ubuntu-24.04.2-desktop-amd64.iso /home/$USER/sriov/install_dir/ubuntu.iso
     ```
 
 ## Installation
@@ -252,53 +245,55 @@ There are three options provided. Choose the corresponding launch method accordi
 
     Example output
     ```shell
-    gmmlib-sriov                        2405-1
-    libdrm-amdgpu1:amd64                2.4.113-2~ubuntu0.22.04.1
-    libdrm-common                       2.4.113-2~ubuntu0.22.04.1
-    libdrm-dev:amd64                    2.4.113-2~ubuntu0.22.04.1
-    libdrm-intel1:amd64                 2.4.113-2~ubuntu0.22.04.1
-    libdrm-nouveau2:amd64               2.4.113-2~ubuntu0.22.04.1
-    libdrm-radeon1:amd64                2.4.113-2~ubuntu0.22.04.1
-    libdrm-sriov                        2405-1
-    libdrm2:amd64                       2.4.113-2~ubuntu0.22.04.1
-    libva-drm2:amd64                    2.14.0-1
-    libva-sriov                         2405-1
-    libva-utils-sriov                   2405-1
-    libva-wayland2:amd64                2.14.0-1
-    libva-x11-2:amd64                   2.14.0-1
-    libva2:amd64                        2.14.0-1
-    libvariable-magic-perl              0.62-1build5
-    libva-utils-sriov                   2405-1
-    media-driver-sriov                  2405-1
-    libegl-mesa0:amd64                  23.2.1-1ubuntu3.1~22.04.2
-    libegl1-mesa:amd64                  23.0.4-0ubuntu1~22.04.1
-    libegl1-mesa-dev:amd64              23.2.1-1ubuntu3.1~22.04.2
-    libgl1-mesa-dri:amd64               23.2.1-1ubuntu3.1~22.04.2
-    libglapi-mesa:amd64                 23.2.1-1ubuntu3.1~22.04.2
-    libglu1-mesa:amd64                  9.0.2-1
-    libglu1-mesa-dev:amd64              9.0.2-1
-    libglx-mesa0:amd64                  23.2.1-1ubuntu3.1~22.04.2
-    mesa-common-dev:amd64               23.2.1-1ubuntu3.1~22.04.2
-    mesa-sriov                          2405-1
-    mesa-utils                          8.4.0-1ubuntu1
-    mesa-utils-bin:amd64                8.4.0-1ubuntu1
-    mesa-va-drivers:amd64               23.2.1-1ubuntu3.1~22.04.2
-    mesa-vdpau-drivers:amd64            23.2.1-1ubuntu3.1~22.04.2
-    mesa-vulkan-drivers:amd64           22.2.5-0ubuntu0.1~22.04.1
-    onevpl-gpu-sriov                    2405-1
-    onevpl-gpu-sriov                    2405-1
-    onevpl-sriov                        2405-1
-    libspice-client-glib-2.0-8:amd64    0.39-3ubuntu1
-    libspice-client-gtk-3.0-5:amd64     0.39-3ubuntu1
-    spice-client-glib-usb-acl-helper    0.39-3ubuntu1
-    libspice-protocol-dev               0.14.3-1
-    libspice-server-dev:amd64           0.15.0-2ubuntu4
-    libspice-server1:amd64              0.15.0-2ubuntu4
-    intel-igc-core                      1.0.13700.14
-    intel-igc-opencl                    1.0.13700.14
-    intel-level-zero-gpu                1.3.26032.30
-    intel-opencl-icd                    23.13.26032.30
-    libigdgmm12:amd64                   22.3.0
+    libdrm-amdgpu1:amd64                2.4.122-1~ubuntu0.24.04.1
+    libdrm-common                       2.4.122-1~ubuntu0.24.04.1
+    libdrm-dev:amd64                    2.4.122-1~ubuntu0.24.04.1
+    libdrm-intel1:amd64                 2.4.122-1~ubuntu0.24.04.1
+    libdrm-nouveau2:amd64               2.4.122-1~ubuntu0.24.04.1
+    libdrm-radeon1:amd64                2.4.122-1~ubuntu0.24.04.1
+    libdrm-tests                        2.4.122-1~ubuntu0.24.04.1
+    libdrm2:amd64                       2.4.122-1~ubuntu0.24.04.1
+    libva2:amd64                        2.22.0-1ppa1~noble1
+    libva-dev:amd64                     2.22.0-1ppa1~noble1
+    libva-drm2:amd64                    2.22.0-1ppa1~noble1
+    libva-glx2:amd64                    2.22.0-1ppa1~noble1
+    libva-wayland2:amd64                2.22.0-1ppa1~noble1
+    libva-x11-2:amd64                   2.22.0-1ppa1~noble1
+    va-driver-all:amd64                 2.22.0-1ppa1~noble1
+    libigdgmm-dev:amd64                 22.5.5-1ppa1~noble2
+    libigdgmm12:amd64                   22.5.5-1ppa1~noble2
+    libvpl2                             1:2.13.0-1ppa1~noble1
+    libvpl-dev                          1:2.13.0-1ppa1~noble1
+    libmfx-gen1.2                       24.4.4-1ppa1~noble2
+    libmfx-gen-dev                      24.4.4-1ppa1~noble2
+    intel-media-va-driver:amd64         24.4.4-1ppa1~noble2
+    intel-media-va-driver-non-free:amd64 24.4.4-1ppa1~noble2
+    libigfxcmrt-dev:amd64               24.4.4-1ppa1~noble2
+    libigfxcmrt7:amd64                  24.4.4-1ppa1~noble2
+    libspice-client-glib-2.0-8:amd64    0.42-2ubuntu2
+    libspice-client-gtk-3.0-5:amd64     0.42-2ubuntu2
+    libspice-client-gtk-3.0-5:amd64     0.42-2ubuntu2
+    spice-client-gtk                    0.42-2ubuntu2
+    spice-client-glib-usb-acl-helper    0.42-2ubuntu2
+    qemu-guest-agent                    1:9.1.0+ppa1-noble5
+    qemu-guest-agent                    1:9.1.0+ppa1-noble5
+    libd3dadapter9-mesa:amd64           24.2.8-1ubuntu1~24.04.1
+    libd3dadapter9-mesa-dev:amd64       24.2.8-1ubuntu1~24.04.1
+    libd3dadapter9-mesa-dev:amd64       24.2.8-1ubuntu1~24.04.1
+    libegl-mesa0:amd64                  24.2.8-1ubuntu1~24.04.1
+    libegl1-mesa-dev:amd64              24.2.8-1ubuntu1~24.04.1
+    libgl1-mesa-dev:amd64               24.2.8-1ubuntu1~24.04.1
+    libgl1-mesa-dri:amd64               24.2.8-1ubuntu1~24.04.1
+    libglapi-mesa:amd64                 24.2.8-1ubuntu1~24.04.1
+    libgles2-mesa-dev:amd64             24.2.8-1ubuntu1~24.04.1
+    libglx-mesa0:amd64                  24.2.8-1ubuntu1~24.04.1
+    libosmesa6:amd64                    24.2.8-1ubuntu1~24.04.1
+    libosmesa6-dev:amd64                24.2.8-1ubuntu1~24.04.1
+    libosmesa6-dev:amd64                24.2.8-1ubuntu1~24.04.1
+    mesa-common-dev:amd64               24.2.8-1ubuntu1~24.04.1
+    mesa-va-drivers:amd64               24.2.8-1ubuntu1~24.04.1
+    mesa-vdpau-drivers:amd64            24.2.8-1ubuntu1~24.04.1
+    mesa-vulkan-drivers:amd64           24.2.8-1ubuntu1~24.04.1
     ```
 
 3. Check Ubuntu grub configuration
@@ -466,3 +461,5 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm4 -f OVMF_VARS_ubuntu4.fd -d ubuntu4.qcow2 -p ssh=2225 &
     wait
     ```
+
+<p align="right">(<a href="#ubuntu-vm-top">back to top</a>)</p>
