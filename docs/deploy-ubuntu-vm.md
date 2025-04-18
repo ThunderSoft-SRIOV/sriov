@@ -19,6 +19,7 @@
   - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
   - [Check the installation program](#check-the-installation-program)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
+- [Reduce the Size of Guest VM](#reduce-the-size-of-guest-vm)
 
 ## Prerequisites
 

@@ -143,7 +143,7 @@ There are two options provided. Choose the corresponding launch method according
 ### Install SR-IOV Zero Copy Driver
 
 1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/816539/nex-display-virtualization-drivers-for-alder-lake-s-p-n-and-raptor-lake-s-p-sr-p-core-ps-amston-lake.html?cache=1708585927) from browser.
-2. Use File Explorer to extract the zip file.
+2. Use File Explorer to extract the zip file and navigate to the folder.
 3. Search for **Windows PowerShell** and run it as an administrator.
 4. Enter the following command and when prompted, enter "Y/Yes" to continue.
 
