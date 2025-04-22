@@ -94,15 +94,15 @@ There are two options provided. Choose the corresponding launch method according
     sudo reboot
     ```
 
-3. Launch the ubuntu vm
+3. Launch the ubuntu VM
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/
 
-    # init ubuntu guest vm
+    # init ubuntu guest VM
     ./guest_setup/idv.sh init ubuntu
 
-    # launch vm
+    # launch VM
     sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
     ```
 
@@ -128,15 +128,15 @@ There are three options provided. Choose the corresponding launch method accordi
 
 ### Launch VM With `virsh`
 
-1. Launch the ubuntu vm
+1. Launch the ubuntu VM
 
     ```sh
     cd /home/$USER/sriov/virsh_enable/
 
-    # init ubuntu guest vm
+    # init ubuntu guest VM
     ./guest_setup/idv.sh init ubuntu
 
-    # launch vm
+    # launch VM
     sudo ./guest_setup/launch_multios.sh -f -d ubuntu -g sriov ubuntu
     ```
 ### Launch VM With `virt-manager`
@@ -152,7 +152,7 @@ There are three options provided. Choose the corresponding launch method accordi
     <img src=./media/ubuntu_virt_2.png width="80%">
     <img src=./media/passthrough-usb.png width="80%">
 
-3. Launch the ubuntu vm. Click *Virtual Machine* -> click *Run*
+3. Launch the ubuntu VM. Click *Virtual Machine* -> click *Run*
 
 ### Upgrade and install Ubuntu software to the latest in the guest VM
 
@@ -239,13 +239,13 @@ There are three options provided. Choose the corresponding launch method accordi
 
 10. After the installation completed, reboot the guest when prompted.
 
-11. Next, shutdown the guest properly. The Ubuntu image `Ubuntu.qcow2` is now ready to use.
+11. Next, shutdown the guest VM properly. The Ubuntu image `Ubuntu.qcow2` is now ready to use.
 
 ## Check the installation program
 
 ### Start and Check VM
 
-1. Start vm
+1. Start VM
 
     ```shell
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
@@ -500,6 +500,7 @@ There are three options provided. Choose the corresponding launch method accordi
     ```shell
     rm -f /mytempfile
     ```
+4. Next, shutdown the guest VM properly.
 
 ## On the Host
 
