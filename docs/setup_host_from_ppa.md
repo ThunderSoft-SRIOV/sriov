@@ -1,28 +1,31 @@
 <!-- TABLE OF CONTENTS -->
 # Table of Contents
 
-- [Register ThunderSoft Machine Owner Key for Secure Boot](#register-thundersoft-machine-owner-key-for-secure-boot)
-- [Enable Secure Boot in BIOS](#enable-secure-boot-in-bios)
-- [Install Software Packages](#install-software-packages)
-- [Check The Software Package Version](#check-the-software-package-version)
+1. [Register ThunderSoft Machine Owner Key for Secure Boot](#register-thundersoft-machine-owner-key-for-secure-boot)
+2. [Install Software Packages](#install-software-packages)
+3. [Check The Software Package Version](#check-the-software-package-version)
 
 ## Register ThunderSoft Machine Owner Key for Secure Boot
 
-1. Download `MOK.der` from ppa
+1. Check the secure boot state
+
+    ```sh
+    sudo mokutil --sb-state
+    ```
+
+    If system returns **SecureBoot disabled**, you need to enable Secure Boot by following steps:
+      1) Reboot the system
+      2) Enter the BIOS configuration interface
+      3) Select *Security* -> *Secure Boot* -> *Enabled*
+      4) Save and exit
+
+2. Download `MOK.der` from ppa
 
     ```sh
     sudo mkdir -p /var/lib/shim-signed/mok/
     cd /var/lib/shim-signed/mok/
-    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/debian.ppa/debian/doc/MOK.der
+    sudo -E curl -SsL -o MOK.der https://ThunderSoft-SRIOV.github.io/ppa/debian/doc/MOK.der
     ```
-
-2. Check if the key is already enrolled
-
-    ```sh
-    sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der
-    ```
-
-    *If system returns */var/lib/shim-signed/mok/MOK.der is already enrolled* , it means that the key has been already enrolled. Skip the following steps*
 
 3. Enroll the key
 
@@ -38,7 +41,7 @@
     sudo reboot
     ```
 
-    At next reboot, the device firmware should launch its MOK manager and prompt the user to review the new key and confirm its enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
+    At next reboot, the device firmware should launch it's MOK manager and prompt the user to review the new key and confirm it's enrollment, using the one-time password. Any kernel modules (or kernels) that have been signed with this MOK should now be loadable.
 
     <img src=./media/secureboot1.png width="80%">
     <img src=./media/secureboot2.png width="80%">
@@ -59,22 +62,11 @@
     /var/lib/shim-signed/mok/MOK.der is already enrolled
     ```
 
-## Enable Secure Boot in BIOS
-
-1. Check the secure boot state
+5. Check the secure boot state
 
     ```sh
     sudo mokutil --sb-state
     ```
-
-    *Note: If system returns **SecureBoot enabled**, it means that the system has booted via Secure Boot. Skip the following steps*
-
-2. Enable Secure Boot in BIOS
-
-    1) Reboot the system
-    2) Enter the BIOS configuration interface
-    3) Select *Security* -> *Secure Boot* -> *Enabled*
-    4) Save and exit
 
 # Install Software Packages
 
