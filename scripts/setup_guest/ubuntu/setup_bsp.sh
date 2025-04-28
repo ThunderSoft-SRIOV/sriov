@@ -193,7 +193,6 @@ function install_kernel_from_ppa() {
 
     # Install Intel kernel overlay
     echo "kernel PPA version: $1"
-    sudo apt --fix-broken install -y
     sudo apt install -y --allow-downgrades linux-headers-"$1" linux-image-"$1" || return 255
 
     # Update boot menu to boot to the new kernel
@@ -258,7 +257,10 @@ function setup_overlay_ppa() {
 
     sudo apt update -y
     sudo apt upgrade -y --allow-downgrades
-    sudo apt --fix-broken install -y
+    if [[ "$os_version" =~ "22" ]]; then
+	    sudo dpkg -i --force-all /var/cache/apt/archives/libgl1-mesa-dri_24.0.5*.deb
+	    sudo apt --fix-broken install -y
+    fi
 
     $LOGD "${FUNCNAME[0]} end"
 }
