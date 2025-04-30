@@ -48,7 +48,16 @@ The key benefits of Intel Graphics SR-IOV are:
     blacklist evbug
     ```
 
-3. Clone from github
+3. If the user environment uses a proxy, keep the proxy settings in the user environment of the same root user by following steps 
+
+    ```shell
+    sudo vim /etc/sudoers
+
+    # Add the following line to the end of the file, save and exit
+    Defaults env_keep += "http_proxy https_proxy ftp_proxy all_proxy no_proxy"
+    ```
+
+4. Clone from github
 
     ```sh
     cd /home/$USER/
@@ -58,18 +67,12 @@ The key benefits of Intel Graphics SR-IOV are:
 <!-- HOST SETUP -->
 # Host Setup
 
-Two installation methods are provided, please choose one of them.
-
-* [Option 1] Setup Host From PPA
-* [Option 2] Build Debian Packages
+*Note : If you need to rebuild ppa package from source, please refer [here](docs/build_package.md) for steps on building debian packages.*
 
 ## Setup Host From PPA
 
 Please refer [here](docs/setup_host_from_ppa.md) for steps on setting up host.
 
-## Build Debian Packages
-
-Please refer [here](docs/build_package.md) for steps on building debian packages.
 
 <!-- VIRTUAL MACHINE IMAGE CREATION -->
 # Virtual Machine Image Creation

@@ -26,6 +26,7 @@
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
   - [Launch Multiple Windows Guest VMs](#launch-multiple-windows-guest-vms)
     - [Launch Multiple Windows Guest VMs Using `qemu`](#launch-multiple-windows-guest-vms-using-qemu)
+- [Reduce the Size of Guest VM](#reduce-the-size-of-guest-vm)
 
 # Prerequisites
 
@@ -173,15 +174,13 @@ There are two options provided. Choose the corresponding launch method according
 5. Use the following command to install VIOSerial.
 
     ```sh
-    # Replace <virtio-win-is-path> in below command with the path where virtio-win iso has been mounted to in Windows VM.
-    Start-Process msiexec.exe -Wait -ArgumentList '/i "<virtio-win-is-path>\virtio-win-gt-x64.msi" ADDLOCAL="FE_network_driver,FE_balloon_driver,FE_pvpanic_driver,FE_qemupciserial_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver"'
+    Start-Process msiexec.exe -Wait -ArgumentList '/i "D:\virtio-win-gt-x64.msi" ADDLOCAL="FE_network_driver,FE_balloon_driver,FE_pvpanic_driver,FE_qemupciserial_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver"'
     ```
 
 6. Install QEMU guest agent in Windows VM.
 
     ```sh
-    # Replace <virtio-win-is-path> in below command with the path where virtio-win iso has been mounted to in Windows VM.
-    Start-Process msiexec.exe -ArgumentList '/i "<virtio-win-is-path>\guest-agent\qemu-ga-x86_64.msi"'
+    Start-Process msiexec.exe -ArgumentList '/i "D:\guest-agent\qemu-ga-x86_64.msi"'
     ```
 
 ### Post Install Launch
@@ -298,6 +297,43 @@ There are three options provided. Choose the corresponding launch method accordi
     # on the host
     cd /home/$USER/sriov/scripts/setup_guest/win11
     sudo ./start_all_windows.sh
+    ```
+
+# Reduce the Size of Guest VM
+
+## Inside the VM
+
+1. Download and Prepare Sdelete
+
+* Obtain [Sdelete](https://learn.microsoft.com/en-us/sysinternals/downloads/sdelete) from Microsoft SysInternals and unzip the package.
+
+2. Run Sdelete
+
+* Execute `sdelete.exe` in Command Prompt with the -z flag on the C: drive
+
+    ```shell
+    sdelete.exe -z C:\
+    ```
+
+## On the Host
+
+1. Backup the Disk Image
+
+* Convert the current disk image to a backup
+
+    ```shell
+    # Please replace the <win11_image> with your actual image name
+    qemu-img convert -O qcow2 <win11_image>.qcow2 <win11_image>.qcow2_backup
+    ```
+
+2. Replace the Original Disk Image
+
+* Remove the original image and replace it with the backup
+
+    ```shell
+    # Please replace the <win11_image> with your actual image name
+    rm <win11_image>.qcow2
+    mv <win11_image>.qcow2_backup <win11_image>.qcow2
     ```
 
 <p align="right">(<a href="#win11-vm-top">back to top</a>)</p>

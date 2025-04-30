@@ -331,7 +331,7 @@ function update_cmdline() {
     local drm_drv
 
     if [[ -z "${DRM_DRV_SELECTED+x}" || -z "$DRM_DRV_SELECTED" ]]; then
-        drm_drv=$(lspci -D -k  -s 0000:00:03.0 | grep "Kernel modules" | awk -F ':' '{print $2}' | xargs)
+        drm_drv="i915"
         set_drm_drv "i915" || return 255
     else
         drm_drv="$DRM_DRV_SELECTED"

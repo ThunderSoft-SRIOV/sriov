@@ -18,10 +18,11 @@
   - [Upgrade and install Ubuntu software to the latest in the guest VM](#upgrade-and-install-ubuntu-software-to-the-latest-in-the-guest-vm)
   - [Check the installation program](#check-the-installation-program)
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
-
+- [Reduce the Size of Guest VM](#reduce-the-size-of-guest-vm)
 ## Prerequisites
 
 * [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso). In this example we are using Intel IOT Ubuntu 22.04 LTS
+* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso). Ubuntu 24.04
 
 ## Preparation
 ### VM for ubuntu 22.04
@@ -178,7 +179,7 @@ There are three options provided. Choose the corresponding launch method accordi
     # on the host
     cd /home/$USER/
     # `idvuser` is the user name of the virtual machine Ubuntu system, Please replace it yourself
-    rsync -avz -e "ssh -p 2222" ./sriovs/cripts/setup_guest/ idvuser@localhost:/home/idvuser/
+    rsync -avz -e "ssh -p 2222" ./sriov/scripts/setup_guest/ idvuser@localhost:/home/idvuser/
     ```
 
 5. Run `./setup_bsp.sh` in Ubuntu guest VM. Please be patient, it will take a few hours
@@ -209,7 +210,7 @@ There are three options provided. Choose the corresponding launch method accordi
     6.6-intel
     ```
 
-8. Setup OpenVINO for use with Intel GPU in guest VM. After the installation completed.
+8. [Optional] Setup OpenVINO for use with Intel GPU in guest VM. After the installation completed.
 
     ```shell
     # on the guest
@@ -223,7 +224,7 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./start_ubuntu.sh
     ```
 
-10. Next, Waite for successful restart of VM, The Ubuntu image Ubuntu.qcow2 is now ready to use.
+10. Next, Wait for successful restart of VM, The Ubuntu image Ubuntu.qcow2 is now ready to use.
 
 ## Check the installation program
 
@@ -461,5 +462,51 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./start_ubuntu.sh -m 2G -c 2 -n ubuntu-vm4 -f OVMF_VARS_ubuntu4.fd -d ubuntu4.qcow2 -p ssh=2225 &
     wait
     ```
+# Reduce the Size of Guest VM
 
+## Inside the VM
+
+1. Delete the sriov directory
+    ```shell
+    rm -rf ~/sriov
+    ```
+
+2. Create a Temporary File:
+
+* Use the dd command to create a file filled with zeros:
+
+    ```shell
+    dd if=/dev/zero of=/mytempfile
+    ```
+3. Remove the Temporary File:
+
+* Delete the file to free up space:
+
+    ```shell
+    rm -f /mytempfile
+    ```
+4. Next, shutdown the guest VM properly.
+
+## On the Host
+
+1. Backup the Disk Image
+
+* Convert the current disk image to a backup
+    
+    ```shell
+    # Please replace the <ubuntu_image> with your actual image name
+    cd ~/sriov/install_dir/
+    qemu-img convert -O qcow2 <ubuntu_image>.qcow2 <ubuntu_image>.qcow2_backup
+    ```
+
+2. Replace the Original Disk Image
+
+* Remove the original image and replace it with the backup
+
+    ```shell
+    # Please replace the <ubuntu_image> with your actual image name
+    cd ~/sriov/install_dir/
+    rm <ubuntu_image>.qcow2
+    mv <ubuntu_image>.qcow2_backup <ubuntu_image>.qcow2
+    ```
 <p align="right">(<a href="#ubuntu-vm-top">back to top</a>)</p>
