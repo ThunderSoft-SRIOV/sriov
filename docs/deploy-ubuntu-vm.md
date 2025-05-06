@@ -33,6 +33,14 @@
     ```sh
     mv ubuntu-22.04-desktop-amd64+intel-iot.iso /home/$USER/sriov/install_dir/ubuntu.iso
     ```
+3. If the user environment uses a proxy, add a comment to edit the `/etc/sudoers` to pass the proxy setting to the sudo/root users
+
+    ```shell
+    sudo vi /etc/sudoers
+    # Add the following line to the end of the file, save and exit
+    Defaults env_keep += "http_proxy https_proxy ftp_proxy all_proxy no_proxy"
+    ```
+
 
 ## Installation
 

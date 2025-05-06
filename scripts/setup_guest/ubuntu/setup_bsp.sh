@@ -123,11 +123,15 @@ function check_url() {
 
     if ! wget --timeout=10 --tries=1 "$url" -nv --spider; then
 		# try again without proxy
-    	if ! wget --no-proxy --timeout=10 --tries=1 "$url" -nv --spider; then
-        	$LOGE "Error: Network issue, unable to access $url"
-        	$LOGE "Error: Please check the internet access connection"
-			return 255
-		fi
+        echo "Error: Network issue, unable to access $url"
+        echo "Error: Please check the internet access connection"
+        echo "Solution to Network Problems One: Add a Proxy"
+        echo "Proxy address depends on user environment. Usually by “export http_proxy=http://proxy_ip_url:proxy_port”"
+        echo "Proxy address depends on user environment. Usually by “export https_proxy=https://proxy_ip_url:proxy_port”"
+        echo "For example:"
+        echo "export http_proxy=http://proxy-domain.com:912"
+        echo "export https_proxy=http://proxy-domain.com:912"
+        exit 255
     fi
 }
 
@@ -222,12 +226,12 @@ function setup_overlay_ppa() {
                     $LOGE "Error: unable to auto get GPG key for PPG url ${PPA_URLS[$i]}"
                     return 255
                 fi
-                sudo wget "${PPA_WGET_NO_PROXY[$i]}" "$url/$ppa_gpg_key.gpg" -O /etc/apt/trusted.gpg.d/"$ppa_gpg_key".gpg
+                sudo -E wget "$url/$ppa_gpg_key.gpg" -O /etc/apt/trusted.gpg.d/"$ppa_gpg_key".gpg
             else
                 if [[ -n "${PPA_GPGS[$i]}" ]]; then
                     gpg_key_name=$(basename "${PPA_GPGS[$i]}")
                     if [[ ! -f /etc/apt/trusted.gpg.d/$gpg_key_name ]]; then
-                        sudo wget "${PPA_WGET_NO_PROXY[$i]}" "${PPA_GPGS[$i]}" -O /etc/apt/trusted.gpg.d/"$gpg_key_name"
+                        sudo -E wget "${PPA_GPGS[$i]}" -O /etc/apt/trusted.gpg.d/"$gpg_key_name"
                     fi
                 fi
             fi

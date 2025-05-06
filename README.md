@@ -39,7 +39,7 @@ The key benefits of Intel Graphics SR-IOV are:
     sudo apt install -y git vim curl
     ```
 
-2. Disable automatic loading of evbug module
+2. Disable automatic loading of `evbug` module
 
     ```shell
     sudo vim /etc/modprobe.d/*-blacklist.conf
@@ -48,7 +48,7 @@ The key benefits of Intel Graphics SR-IOV are:
     blacklist evbug
     ```
 
-3. If the user environment uses a proxy, keep the proxy settings in the user environment of the same root user by following steps 
+3. If the user environment uses a proxy, add a comment to edit the `/etc/sudoers` to pass the proxy setting to the sudo/root users
 
     ```shell
     sudo vim /etc/sudoers
