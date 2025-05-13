@@ -48,7 +48,7 @@ The key benefits of Intel Graphics SR-IOV are:
     blacklist evbug
     ```
 
-3. If the user environment uses a proxy, add a comment to edit the `/etc/sudoers` to pass the proxy setting to the sudo/root users
+3. If the user environment uses a proxy, make sure environment variables such as **http_proxy**, **https_proxy**, and **no_proxy** is configured properly. Additionally, edit the file ```/etc/sudoers``` and uncomment the following line to allow passing the proxy settings to the sudo/root users
 
     ```shell
     sudo vim /etc/sudoers
