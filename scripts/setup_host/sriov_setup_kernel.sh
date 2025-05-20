@@ -58,13 +58,12 @@ function sriov_install_firmware() {
     cd $WORK_DIR/firmware_install
 
     # Download firmware
-    wget -N https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/snapshot/linux-firmware-20231211.tar.gz
+    git clone --branch 20231211 --depth 1 https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 
     # Copy firmware
-    tar xzvf linux-firmware-20231211.tar.gz
-    sudo cp linux-firmware-20231211/i915/adlp_guc_70.bin /lib/firmware/i915
-    sudo cp linux-firmware-20231211/i915/tgl_guc_70.bin /lib/firmware/i915
-    sudo cp linux-firmware-20231211/i915/tgl_huc.bin /lib/firmware/i915
+    sudo cp linux-firmware/i915/adlp_guc_70.bin /lib/firmware/i915
+    sudo cp linux-firmware/i915/tgl_guc_70.bin /lib/firmware/i915
+    sudo cp linux-firmware/i915/tgl_huc.bin /lib/firmware/i915
 
     # Update initramfs
     sudo update-initramfs -u -k all
