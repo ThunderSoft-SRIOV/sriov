@@ -38,9 +38,9 @@ function check_network() {
               "https://github.com/")
 
     for site in ${websites[@]}; do
-        echo "Checking $site"
-        wget --timeout=10 --tries=1 $site -nv --spider
-        if [ $? -ne 0 ]; then
+        echo "Checking $site"       
+        if ! wget --timeout=10 --tries=1 $site -nv --spider
+        then
             echo "Error: Network issue, unable to access $site" | tee -a $WORK_DIR/$LOG_FILE
             echo "Error: Please check the internet access connection" | tee -a $WORK_DIR/$LOG_FILE
             echo "Solution to Network Problems One: Add a Proxy"
