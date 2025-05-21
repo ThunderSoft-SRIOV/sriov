@@ -254,27 +254,27 @@ There are three options provided. Choose the corresponding launch method accordi
 
     Example output
     ```shell
-    libdrm-amdgpu1:amd64                2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-common                       2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-dev:amd64                    2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-intel1:amd64                 2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-nouveau2:amd64               2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-radeon1:amd64                2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm-tests                        2.4.120-1ubuntu1-1ppa1~jammy1
-    libdrm2:amd64                       2.4.120-1ubuntu1-1ppa1~jammy1
-    libva2:amd64                        2.21.0-1ppa1~jammy1
-    libva-dev:amd64                     2.21.0-1ppa1~jammy1
-    libva-drm2:amd64                    2.21.0-1ppa1~jammy1
-    libva-glx2:amd64                    2.21.0-1ppa1~jammy1
-    libva-wayland2:amd64                2.21.0-1ppa1~jammy1
-    libva-x11-2:amd64                   2.21.0-1ppa1~jammy1
-    va-driver-all:amd64                 2.21.0-1ppa1~jammy1
-    libigdgmm-dev:amd64                 22.5.0
-    libigdgmm12:amd64                   22.5.0
-    libvpl2                             1:2.10.2-1ppa1~jammy3
-    libvpl-dev                          1:2.10.2-1ppa1~jammy3
-    libmfx-gen1.2                       24.1.5-1ppa1~jammy2
-    libmfx-gen-dev                      24.1.5-1ppa1~jammy2
+    libdrm-amdgpu1:amd64                    2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-common                           2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-dev:amd64                        2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-intel1:amd64                     2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-nouveau2:amd64                   2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-radeon1:amd64                    2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm-tests                            2.4.120-1ubuntu1-1ppa1~jammy1
+    libdrm2:amd64                           2.4.120-1ubuntu1-1ppa1~jammy1
+    libva2:amd64                            2.21.0-1ppa1~jammy1
+    libva-dev:amd64                         2.21.0-1ppa1~jammy1
+    libva-drm2:amd64                        2.21.0-1ppa1~jammy1
+    libva-glx2:amd64                        2.21.0-1ppa1~jammy1
+    libva-wayland2:amd64                    2.21.0-1ppa1~jammy1
+    libva-x11-2:amd64                       2.21.0-1ppa1~jammy1
+    va-driver-all:amd64                     2.21.0-1ppa1~jammy1
+    libigdgmm-dev:amd64                     22.5.0
+    libigdgmm12:amd64                       22.5.0
+    libvpl2                                 1:2.10.2-1ppa1~jammy3
+    libvpl-dev                              1:2.10.2-1ppa1~jammy3
+    libmfx-gen1.2                           24.1.5-1ppa1~jammy2
+    libmfx-gen-dev                          24.1.5-1ppa1~jammy2
     intel-media-va-driver:amd64             24.1.5-1ppa1~jammy1
     intel-media-va-driver-non-free:amd64    24.1.5-1ppa1~jammy1
     libigfxcmrt-dev:amd64                   24.1.5-1ppa1~jammy1
