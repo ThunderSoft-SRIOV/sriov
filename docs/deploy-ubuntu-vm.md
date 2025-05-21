@@ -287,20 +287,20 @@ There are three options provided. Choose the corresponding launch method accordi
     qemu-guest-agent                        1:8.2.1+ppa1-jammy3
     libd3dadapter9-mesa:amd64               24.0.5-1ppa1~jammy2
     libd3dadapter9-mesa-dev:amd64           24.0.5-1ppa1~jammy2
-    libegl-mesa0:amd64                  24.0.5-1ppa1~jammy2
-    libegl1-mesa-dev:amd64              24.0.5-1ppa1~jammy2
-    libgl1-mesa-dev:amd64               24.0.5-1ppa1~jammy2
-    libgl1-mesa-dri:amd64               24.0.5-1ppa1~jammy2
-    libglapi-mesa:amd64                 24.0.5-1ppa1~jammy2
-    libgles2-mesa-dev:amd64             24.0.5-1ppa1~jammy2
-    libglx-mesa0:amd64                  24.0.5-1ppa1~jammy2
-    libosmesa6:amd64                    24.0.5-1ppa1~jammy2
-    libosmesa6-dev:amd64                24.0.5-1ppa1~jammy2
-    libosmesa6-dev:amd64                24.0.5-1ppa1~jammy2
-    mesa-common-dev:amd64               24.0.5-1ppa1~jammy2
-    mesa-va-drivers:amd64               24.0.5-1ppa1~jammy2
-    mesa-vdpau-drivers:amd64            24.0.5-1ppa1~jammy2
-    mesa-vulkan-drivers:amd64           24.0.5-1ppa1~jammy2
+    libegl-mesa0:amd64                      24.0.5-1ppa1~jammy2
+    libegl1-mesa-dev:amd64                  24.0.5-1ppa1~jammy2
+    libgl1-mesa-dev:amd64                   24.0.5-1ppa1~jammy2
+    libgl1-mesa-dri:amd64                   24.0.5-1ppa1~jammy2
+    libglapi-mesa:amd64                     24.0.5-1ppa1~jammy2
+    libgles2-mesa-dev:amd64                 24.0.5-1ppa1~jammy2
+    libglx-mesa0:amd64                      24.0.5-1ppa1~jammy2
+    libosmesa6:amd64                        24.0.5-1ppa1~jammy2
+    libosmesa6-dev:amd64                    24.0.5-1ppa1~jammy2
+    libosmesa6-dev:amd64                    24.0.5-1ppa1~jammy2
+    mesa-common-dev:amd64                   24.0.5-1ppa1~jammy2
+    mesa-va-drivers:amd64                   24.0.5-1ppa1~jammy2
+    mesa-vdpau-drivers:amd64                24.0.5-1ppa1~jammy2
+    mesa-vulkan-drivers:amd64               24.0.5-1ppa1~jammy2
     ```
 
 3. Check Ubuntu grub configuration
