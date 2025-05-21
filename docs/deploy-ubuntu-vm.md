@@ -252,6 +252,7 @@ There are three options provided. Choose the corresponding launch method accordi
     sudo ./sriov_check_version.sh
     ```
     *Note: If there is a difference in package versions, it does not affect the remaining steps, just make sure the correspond package is installed successfully.*
+    
     Example output
     ```shell
     libdrm-amdgpu1:amd64                    2.4.120-1ubuntu1-1ppa1~jammy1
