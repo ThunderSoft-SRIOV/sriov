@@ -187,7 +187,7 @@ There are three options provided. Choose the corresponding launch method accordi
     # on the host
     cd /home/$USER/
     # `idvuser` is the user name of the virtual machine Ubuntu system, Please replace it yourself
-    rsync -avz -e "ssh -p 2222" ./sriov/scripts/setup_guest/ idvuser@localhost:/home/idvuser/
+    rsync -avz -e "ssh -p 2222" ./sriov/scripts/setup_guest/ubuntu idvuser@localhost:/home/idvuser/
     ```
 
 5. Run `./setup_bsp.sh` in Ubuntu guest VM. Please be patient, it will take a few hours
