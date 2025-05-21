@@ -13,6 +13,8 @@
     sudo mokutil --sb-state
     ```
 
+    *Note: You might need to create user pasword  to enable secure boot. Please refer to your system manual for details*
+
     If system returns **SecureBoot disabled**, you need to enable Secure Boot by following steps:
       1) Reboot the system
       2) Enter the BIOS configuration interface
@@ -143,9 +145,6 @@
     spice-client-gtk                    0.42-1ppa1~sriov~bookworm1
     spice-client-glib-usb-acl-helper    0.42-1ppa1~sriov~bookworm1
     qemu-system-modules-opengl          1:8.2.4-ppa1~sriov~bookworm1
-    qemu-block-extra                    1:8.2.4-ppa1~sriov~bookworm1
-    qemu-guest-agent                    1:8.2.4-ppa1~sriov~bookworm1
-    qemu-block-extra                    1:8.2.4-ppa1~sriov~bookworm1
     qemu-guest-agent                    1:8.2.4-ppa1~sriov~bookworm1
     qemu-system                         1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-arm                     1:8.2.4-ppa1~sriov~bookworm1
@@ -154,17 +153,7 @@
     qemu-system-gui                     1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-mips                    1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-misc                    1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-modules-opengl          1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-modules-spice           1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-ppc                     1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-sparc                   1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-x86                     1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-arm                     1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-common                  1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-data                    1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-gui                     1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-mips                    1:8.2.4-ppa1~sriov~bookworm1
-    qemu-system-misc                    1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-ppc                     1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-sparc                   1:8.2.4-ppa1~sriov~bookworm1
     qemu-system-x86                     1:8.2.4-ppa1~sriov~bookworm1
