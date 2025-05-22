@@ -1,0 +1,67 @@
+From 69cf95e6d3bc5bd4ebaec61e4d675ea2682d748c Mon Sep 17 00:00:00 2001
+From: "Mazlan, Hazwan Arif" <hazwan.arif.mazlan@intel.com>
+Date: Wed, 1 Feb 2023 18:51:19 +0800
+Subject: [PATCH] Revert "Enable CM copy by default on TGL/RKL/ADL Linux
+ (#2939)"
+
+This reverts commit 5f497951275b2ed1099a570541f8212ca4d4d920.
+---
+ _studio/shared/include/libmfx_core_vaapi.h |  1 -
+ _studio/shared/src/libmfx_core_vaapi.cpp   | 15 ++++-----------
+ 2 files changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/_studio/shared/include/libmfx_core_vaapi.h b/_studio/shared/include/libmfx_core_vaapi.h
+index dadf40475684..09f8af5b1942 100644
+--- a/_studio/shared/include/libmfx_core_vaapi.h
++++ b/_studio/shared/include/libmfx_core_vaapi.h
+@@ -210,7 +210,6 @@ protected:
+     void                   ReleaseHandle();
+ 
+     bool                   IsCmSupported();
+-    bool                   IsCmCopyEnabledByDefault();
+     mfxStatus              TryInitializeCm();
+ 
+     std::unique_ptr<UMC::LinuxVideoAccelerator> m_pVA;
+diff --git a/_studio/shared/src/libmfx_core_vaapi.cpp b/_studio/shared/src/libmfx_core_vaapi.cpp
+index 519625927df8..7039b17b35f1 100644
+--- a/_studio/shared/src/libmfx_core_vaapi.cpp
++++ b/_studio/shared/src/libmfx_core_vaapi.cpp
+@@ -789,13 +789,6 @@ bool VAAPIVideoCORE_T<Base>::IsCmSupported()
+     return GetHWType() < MFX_HW_DG2;
+ }
+ 
+-template <class Base>
+-bool VAAPIVideoCORE_T<Base>::IsCmCopyEnabledByDefault()
+-{
+-    // For Linux by default CM copy is ON on RKL/ADL
+-    return IsCmSupported() && GetHWType() != MFX_HW_DG1 && GetHWType() != MFX_HW_TGL_LP;
+-}
+-
+ template <class Base>
+ mfxStatus VAAPIVideoCORE_T<Base>::TryInitializeCm()
+ {
+@@ -1315,8 +1308,8 @@ mfxStatus VAAPIVideoCORE_T<Base>::DoFastCopyExtended(
+         return MFX_ERR_UNDEFINED_BEHAVIOR;
+     }
+ 
+-    // For Linux, if CM copy is forced to be used, or if choose to use default copy method and CM copy is enabled by default, use CM copy.
+-    bool canUseCMCopy = (gpuCopyMode & MFX_COPY_USE_CM) && m_pCmCopy && (m_ForcedCmState == MFX_GPUCOPY_ON || (m_ForcedCmState == MFX_GPUCOPY_DEFAULT && IsCmCopyEnabledByDefault())) && CmCopyWrapper::CanUseCmCopy(pDst, pSrc);
++    // For Linux by default CM copy is OFF
++    bool canUseCMCopy = (gpuCopyMode & MFX_COPY_USE_CM) && m_pCmCopy && m_ForcedCmState == MFX_GPUCOPY_ON && CmCopyWrapper::CanUseCmCopy(pDst, pSrc);
+ 
+     if (NULL != pSrc->Data.MemId && NULL != pDst->Data.MemId)
+     {
+@@ -1808,8 +1801,8 @@ VAAPIVideoCORE_VPL::DoFastCopyExtended(
+     // check that region of interest is valid
+     MFX_CHECK(roi.width && roi.height, MFX_ERR_UNDEFINED_BEHAVIOR);
+ 
+-    // For Linux, if CM copy is forced to be used, or if choose to use default copy method and CM copy is enabled by default, use CM copy.
+-    bool canUseCMCopy = (gpuCopyMode & MFX_COPY_USE_CM) && m_pCmCopy && (m_ForcedCmState == MFX_GPUCOPY_ON || (m_ForcedCmState == MFX_GPUCOPY_DEFAULT && IsCmCopyEnabledByDefault())) && CmCopyWrapper::CanUseCmCopy(pDst, pSrc);
++    // For Linux by default CM copy is OFF
++    bool canUseCMCopy = (gpuCopyMode & MFX_COPY_USE_CM) && m_pCmCopy && m_ForcedCmState == MFX_GPUCOPY_ON && CmCopyWrapper::CanUseCmCopy(pDst, pSrc);
+ 
+     if (m_pVaCopy && (gpuCopyMode & MFX_COPY_USE_VACOPY_ANY) && (m_ForcedCmState != MFX_GPUCOPY_OFF))
+     {
+-- 
+2.39.0
+

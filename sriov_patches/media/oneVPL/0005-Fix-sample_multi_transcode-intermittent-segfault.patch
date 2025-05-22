@@ -1,0 +1,29 @@
+From cb73e06ae3985bbfb1d8231ad42eda1104fb0861 Mon Sep 17 00:00:00 2001
+From: Vincent Cheah Beng Keat <vincent.beng.keat.cheah@intel.com>
+Date: Thu, 25 May 2023 01:16:18 +0800
+Subject: [PATCH] Fix sample_multi_transcode intermittent segfault
+
+HSD ID: 15012772965
+Tested command: ./sample_multi_transcode -par config.par
+---
+ tools/legacy/sample_misc/wayland/src/class_wayland.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/legacy/sample_misc/wayland/src/class_wayland.cpp b/tools/legacy/sample_misc/wayland/src/class_wayland.cpp
+index 9996f3a8..ac8ba657 100644
+--- a/tools/legacy/sample_misc/wayland/src/class_wayland.cpp
++++ b/tools/legacy/sample_misc/wayland/src/class_wayland.cpp
+@@ -152,8 +152,10 @@ void Wayland::FreeSurface() {
+         while (!m_buffers_list.empty()) {
+             wl_surface_attach(m_surface, NULL, 0, 0);
+             wl_surface_commit(m_surface);
+-            if (wl_display_dispatch_queue(m_display, m_event_queue) < 1)
++            if (wl_display_dispatch_queue(m_display, m_event_queue) < 1) {
++                DestroyBufferList();
+                 break;
++            }
+         }
+ 
+         wl_surface_destroy(m_surface);
+-- 
+2.25.1

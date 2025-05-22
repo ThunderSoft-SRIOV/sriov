@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!--
+# Copyright (c) 2024 ThunderSoft Corporation.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+-->
+<domain xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0" type="kvm">
+  <name>%VM_NAME%</name>
+  <!-- <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://microsoft.com/win/11"/>
+    </libosinfo:libosinfo>
+  </metadata> -->
+  <memory>4194304</memory>
+  <currentMemory>4194304</currentMemory>
+  <memoryBacking>
+    <hugepages>
+      <page size="2048" unit="KiB"/>
+    </hugepages>
+    <nosharepages/>
+    <source type="memfd"/>
+    <access mode="shared"/>
+    <allocation mode="immediate"/>
+  </memoryBacking>
+  <vcpu>2</vcpu>
+  <os>
+    <type arch="x86_64" machine="q35">hvm</type>
+    <loader readonly="yes" type="pflash">%VM_OVMF_CODE%</loader>
+    <nvram template="%VM_OVMF_VARS%"/>
+    <boot dev="hd"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state="off"/>
+  </features>
+  <cpu mode="host-passthrough"/>
+  <clock offset="localtime">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+  </clock>
+  <pm>
+    <suspend-to-mem enabled="yes"/>
+    <suspend-to-disk enabled="yes"/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2" cache="none" discard="unmap"/>
+      <source file="%VM_IMAGE%"/>
+      <target dev="vda" bus="sata"/>
+    </disk>
+    <controller type="usb" model="qemu-xhci" ports="15"/>
+    <controller type="pci" model="pcie-root"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <controller type="pci" model="pcie-root-port"/>
+    <interface type="user">
+      <link state="up"/>
+      <mac address="52:54:00:ab:cd:23"/>
+      <model type="e1000e"/>
+    </interface>
+    <input type="tablet" bus="usb"/>
+    <sound model="ich9">
+      <codec type="duplex"/>
+      <audio id="1"/>
+      <alias name="sound0"/>
+    </sound>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0" bus="0" slot="2" function="2"/>
+      </source>
+      <address type="pci" domain="0" bus="0" slot="2" function="0"/>
+    </hostdev>
+    <video>
+      <!-- blob='on' requires libvirt 9.2 and beyond, so add custom qemu cmdline below for now-->
+      <model type="virtio" heads="1" blob="on"/>
+      <driver name="qemu"/>
+    </video>
+  </devices>
+  <qemu:commandline>
+    <!-- enable blob for virtio-vga-->
+    <qemu:arg value="-display"/>
+    <qemu:arg value="gtk,gl=on"/>
+    <qemu:env name="DISPLAY" value=":1"/>
+  </qemu:commandline>
+  <qemu:override>
+    <qemu:device alias="video0">
+      <qemu:frontend>
+        <qemu:property name="blob" type="bool" value="true"/>
+        <qemu:property name="render_sync" type="bool" value="false"/>
+      </qemu:frontend>
+    </qemu:device>
+  </qemu:override>
+</domain>

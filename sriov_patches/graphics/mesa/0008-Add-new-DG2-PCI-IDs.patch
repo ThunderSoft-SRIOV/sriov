@@ -1,0 +1,28 @@
+From 4633e74bf27118e2519c2d6de01d03458b74e77c Mon Sep 17 00:00:00 2001
+From: "Teng, Jin Chung" <jin.chung.teng@intel.com>
+Date: Fri, 13 Oct 2023 11:16:32 +0800
+Subject: [PATCH] Add new DG2 PCI IDs
+
+Signed-off-by: Teng, Jin Chung <jin.chung.teng@intel.com>
+---
+ include/pci_ids/iris_pci_ids.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/pci_ids/iris_pci_ids.h b/include/pci_ids/iris_pci_ids.h
+index 04b024480ad..230f12bfec6 100644
+--- a/include/pci_ids/iris_pci_ids.h
++++ b/include/pci_ids/iris_pci_ids.h
+@@ -232,6 +232,10 @@ CHIPSET(0x5692, dg2_g10, "DG2", "Intel(R) Arc(tm) A550M Graphics")
+ CHIPSET(0x5693, dg2_g11, "DG2", "Intel(R) Arc(tm) A370M Graphics")
+ CHIPSET(0x5694, dg2_g11, "DG2", "Intel(R) Arc(tm) A350M Graphics")
+ CHIPSET(0x5695, dg2_g11, "DG2", "Intel(R) Graphics")
++CHIPSET(0x56ba, dg2_g11, "DG2", "Intel(R) Graphics")
++CHIPSET(0x56bb, dg2_g11, "DG2", "Intel(R) Graphics")
++CHIPSET(0x56bc, dg2_g11, "DG2", "Intel(R) Graphics")
++CHIPSET(0x56bd, dg2_g11, "DG2", "Intel(R) Graphics")
+ CHIPSET(0x5696, dg2_g12, "DG2", "Intel(R) Graphics")
+ CHIPSET(0x5697, dg2_g12, "DG2", "Intel(R) Graphics")
+ CHIPSET(0x56a0, dg2_g10, "DG2", "Intel(R) Arc(tm) A770 Graphics")
+-- 
+2.25.1
+

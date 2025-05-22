@@ -1,0 +1,31 @@
+From 94b5844aa6e05b43623d7551340ef76bad3f6bc6 Mon Sep 17 00:00:00 2001
+From: Lim Siew Hoon <siew.hoon.lim@intel.com>
+Date: Thu, 23 Mar 2023 09:46:04 +0800
+Subject: [PATCH] Fix X11 rendering corruption issue.
+
+Upstream-status: submitted
+https://github.com/intel-innersource/frameworks.media.onevpl.dispatcher/pull/616/commits
+
+JIRA: https://jira.devtools.intel.com/browse/NEXGRAPHIC-20
+
+Signed-off-by: Lim Siew Hoon <siew.hoon.lim@intel.com>
+---
+ tools/legacy/sample_common/src/vaapi_device.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/legacy/sample_common/src/vaapi_device.cpp b/tools/legacy/sample_common/src/vaapi_device.cpp
+index e621251..1be54ef 100644
+--- a/tools/legacy/sample_common/src/vaapi_device.cpp
++++ b/tools/legacy/sample_common/src/vaapi_device.cpp
+@@ -271,7 +271,7 @@ mfxStatus CVAAPIDeviceX11::RenderFrame(mfxFrameSurface1* pSurface,
+         width  = pSurface->Info.CropX + pSurface->Info.CropW;
+         height = pSurface->Info.CropY + pSurface->Info.CropH;
+ 
+-        stride = width * bpp / 8;
++        stride = memId->m_image.pitches[0];
+         size   = PAGE_ALIGN(stride * height);
+ 
+         bo = drmintellib.drm_intel_bo_gem_create_from_prime(m_bufmgr,
+-- 
+2.39.0
+
