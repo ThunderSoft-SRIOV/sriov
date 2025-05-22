@@ -61,7 +61,7 @@ The key benefits of Intel Graphics SR-IOV are:
 
     ```sh
     cd /home/$USER/
-    git clone -b mr2 https://github.com/ThunderSoft-SRIOV/sriov.git
+    git clone https://github.com/ThunderSoft-SRIOV/sriov.git
     ```
 
 <!-- HOST SETUP -->
