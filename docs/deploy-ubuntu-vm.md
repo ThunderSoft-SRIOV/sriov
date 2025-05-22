@@ -20,13 +20,13 @@
 - [Advanced Guest VM Launch](#advanced-guest-vm-launch)
 - [Reduce the Size of Guest VM](#reduce-the-size-of-guest-vm)
 ## Prerequisites
-
-* [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso). In this example we are using Intel IOT Ubuntu 22.04 LTS
-* [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso). Ubuntu 24.04
+Download the iso image for one of the supported guest OS:
+- [Option 1] [Ubuntu 22.04 ISO](https://cdimage.ubuntu.com/releases/jammy/release/inteliot/ubuntu-22.04-desktop-amd64+intel-iot.iso) - We will show the installation of ubuntu 22.04 VM as an example
+- [Option 2] [Ubuntu 24.04 ISO](https://releases.ubuntu.com/noble/ubuntu-24.04.2-desktop-amd64.iso)
 
 ## Preparation
-### VM for ubuntu 22.04
-1. Download ubuntu_22.04 iso image and save the iso file as `ubuntu.iso`
+### VM for ubuntu
+1. Download ubuntu iso image and save the iso file as `ubuntu.iso`
 
 2. Copy the `ubuntu.iso` to setup directory
 
@@ -251,9 +251,9 @@ There are three options provided. Choose the corresponding launch method accordi
     cd /home/$USER/sriov/scripts/setup_guest/ubuntu/
     sudo ./sriov_check_version.sh
     ```
-    *Note: If there is a difference in package versions, it does not affect the remaining steps, just make sure the correspond package is installed successfully.*
+    *Note:  Version number on Ubuntu 24.04(noble) maybe different than the example output below.*
     
-    Example output
+    Example output:(ubuntu 22.04)
     ```shell
     libdrm-amdgpu1:amd64                    2.4.120-1ubuntu1-1ppa1~jammy1
     libdrm-common                           2.4.120-1ubuntu1-1ppa1~jammy1

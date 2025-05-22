@@ -13,7 +13,7 @@
     sudo mokutil --sb-state
     ```
 
-    *Note: You might need to create user pasword  to enable secure boot. Please refer to your system manual for details*
+    *Note: You might need to create user password  to enable secure boot. Please refer to your system manual for details*
 
     If system returns **SecureBoot disabled**, you need to enable Secure Boot by following steps:
       1) Reboot the system
