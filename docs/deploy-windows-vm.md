@@ -32,7 +32,7 @@
 
 * Windows 11 ISO. In this example we are using Windows 11 version 23H2 (OS Build 22631.4890)
 * [Intel Graphics Driver](https://www.intel.com/content/www/us/en/secure/design/confidential/software-kits/kit-details.html?kitId=843233) version 32.0.101.6314
-* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/843228/display-virtualization-drivers-for-display-virtualization-drivers-for-meteor-lake-u-h-and-meteor-lake-ps.html?cache=1734486750) version 4.0.0.1742
+* [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/844242/844243/display-virtualization-drivers-for-arrow-lake-uh-arrow-lake-s.html) version 4.0.0.1797
 * [Virtio Driver](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win.iso) version 0.1.240-1
 
 # Preparation
@@ -147,7 +147,7 @@ There are two options provided. Choose the corresponding launch method according
 
 ### Install SR-IOV Zero Copy Driver
 
-1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/843228/display-virtualization-drivers-for-display-virtualization-drivers-for-meteor-lake-u-h-and-meteor-lake-ps.html?cache=1734486750) from browser.
+1. Download [SR-IOV Zero Copy Driver](https://www.intel.com/content/www/us/en/download/844242/844243/display-virtualization-drivers-for-arrow-lake-uh-arrow-lake-s.html) from browser.
 2. Navigate into the install folder and double click on `ZeroCopyInstaller.exe` to launch the installer.
 
     <img src=./media/mr2/zerocopydrv1.png width="80%">
